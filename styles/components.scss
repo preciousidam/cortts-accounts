@@ -1,0 +1,418 @@
+//////////////////////SIDEBAR///////////////////
+
+.sidebar{
+    background-color: $sidebar-color;
+    border-right: 1px solid #c9c9c9;
+    padding: 0;
+
+    ul{
+        text-decoration: none;
+        padding: 0;
+        margin-top: 50px;
+    }
+
+    #brand{
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 !important;
+        padding: 14px !important;
+        background-color: $primary-green;
+        width: 100%;
+        
+        img{
+            width: $logo-size !important;
+            height: $logo-size;
+            margin-right: 15px;
+            margin-left: 15px;
+            background-color: $background-white;
+            padding: 5px;
+            border-radius: 50%;
+
+        }
+    
+        h2{
+            font-weight: bolder;
+            margin: 0 30px 0 0;
+            color: $text-color-dark-active;
+        }
+    }
+}
+
+hr{
+    margin: 0 !important;
+}
+
+//////HEADER/////////
+#navbar{
+    background-color: $background-white !important;
+    width: 100% !important;
+    margin: 0 !important;
+    position: sticky;
+    top: 0;
+    
+}
+
+#navbar-content{
+    padding: 13px !important;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#navbar-content-right{
+    list-style-type: none;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    .nav-link{
+        margin: 0;
+        padding-right: 30px;
+        display: inline !important;
+    }
+}
+
+#navbar-content-left{
+    list-style-type: none;
+   
+    margin: 0 !important;
+    padding: 0 !important;
+    
+    .nav-link{
+        display: inline !important;
+        margin: 0;
+        padding-left: 20px;
+
+        input{
+            background-color: rgba($color: #ffffff, $alpha: 0.1);
+            border: 1px solid rgba($color: #ffffff, $alpha: 0.1);
+
+        }
+    }
+}
+
+//////////////////////////////////////////////
+////////////////////SIDELINK/////////////////////
+////////////////////////////////////////////
+
+
+.link{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    
+    &:hover{
+        background-color: rgba($color: #000000, $alpha: 0.03);
+        cursor: pointer;
+    }
+    
+
+    a{
+        display: inline-flex;
+        flex-direction: row;
+        text-decoration: none;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 10px 20px;
+        margin: 0 !important;
+        width: 100%;
+
+        p{
+            color: $text-color-light;
+            font-weight: bold;
+            text-transform: capitalize;
+            margin-left: 20px;
+            margin-bottom: 0;
+        }
+        svg{
+            color: $text-color-light;
+        }
+    }
+}
+
+.active{
+    //background-color: rgba($color: #000000, $alpha: 0.1);
+    border-right: 5px solid $primary-green;
+    cursor: pointer;
+    background-color: rgba($color: #ffffff, $alpha: 0.1);
+    
+    p{
+        color: $text-color-dark-active !important;
+
+    }
+    svg{
+        color: $primary-green !important;
+    }
+}
+
+////////////////////////////DROPDOWN////////////////
+///////////////////////////////////////////////////
+
+#profileCont{
+    display: inline-flex;
+    position: relative;
+    cursor: pointer;
+    
+    #profile{
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+        
+        p{
+            margin: 0 0 0 10px;
+            color: $text-color;
+        }
+    }
+    .dropdown{
+        position: absolute;
+        top: 50px;
+        left: 40px;
+        background-color: $background-white;
+        padding: 0px;
+        border: 1px solid #c9c9c9;
+        border-radius: 5px;
+        box-shadow: 2px 2px 1px 1px rgba($color: #000000, $alpha: 0.1);
+
+
+        .dropdown-content{
+            padding: 0;
+            .drop-link{
+                display: block !important;
+                padding: 10px 10px;
+                &:hover{
+                    background-color: rgba($color: #000000, $alpha: 0.03);
+                }
+
+                a{
+                    display: inline;
+                    margin: 0 !important;
+                    padding: 10px 20px;
+                    color: $text-color-light;
+                }
+            }
+        }
+    }
+}
+
+
+/////////////////////////////////////////////
+//////////////////////INNER NAV/////////////
+///////////////////////////////////////////
+
+.inner-nav{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 30px;
+    align-items: center;
+
+    .inner-crumb{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        h4{
+            margin-right: 30px;
+        }
+
+        a{
+            color: $text-color-light;
+        }
+    }
+
+    .inner-action{
+        margin-right: 50px;
+
+        button{
+            &:active, &:focus{
+                outline: $primary-green !important;
+            }
+        }
+    }
+}
+
+
+////////////////////////////////////////////////
+/////////////////////////TABLE//////////////////
+///////////////////////////////////////////////
+
+.table-cont{
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: auto;
+    
+
+    .filters{
+        padding-left: 80px;
+
+        .pagination{
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+            
+            .control-nav{
+                background-color: $background-white;
+                margin: 0 !important;
+                padding: 5px;
+                box-shadow: 1px 1px 1px 1px rgba($color: #000000, $alpha: 0.1);
+
+                &:focus, &:active{
+                    box-shadow: none;
+                }
+
+                svg{
+                    color: $primary-green;
+                }
+            }
+
+            .control-text{
+                margin: 0 15px !important;
+            }
+        }
+    }
+
+    .table{
+        margin: 20px auto !important;
+        background-color: transparent !important;
+        width: 90% !important;
+
+        .thead{
+            background-color: $background-white;
+            padding: 5px;
+            border-bottom: 1px solid #c9c9c9;
+
+            .th{
+                font-weight: bold;
+                text-transform: capitalize;
+            }
+        }
+
+        .tbody{
+
+            .tr{
+               background-color: $background-white;
+               padding: 10px 5px;
+               
+               .td{
+                   display: inline-flex;
+                   align-items: center;
+                   align-items: center;
+
+                   ul{
+                       margin: 0 !important;
+                   }
+                    .item-desc{
+                        display: inline-block;
+                        margin-right: 10px;
+
+                        &:before {
+                                content: ' \2022';
+                                margin-right: 0.5em;
+                            }
+                    }
+
+                    .tAction{
+                        display: inline-block;
+                        padding: 10px;
+                        margin: 5px 10px;
+                        border-radius: 2px;
+                        box-shadow: 1px 1px 1px 1px rgba($color: #000000, $alpha: 0.1);
+
+                        svg{
+                            color: $background-white
+                        }
+                    }
+
+                    .view{
+                        border: 1px solid $primary-blue;
+                        border-radius: 50%;
+                        background-color: $primary-blue;
+
+
+                        &:hover, &:focus, &:active{
+                            background-color: $primary-blue;
+                            svg{
+                                color: $background-white
+                            }
+                        }
+                    }
+
+                    .del{
+                        border: 1px solid $support-red;
+                        border-radius: 50%;
+                        background-color: $support-red;
+
+                        &:hover, &:focus, &:active{
+                            background-color: $support-red;
+                            svg{
+                                color: $background-white
+                            }
+                        }
+                    }
+
+                    .edit{
+                        border: 1px solid $primary-green;
+                        border-radius: 50%;
+                        background-color: $primary-green;
+
+                        &:hover, &:focus, &:active{
+                            background-color: $primary-green;
+                            svg{
+                                color: $background-white
+                            }
+                        }
+                    }
+               }
+
+            }
+
+            .tr:nth-child(even){
+                background-color: transparent;
+            }
+        }
+    }
+}
+
+
+
+/////////////////////////////////////////////////////
+//////////////////////ACTION BUTTONS/////////////////
+////////////////////////////////////////////////////
+
+.actionBtn{
+    .trigger{
+        &:active, &:focus{
+            outline: none;
+        }
+    }
+}
+
+.actions-items{
+    padding: 5px 10px !important;
+    svg{
+        margin-right: 10px;
+    }
+    cursor: pointer;
+
+    &:hover, &:active, &:focus{
+        background-color: rgba($color: #000000, $alpha: 0.04);
+    }
+}
+
+
+
+/////////////////////////////////////////////////////////////
+//////////////////////////FOOTER////////////////////////////
+////////////////////////////////////////////////////////////
+
+.footer{
+    background-color: $background-white !important;
+    width: 100% !important;
+    margin: 0 !important;
+    position: sticky;
+    bottom: 0;
+}
