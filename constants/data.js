@@ -13,3 +13,33 @@ export const budget = [
     {date: '12 Sep, 2019', items: [{desc: 'Fuel for the Marketers', rate: 5000, qty: 4, amount: 20000,},{desc: 'Fuel for the MD', rate: 8000, qty: 1, amount: 8000,},{desc: 'Toll Gate Payment', rate: 6000, qty: 4, amount: 24000,}]},
     {date: '12 Aug, 2019', items: [{desc: 'Fuel for the Marketers', rate: 5000, qty: 4, amount: 20000,},{desc: 'Fuel for the MD', rate: 8000, qty: 1, amount: 8000,},{desc: 'Toll Gate Payment', rate: 6000, qty: 4, amount: 24000,}]},
 ];
+
+
+export const landlords = [
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+]
+
+
+export const tenants = [
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+    {name: 'Modd Family', address: '12B Somewhere in, water coopperation road', email: 'modd.family@something.com', cp: 'Tobusun olamide', phone: '08162300796'},
+]

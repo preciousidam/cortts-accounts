@@ -21,7 +21,17 @@ export default function New() {
         let qty = parseInt(document.getElementById('qty').value);
         let rate = parseInt(document.getElementById('amount').value);
         let amount = qty*rate;
-        setItems([...items,{desc,qty,rate,amount}]);
+        console.log(rate)
+        if(desc != '' && qty != NaN && rate != NaN){
+            setItems([...items,{desc,qty,rate,amount}]);
+            clearField();
+        }
+    }
+
+    const clearField = () => {
+        document.getElementById('desc').value = "";
+        document.getElementById('qty').value = "";
+        document.getElementById('amount').value = "";
     }
 
     const deleteitem = (id) => {

@@ -14,14 +14,14 @@ const useStyles = makeStyles({
     },
   });
 
-const Nav = ({breadcrumb, title,href}) => {
+const Nav = ({breadcrumb, title,action}) => {
     const classes = useStyles();
     const router = useRouter();
 
     const handleClick = (e) => {
-        const link = `${router.pathname+href}`
+        
         e.preventDefault();
-        router.push(link);
+        action();
     }
 
     return (

@@ -1,6 +1,7 @@
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Typography from '@material-ui/core/Typography';
 import Link from 'next/link';
+import {useRouter} from 'next/router';
 
 import MainLayout from "../../layouts/mainLayout";
 import Nav from "../../components/innerNav/innerNav";
@@ -14,10 +15,14 @@ export default function Budget() {
                             <Link href="/"><a>Dashboard</a></Link>
                             <Typography color="textPrimary">Budget</Typography>
                         </Breadcrumbs>);
+
+    const router = useRouter();
+    const action = () => router.push(router.pathname+"/new")
+
     return (
         <MainLayout title="budget">
             <div className="body">
-                <Nav title="Budget" breadcrumb={breadcrumb} href="/new" />
+                <Nav title="Budget" breadcrumb={breadcrumb} action={action} />
                 <Table data={budget} />
             </div>
         </MainLayout>

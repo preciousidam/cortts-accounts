@@ -1,5 +1,5 @@
 import {useRouter} from 'next/router';
-import {AccountBalance, Grade, FormatBoldOutlined, Apartment, HotelOutlined, DescriptionOutlined, Person} from '@material-ui/icons';
+import {AccountBalance, AccountBalanceWalletOutlined, FormatBoldOutlined, Apartment, HotelOutlined, DescriptionOutlined, Person} from '@material-ui/icons';
 import Badge from '@material-ui/core/Badge';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SideBarLayout from '../../layouts/sidebarLayout';
@@ -10,6 +10,7 @@ import {SidebarLink} from '../button/sidebarLinks';
 const links = [
     {icon: <FormatBoldOutlined />, title: 'Budget', link: 'budget'},
     {icon: <DescriptionOutlined />, title: 'Invoices', link: 'invoices'},
+    {icon: <AccountBalanceWalletOutlined />, title: 'Accounts', link: 'accounts'},
     {icon: <Apartment />, title: 'Apartments', link: 'apartments'},
     {icon: <Person />, title: 'landlords', link: 'landlords'},
     {icon: <HotelOutlined />, title: 'Tenants', link: 'tenants'},
