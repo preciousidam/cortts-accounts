@@ -7,3 +7,14 @@ export function StyledInput({type, label, placeholder, id, ...rest}){
         </div>
     );
 }
+
+export function SelectInput({defaultChoice, options, ...rest}){
+    return (
+        <div className="form-group styled">
+            <select class="custom-select" id="inputGroupSelect02" {...rest}>
+                <option selected>{defaultChoice}</option>
+                {options.map(({text,value}) => <option value={value}>{text}</option>)}
+            </select>
+        </div>
+    );
+}

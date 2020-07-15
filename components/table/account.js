@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { Pagination } from 'antd';
 import ActionButton from '../button/actionButtons';
 
-export default function DetailsTable({data}){
+export default function AccountsTable({data}){
     
     const [page, setPage] = useState(1)
     const offset = 8;
@@ -17,23 +17,23 @@ export default function DetailsTable({data}){
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Name</th>
-                        <th>Address</th>
-                        <th>Email</th>
-                        <th>Contact</th>
-                        <th>Phone</th>
+                        <th>Acct Name</th>
+                        <th>Acct Number</th>
+                        <th>Owner</th>
+                        <th>Bank</th>
+                        <th>Sort Code</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {data.slice(upper,lower).map(({name,email,address,cp,phone},i) => (
+                    {data.slice(upper,lower).map(({name,number,owner,bank,sc},i) => (
                         <tr>
                             <td>{i+1}</td>
                             <td>{name}</td>
-                            <td>{address}</td>
-                            <td>{email}</td>
-                            <td>{cp}</td>
-                            <td>{phone}</td>
+                            <td>{number}</td>
+                            <td>{owner}</td>
+                            <td>{bank}</td>
+                            <td>{sc}</td>
                             <td><ActionButton /></td>
                         </tr>
                     ))}
