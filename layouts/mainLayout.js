@@ -5,7 +5,7 @@ import Header from '../components/header/header';
 import {FooterWithButton} from '../components/footer';
 import '../styles/styles.scss';
 
-export default function MainLayout({children, title}){
+export default function MainLayout({children, title, actionFooter}){
     return (
         <div className="main">
             <Head>
@@ -20,7 +20,7 @@ export default function MainLayout({children, title}){
                     <div className="col-lg-10">
                         <Header />
                         {children}
-                        <FooterWithButton />
+                        {actionFooter && <FooterWithButton />}
                     </div>
                 </div>
             </main>
