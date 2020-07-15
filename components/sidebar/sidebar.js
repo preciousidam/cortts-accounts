@@ -19,7 +19,7 @@ const links = [
 
 export default function SideBar(props){
     const router = useRouter();
-    console.log(router.pathname.split('/')[1])
+    
     return(
         <SideBarLayout toogle={props.toogle}>
             <ul id="sidabar-content">

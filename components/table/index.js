@@ -32,7 +32,7 @@ export default function Table({data}){
 
 
     const handlePagination = (action) =>{
-        console.log(action)
+        
         if (action === 'dec'){
             
             setPage(page-7)
