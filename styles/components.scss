@@ -88,6 +88,14 @@ hr{
         input{
             background-color: rgba($color: #ffffff, $alpha: 0.1);
             border: 1px solid rgba($color: #ffffff, $alpha: 0.1);
+            width: 200px;
+
+            &:focus, &:active{
+                outline: none;
+                border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
+                width: 300px;
+                transition:width 1s ease-out;
+            }
 
         }
     }
@@ -259,7 +267,7 @@ hr{
             .control-nav{
                 background-color: $background-white;
                 margin: 0 !important;
-                padding: 5px;
+                
                 box-shadow: 1px 1px 1px 1px rgba($color: #000000, $alpha: 0.1);
 
                 &:focus, &:active{
@@ -268,6 +276,15 @@ hr{
 
                 svg{
                     color: $primary-green;
+                }
+
+                .contr-btn{
+                    width: 30px;
+                    height: 30px;
+
+                    &:focus, &:active{
+                        outline: none;
+                    }
                 }
             }
 

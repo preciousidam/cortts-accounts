@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {ChevronLeftOutlined, ChevronRightOutlined, CreateOutlined, DeleteOutline, RemoveRedEyeOutlined} from '@material-ui/icons';
 import Paper from '@material-ui/core/Paper';
+import IconButton from '@material-ui/core/IconButton';
 
 
 import ActionButton from '../button/actionButtons';
@@ -26,56 +27,57 @@ export default function Table({data}){
 
     const [page, setPage] = useState(0);
 
-    const header = ['#',...Object.keys(data[0]),'action']
+    const header = ['#',...Object.keys(data[0]),'Amount','action']
     const [upper,lower] = [page,page+7];
 
 
     const handlePagination = (action) =>{
-        console.log('called')
+        console.log(action)
         if (action === 'dec'){
-            if (page != 0)
-                setPage(page-7)
+            
+            setPage(page-7)
         }else if(action == 'inc'){
-            if (page+7 < data.lenght)
-                setPage(page+7)
+            
+            setPage(page+7)
         }
     }
-    console.log(`${page} ${upper}`)
+
     return(
         <div className="table-cont">
-            <Filter action={handlePagination} page={page} />
+            <Filter action={handlePagination} page={page} total={data.length} />
             <Paper elevation={2} className="container-fluid table">
                 <div className="row thead">
                     <div className="col-lg-1 th">{header[0]}</div>
                     <div className="col-lg-2 th">{header[1]}</div>
-                    <div className="col-lg-8 th">{header[2]}</div>
-                    <div className="col-lg-1 th">{header[3]}</div>
+                    <div className="col-lg-6 th">{header[2]}</div>
+                    <div className="col-lg-2 th">{header[3]}</div>
+                    <div className="col-lg-1 th">{header[4]}</div>
                 </div>
                 <div className="tbody">
-                    {sortByDate(data.slice(upper,lower)).map((item, i) => <TableItem key={i} item={item} index={i} />)}
+                    {sortByDate(data.slice(upper,lower)).map((item, i) => <TableItem key={i} item={item} index={i} page={page} total={data.length} />)}
                 </div>
             </Paper>
         </div>
     );
 }
 
-export const Filter = ({action,page}) => {
+export const Filter = ({action,page, total}) => {
     return (
         <div className="filters">
             <div className="pagination">
-                <div className="control-nav" onClick={action('dec')}>
-                    <ChevronLeftOutlined />
+                <div className="control-nav" >
+                    <IconButton className="contr-btn" onClick={() => action('dec')}><ChevronLeftOutlined /></IconButton>
                 </div>
-                <p className="control-text">1 to 15 ... 100</p>
-                <div className="control-nav" onClick={action('inc')}>
-                    <ChevronRightOutlined />
+                <p className="control-text">{page+1} to {page+7} ... {total}</p>
+                <div className="control-nav">
+                    <IconButton className="contr-btn" onClick={() => action('inc')}><ChevronRightOutlined /></IconButton>
                 </div>
             </div>
         </div>
     )
 }
 
-export const TableItem = ({actions, item, index}) => {
+export const TableItem = ({actions, item, index, page}) => {
 
     const format = (data) =>{
         return (
@@ -85,12 +87,20 @@ export const TableItem = ({actions, item, index}) => {
         );
     }
 
+    const getTotal = (items) =>{
+        let total = 0;
+
+        items.forEach( ({amount}) => total += amount);
+        return total;
+    }
+
 
     return (
         <div className={`row tr`}>
-            <div className="col-lg-1 td">{index+1}</div>
+            <div className="col-lg-1 td">{page+index+1}</div>
             <div className="col-lg-2 td">{item.date}</div>
-            <div className="col-lg-8 td">{format(item.items)}</div>
+            <div className="col-lg-6 td">{format(item.items)}</div>
+            <div className="col-lg-2 td"><span>&#8358;</span> {getTotal(item.items)}</div>
             <div className="col-lg-1 td"><ActionButton /></div>
         </div>
     )

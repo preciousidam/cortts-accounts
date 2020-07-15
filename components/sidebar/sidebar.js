@@ -19,7 +19,7 @@ const links = [
 
 export default function SideBar(props){
     const router = useRouter();
-
+    console.log(router.pathname.split('/')[1])
     return(
         <SideBarLayout toogle={props.toogle}>
             <ul id="sidabar-content">
@@ -27,7 +27,7 @@ export default function SideBar(props){
                 <SidebarLink title="Dashboard" icon={<AccountBalance />} link="index" active={router.pathname == "/" || router.pathname == "/index" ? "active" : ""} />
                 {
                     links.map(
-                        ({title,icon,link}, id) => <SidebarLink key={id} title={title} icon={icon} link={link} active={router.pathname == `/${link}` ? "active" : ""} />
+                        ({title,icon,link}, id) => <SidebarLink key={id} title={title} icon={icon} link={link} active={router.pathname.split('/')[1] == `${link}` ? "active" : ""} />
                     )
                 }
                 

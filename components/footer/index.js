@@ -9,7 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import Grow from '@material-ui/core/Grow';
 
-const options = ['Save and Close', 'Save and Continue'];
+const options = ['Save and Close', 'Save and Continue', 'Discard and Close'];
 
 export const FooterWithButton = () => {
 

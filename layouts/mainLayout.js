@@ -17,7 +17,7 @@ export default function MainLayout({children, title, actionFooter}){
                 
                 <div className="row" id="mainContent">
                     <Sidebar />
-                    <div className="col-lg-10">
+                    <div className="col-lg-10 content-area">
                         <Header />
                         {children}
                         {actionFooter && <FooterWithButton />}

@@ -16,11 +16,9 @@ export default function header(props){
                 <ul id="navbar-content-left">
                     <li className="nav-link"><Link href="/"><a><FontAwesomeIcon icon="bars" color="#000" size="lg" /></a></Link></li>
                     <li className="nav-link">
-                        <Link href="/#">
-                            <a>  
-                                <input type="search"id="search" placeholder="Search Here" />
-                            </a>
-                        </Link>
+                          
+                        <input type="search"id="search" placeholder="Search Here" />
+                        
                     </li>  
                 </ul>
                 <ul id="navbar-content-right">
