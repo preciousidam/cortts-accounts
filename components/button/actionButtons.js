@@ -4,7 +4,7 @@ import IconButton from '@material-ui/core/IconButton';
 import {MoreVertOutlined,CreateOutlined, DeleteOutline, RemoveRedEyeOutlined} from '@material-ui/icons';
 
 
-export default function ActionButton({}){
+export default function ActionButton({ind,actions}){
 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -39,9 +39,9 @@ export default function ActionButton({}){
                 }}
             >
                 <div className="actions">
-                    <div className="actions-items edit"><CreateOutlined />Edit</div>
-                    <div className="actions-items view"><RemoveRedEyeOutlined />View</div>
-                    <div className="actions-items del"><DeleteOutline />Delete</div>
+                    <div className="actions-items edit" onClick={e => actions.edit(ind)}><CreateOutlined />Edit</div>
+                    <div className="actions-items view" onClick={e => actions.view(ind)}><RemoveRedEyeOutlined />View</div>
+                    <div className="actions-items del" onClick={e => actions.del(ind)}><DeleteOutline />Delete</div>
                 </div>
             </Popover>
         </div>

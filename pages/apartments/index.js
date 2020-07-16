@@ -3,14 +3,15 @@ import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Link from 'next/link';
+import {useRouter} from 'next/router';
 import {CloseOutlined} from '@material-ui/icons';
 import IconButton from '@material-ui/core/IconButton';
 
-import FlatsTable from '../components/table/flats';
-import MainLayout from "../layouts/mainLayout";
-import Nav from "../components/innerNav/innerNav";
-import {flats} from '../constants/data';
-import {StyledInput, SelectInput} from "../components/textinput/styledTextInput";
+import FlatsTable from '../../components/table/flats';
+import MainLayout from "../../layouts/mainLayout";
+import Nav from "../../components/innerNav/innerNav";
+import {flats} from '../../constants/data';
+import {StyledInput, SelectInput} from "../../components/textinput/styledTextInput";
 
 
 export default function Apartments() {
@@ -23,6 +24,7 @@ export default function Apartments() {
 
     const [open, setOpen] = useState(false)
     const [data, setData] = useState(flats)
+    const router = useRouter();
 
     const add = (e) => {
         const name = document.getElementById('name').value;
@@ -43,12 +45,26 @@ export default function Apartments() {
         document.getElementById('sc').value = "";
     }
 
+    const del = (id) => {
+        const filter = data.filter( x => x.flat != id);
+
+        setData(filter);
+    }
+
+    const view = (flat) => {
+        router.push(router.pathname+`/${flat}`)
+    }
+
+    const edit = (id) => {
+
+    }
+
     return (
         <MainLayout title="Apartments">
             <div className="body">
                 <Nav title="Apartments" breadcrumb={breadcrumb} action={_ => setOpen(true)} />
                 <Paper className="container land-list">
-                    <FlatsTable data={data} />
+                    <FlatsTable data={data} actions={{del, view, edit}}/>
                 </Paper>
 
                 {open && <div className="new-cont-overlay">

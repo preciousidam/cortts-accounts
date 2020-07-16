@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { Pagination } from 'antd';
 import ActionButton from '../button/actionButtons';
 
-export default function FlatsTable({data}){
+export default function FlatsTable({data,actions}){
     
     const [page, setPage] = useState(1)
     const offset = 8;
@@ -20,7 +20,7 @@ export default function FlatsTable({data}){
                         <th>Flat</th>
                         <th>Property</th>
                         <th>Status</th>
-                        <th>No .of Beds</th>
+                        <th>No. of Beds</th>
                         <th>Landlord</th>
                         <th>Tenant</th>
                         <th>Action</th>
@@ -32,11 +32,11 @@ export default function FlatsTable({data}){
                             <td>{i+1}</td>
                             <td>{flat}</td>
                             <td>{property}</td>
-                            <td className={status.toLowerCase()}>{status}</td>
+                            <td><span className={status.toLowerCase()}>{status}</span></td>
                             <td>{beds}</td>
                             <td>{landlord}</td>
                             <td>{tenant}</td>
-                            <td><ActionButton /></td>
+                            <td><ActionButton ind={flat} actions={actions} /></td>
                         </tr>
                     ))}
                 </tbody>

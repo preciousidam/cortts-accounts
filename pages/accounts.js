@@ -54,7 +54,7 @@ export default function Accounts() {
                 {open && <div className="new-cont-overlay">
                     <div className="new-form">
                         <header>
-                            <h5>Add Tenants</h5>
+                            <h5>Add Accounts</h5>
                             <IconButton className="close" onClick={_ => setOpen(false)}><CloseOutlined /></IconButton>
                         </header>
                         <div>

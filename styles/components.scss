@@ -466,10 +466,22 @@ hr{
                 cursor: pointer;
             }
             .vacant{
-                color: red;
+                color: $text-color-dark-active;
+                font-weight: bold;
+                font-size: 12px;
+                background-color: red;
+                border-radius: 3px;
+                padding: 5px;
+                text-transform: uppercase;
             }
             .occupied{
-                color: $primary-green;
+                color: $text-color-dark-active;
+                font-weight: bold;
+                font-size: 12px;
+                background-color: $primary-green;
+                border-radius: 3px;
+                padding: 5px;
+                text-transform: uppercase;
             }
         }
     }
