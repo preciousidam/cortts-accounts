@@ -7,10 +7,13 @@ import 'animate.css';
 import 'antd/dist/antd.css';
 config.autoAddCss = false;
  
-import { faBars, faSpinner, faCheck, faEnvelope, faListAlt, faHome, faHandshake } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faSpinner, faCheck, faEnvelope, faListAlt,
+        faHome, faHandshake, faCarAlt, faBed, faToilet, faBath, 
+        faMapMarkedAlt} from '@fortawesome/free-solid-svg-icons';
 import {fab} from '@fortawesome/free-brands-svg-icons'
  
-library.add(faBars,faSpinner, faCheck, faEnvelope, faListAlt, faHome, faHandshake);
+library.add(faBars,faSpinner, faCheck, faEnvelope, faListAlt, faHome, faHandshake,
+           faCarAlt, faBed, faToilet, faBath, faMapMarkedAlt);
  
 class MyApp extends App {
   render() {
