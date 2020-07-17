@@ -1,6 +1,7 @@
 
 .land-list{
-    padding: 15px;
+    display: flex;
+    justify-content: space-around;
 }
 .new-cont-overlay{
     position: absolute;

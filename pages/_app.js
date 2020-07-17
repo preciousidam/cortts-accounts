@@ -1,5 +1,4 @@
 import React from 'react';
-import App, { Container } from 'next/app';
  
 import { config, library } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -15,11 +14,8 @@ import {fab} from '@fortawesome/free-brands-svg-icons'
 library.add(faBars,faSpinner, faCheck, faEnvelope, faListAlt, faHome, faHandshake,
            faCarAlt, faBed, faToilet, faBath, faMapMarkedAlt);
  
-class MyApp extends App {
-  render() {
-    const { Component, pageProps } = this.props
-    return <Component {...pageProps} />
-  }
-}
+const MyApp = ({ Component, pageProps }) => (
+    <Component {...pageProps} />
+);
  
 export default MyApp;

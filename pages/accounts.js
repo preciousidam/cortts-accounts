@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
 import Link from 'next/link';
 import {CloseOutlined} from '@material-ui/icons';
 import IconButton from '@material-ui/core/IconButton';
@@ -47,9 +46,9 @@ export default function Accounts() {
         <MainLayout title="Accounts">
             <div className="body">
                 <Nav title="Accounts" breadcrumb={breadcrumb} action={_ => setOpen(true)} />
-                <Paper className="container land-list">
+                <div className="container-fluid land-list">
                     <AccountsTable data={data} />
-                </Paper>
+                </div>
 
                 {open && <div className="new-cont-overlay">
                     <div className="new-form">

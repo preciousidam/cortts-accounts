@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import { Pagination } from 'antd';
+import Paper from '@material-ui/core/Paper';
+
 import ActionButton from '../button/actionButtons';
 
 export default function DetailsTable({data}){
@@ -12,7 +14,7 @@ export default function DetailsTable({data}){
     };
     const [upper,lower] = [(offset * page) - offset, page * offset];
     return (
-        <div className="detail-table-cont">
+        <Paper className="detail-table-cont">
             <table>
                 <thead>
                     <tr>
@@ -42,6 +44,6 @@ export default function DetailsTable({data}){
             <div className="pagination">
                 <Pagination current={page} defaultCurrent={1} total={data.length} onChange={onChange} />
             </div>
-        </div>
+        </Paper>
     );
 }

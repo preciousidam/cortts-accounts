@@ -10,10 +10,8 @@ import { Tabs } from 'antd';
 import { StickyContainer, Sticky } from 'react-sticky';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
-import FlatsTable from '../../components/table/flats';
+
 import MainLayout from "../../layouts/mainLayout";
-import Nav from "../../components/innerNav/innerNav";
-import {flats} from '../../constants/data';
 import {StyledInput, SelectInput} from "../../components/textinput/styledTextInput";
 import {getAllFlats, getFlatDetails} from '../../lib/flats';
 
@@ -21,6 +19,7 @@ import {getAllFlats, getFlatDetails} from '../../lib/flats';
 export default function Flats({flatDetails}) {
     
     const {TabPane} = Tabs;
+    const router = useRouter();
 
     const renderTabBar = (props, DefaultTabBar) => (
         <Sticky bottomOffset={80}>
@@ -32,9 +31,9 @@ export default function Flats({flatDetails}) {
 
     return (
         <MainLayout title={`Flat ${flatDetails.flat}`}>
-            <div className="body">
+            { router.isFallback ?<div>Loading...</div>:(<div className="body">
                 <div className="container-fluid flat-details-cont">
-                    <Paper className="container" >
+                    <Paper className="container info" >
                         <StickyContainer className="sticky">
                             <Tabs defaultActiveKey="1" renderTabBar={renderTabBar}>
                                 <TabPane tab="Basic" key="1">
@@ -46,8 +45,13 @@ export default function Flats({flatDetails}) {
                             </Tabs>
                         </StickyContainer>
                     </Paper>
+                    <Paper className="container aside">
+                        <header>
+                            <h5>Related Apartments</h5>
+                        </header>
+                    </Paper>
                 </div>     
-            </div>
+            </div>)}
         </MainLayout>
     );
 }
@@ -56,7 +60,7 @@ export async function getStaticPaths(){
     const paths = getAllFlats();
     return {
         paths,
-        fallback: false
+        fallback: true,
     }
 }
 
