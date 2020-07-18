@@ -29,7 +29,7 @@ export default function AccountsTable({data}){
                 </thead>
                 <tbody>
                     {data.slice(upper,lower).map(({name,number,owner,bank,sc},i) => (
-                        <tr>
+                        <tr key={i}>
                             <td>{i+1}</td>
                             <td>{name}</td>
                             <td>{number}</td>

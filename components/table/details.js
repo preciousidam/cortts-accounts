@@ -29,7 +29,7 @@ export default function DetailsTable({data}){
                 </thead>
                 <tbody>
                     {data.slice(upper,lower).map(({name,email,address,cp,phone},i) => (
-                        <tr>
+                        <tr key={i}>
                             <td>{i+1}</td>
                             <td>{name}</td>
                             <td>{address}</td>

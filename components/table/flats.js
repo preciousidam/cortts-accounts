@@ -31,7 +31,7 @@ export default function FlatsTable({data,actions}){
                 </thead>
                 <tbody>
                     {data.slice(upper,lower).map(({flat,property,status,beds, landlord, tenant },i) => (
-                        <tr>
+                        <tr key={i}>
                             <td>{i+1}</td>
                             <td>{flat}</td>
                             <td>{property}</td>

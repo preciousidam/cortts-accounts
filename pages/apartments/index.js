@@ -10,7 +10,7 @@ import FlatsTable from '../../components/table/flats';
 import MainLayout from "../../layouts/mainLayout";
 import Nav from "../../components/innerNav/innerNav";
 import {flats} from '../../constants/data';
-import {StyledInput, SelectInput} from "../../components/textinput/styledTextInput";
+import CreateForm from '../../components/forms/flatForm';
 
 
 export default function Apartments() {
@@ -67,19 +67,12 @@ export default function Apartments() {
                 </div>
 
                 {open && <div className="new-cont-overlay">
-                    <div className="new-form">
+                    <div className="new-form-flat">
                         <header>
                             <h5>Add Tenants</h5>
                             <IconButton className="close" onClick={_ => setOpen(false)}><CloseOutlined /></IconButton>
                         </header>
-                        <div>
-                            <StyledInput placeholder="Acct Name" id="name" type="text" />
-                            <StyledInput placeholder="Acct Number" id="number" type="text" />
-                            <SelectInput placeholder="owner" id="owner" type="text" options={options} defaultChoice="Select Owner" />
-                            <StyledInput placeholder="Bank" id="bank" type="text" />
-                            <StyledInput placeholder="Sort Code" id="sc" type="text" />
-                            <button className="btn btn-success add" onClick={add}>Save Detail</button>
-                        </div>
+                        {<CreateForm close={_ => setOpen(!open)} />}
                     </div>
                 </div>}
             </div>

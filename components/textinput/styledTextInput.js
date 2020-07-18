@@ -8,10 +8,11 @@ export function StyledInput({type, label, placeholder, id, ...rest}){
     );
 }
 
-export function SelectInput({defaultChoice, options, ...rest}){
+export function SelectInput({defaultChoice, options, label, id, ...rest}){
     return (
         <div className="form-group styled">
-            <select class="custom-select" id="inputGroupSelect02" {...rest}>
+            {label && <label className="label" htmlFor={id}>{label}</label>}
+            <select class="custom-select" id={id} {...rest}>
                 <option selected>{defaultChoice}</option>
                 {options.map(({text,value}) => <option value={value}>{text}</option>)}
             </select>

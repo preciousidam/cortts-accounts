@@ -48,3 +48,34 @@
         }
     }
 }
+
+.new-form-flat{
+    width: 70%;
+    height: 100%;
+    background-color: $background-white;
+    border-top: 1px solid rgba($color: #000000, $alpha: 0.1);
+
+    header{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid rgba($color: #000000, $alpha: 0.1);
+        padding: 15px;
+
+        .close{
+            &:focus, &:active{
+                outline-color: $primary-blue;
+            }
+        }
+    }
+
+    div{
+        padding: 15px;
+        
+        .add{
+            margin-left: 15px;
+        }
+    }
+}
+
