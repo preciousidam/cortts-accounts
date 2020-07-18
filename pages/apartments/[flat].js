@@ -60,7 +60,7 @@ export async function getStaticPaths(){
     const paths = getAllFlats();
     return {
         paths,
-        fallback: true,
+        fallback: false,
     }
 }
 
