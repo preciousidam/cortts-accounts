@@ -3,10 +3,10 @@ import Typography from '@material-ui/core/Typography';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 
-import MainLayout from "../layouts/mainLayout";
-import Nav from "../components/innerNav/innerNav";
-import Table from "../components/table/invoice";
-import {budget} from '../constants/data';
+import MainLayout from "../../layouts/mainLayout";
+import Nav from "../../components/innerNav/innerNav";
+import Table from "../../components/table/invoice";
+import {invoice} from '../../constants/data';
 
 
 export default function Invoice() {
@@ -21,9 +21,9 @@ export default function Invoice() {
     return (
         <MainLayout title="Invoice">
             <div className="body">
-                <Nav title="Invoice" breadcrumb={breadcrumb} />
+                <Nav title="Invoice" breadcrumb={breadcrumb} action={action} />
                 <div className="container-fluid land-list">
-                    <Table data={budget} />
+                    <Table data={invoice} />
                 </div>
             </div>
         </MainLayout>

@@ -10,13 +10,12 @@ export default function BudgetTable({data}){
     const [page, setPage] = useState(1)
     const offset = 8;
 
-    const format = (data) =>{
-        return (
-            <ul>
-                {data.map(({desc}, i) => <li class="item-desc" key={i}>{desc}</li>)}
-            </ul>
-        );
-    }
+    const format = data => (
+        <ul>
+            {data.map(({desc}, i) => <li class="item-desc" key={i}>{desc}</li>)}
+        </ul>
+    );
+    
 
     const getTotal = (items) =>{
         let total = 0;

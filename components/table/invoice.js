@@ -14,6 +14,13 @@ export default function InvoiceTable({data}){
     const onChange = pag => {
         setPage(pag)
     };
+
+    const format = items => (
+        <ul>
+            {items.map(({type}, i) => <li class="item-desc" key={i}>{type}</li>)}
+        </ul>
+    )
+
     const [upper,lower] = [(offset * page) - offset, page * offset];
     return (
         <Paper className="detail-table-cont">
@@ -25,6 +32,7 @@ export default function InvoiceTable({data}){
                             <th>Invoice No.</th>
                             <th>Date</th>
                             <th>Recipient</th>
+                            <th>Flat</th>
                             <th>Items</th>
                             <th>Amount</th>
                             <th>Action</th>
@@ -32,14 +40,15 @@ export default function InvoiceTable({data}){
                     </thead>
                     
                         <tbody>
-                            {data.slice(upper,lower).map(({name,number,owner,bank,sc},i) => (
+                            {data.slice(upper,lower).map(({invNo, date, recipient, items, flat, total}, i) => (
                                 <tr key={i}>
                                     <td>{i+1}</td>
-                                    <td>{name}</td>
-                                    <td>{number}</td>
-                                    <td>{owner}</td>
-                                    <td>{bank}</td>
-                                    <td>{sc}</td>
+                                    <td>{invNo}</td>
+                                    <td>{date}</td>
+                                    <td>{recipient}</td>
+                                    <td>{flat}</td>
+                                    <td>{format(items)}</td>
+                                    <td>&#8358; {total}</td>
                                     <td><ActionButton /></td>
                                 </tr>
                             ))}

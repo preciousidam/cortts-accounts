@@ -113,5 +113,24 @@ export const flats = [
 
 
 export const invoice = [
-    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Modd Family', item: [{id: 1, type: 'rent', renewal: 'yes', flat: 'AR6'},{id: 1, type: 'charges', renewal: 'yes', flat: 'AR6'},]}
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AR6', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'yes'},],},
+    {invNo: `INV-1245-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'BP10', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'No'},],},
+    {invNo: `INV-1334-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'BM4', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'No'},],},
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AM6', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'yes'},],},
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AR6', items: [{id: 1, type: 'rent', renewal: 'No'},{id: 1, type: 'charges', renewal: 'yes'},],},
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AR6', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'yes'},],},
+    {invNo: `INV-1245-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'BP10', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'No'},],},
+    {invNo: `INV-1334-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'BM4', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'No'},],},
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AM6', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'yes'},],},
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AR6', items: [{id: 1, type: 'rent', renewal: 'No'},{id: 1, type: 'charges', renewal: 'yes'},],},
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AR6', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'yes'},],},
+    {invNo: `INV-1245-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'BP10', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'No'},],},
+    {invNo: `INV-1334-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'BM4', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'No'},],},
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AM6', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'yes'},],},
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AR6', items: [{id: 1, type: 'rent', renewal: 'No'},{id: 1, type: 'charges', renewal: 'yes'},],},
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AR6', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'yes'},],},
+    {invNo: `INV-1245-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'BP10', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'No'},],},
+    {invNo: `INV-1334-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'BM4', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'No'},],},
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AM6', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'yes'},],},
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AR6', items: [{id: 1, type: 'rent', renewal: 'No'},{id: 1, type: 'charges', renewal: 'yes'},],},
 ]

@@ -17,7 +17,7 @@ export default function Budget() {
                         </Breadcrumbs>);
 
     const router = useRouter();
-    const action = () => router.push(router.pathname+"/new")
+    const action = () => router.push(router.pathname+"/new");
 
     return (
         <MainLayout title="budget">
