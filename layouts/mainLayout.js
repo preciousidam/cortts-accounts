@@ -1,11 +1,21 @@
+import React, {useState} from 'react';
 import Head from "next/head";
 
-import Sidebar from '../components/sidebar/sidebar';
+import Sidebar, {MinSideBar} from '../components/sidebar/sidebar';
 import Header from '../components/header/header';
 import {FooterWithButton} from '../components/footer';
 import '../styles/styles.scss';
 
 export default function MainLayout({children, title, actionFooter}){
+
+    const [min, setMin] = useState(false);
+    const className = min ? 'col-lg-11' : 'col-lg-10';
+
+    const handleToogle = e => {
+        e.preventDefault();
+        setMin(!min);
+    }
+
     return (
         <div className="main">
             <Head>
@@ -16,9 +26,9 @@ export default function MainLayout({children, title, actionFooter}){
             <main id="mainContainer" className="container-fluid">
                 
                 <div className="row" id="mainContent">
-                    <Sidebar />
-                    <div className="col-lg-10 content-area">
-                        <Header />
+                    {min? <MinSideBar min={min} /> :<Sidebar min={min} />}
+                    <div className={`${className} content-area`}>
+                        <Header toogle={handleToogle} />
                         {children}
                         {actionFooter && <FooterWithButton />}
                     </div>

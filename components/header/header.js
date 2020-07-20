@@ -8,13 +8,13 @@ import { useRouter } from "next/router";
 
 import {ProfileDropdown} from '../dropdown/dropdown';
 
-export default function header(props){
+export default function header({toogle}){
 
     return(
         <header id="navbar">
             <nav id="navbar-content">
                 <ul id="navbar-content-left">
-                    <li className="nav-link"><Link href="/"><a><FontAwesomeIcon icon="bars" color="#000" size="lg" /></a></Link></li>
+                    <li className="nav-link"><Link href="/" onClick={toogle}><a><FontAwesomeIcon onClick={toogle} icon="bars" color="#000" size="lg" /></a></Link></li>
                     <li className="nav-link">
                           
                         <input type="search"id="search" placeholder="Search Here" />

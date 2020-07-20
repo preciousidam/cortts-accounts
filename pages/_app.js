@@ -6,6 +6,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'animate.css';
 import 'antd/dist/antd.css';
 import 'nprogress/nprogress.css';
+import 'react-custom-scroll/dist/customScroll.css';
 
 
 config.autoAddCss = false;

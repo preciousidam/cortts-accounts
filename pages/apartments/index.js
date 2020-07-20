@@ -69,7 +69,7 @@ export default function Apartments() {
                 {open && <div className="new-cont-overlay">
                     <div className="new-form-flat">
                         <header>
-                            <h5>Add Tenants</h5>
+                            <h5>Add Apartment</h5>
                             <IconButton className="close" onClick={_ => setOpen(false)}><CloseOutlined /></IconButton>
                         </header>
                         {<CreateForm close={_ => setOpen(!open)} />}

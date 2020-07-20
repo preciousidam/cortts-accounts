@@ -6099,6 +6099,11 @@ rc-virtual-list@^1.1.0, rc-virtual-list@^1.1.2:
     raf "^3.4.1"
     rc-util "^5.0.0"
 
+react-custom-scroll@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/react-custom-scroll/-/react-custom-scroll-4.2.1.tgz#04081737c8f665103660239ff6e279916e8954bb"
+  integrity sha512-R0iBc61fUVA+EpMqFT+dseoOjgTf0sIggBwNuNUmyEm4YqT3py6Bo1/+9FYDtxIKC/MMjZ7Cu2SPWA1Ghm0kBg==
+
 react-dom@16.13.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.13.1.tgz#c1bd37331a0486c078ee54c4740720993b2e0e7f"

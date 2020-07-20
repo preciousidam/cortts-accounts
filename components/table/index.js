@@ -5,6 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 
 
 import ActionButton from '../button/actionButtons';
+import CustomScroll from 'react-custom-scroll';
 
 const sortByDate = (data) =>{
     let array = data.sort((x,y) =>{
@@ -45,18 +46,22 @@ export default function Table({data}){
     return(
         <div className="table-cont">
             <Filter action={handlePagination} page={page} total={data.length} />
-            <Paper elevation={2} className="container-fluid table">
-                <div className="row thead">
-                    <div className="col-lg-1 th">{header[0]}</div>
-                    <div className="col-lg-2 th">{header[1]}</div>
-                    <div className="col-lg-6 th">{header[2]}</div>
-                    <div className="col-lg-2 th">{header[3]}</div>
-                    <div className="col-lg-1 th">{header[4]}</div>
-                </div>
-                <div className="tbody">
-                    {sortByDate(data.slice(upper,lower)).map((item, i) => <TableItem key={i} item={item} index={i} page={page} total={data.length} />)}
-                </div>
-            </Paper>
+            
+                <Paper elevation={2} className="container-fluid table">
+                    <CustomScroll heightRelativeToParent="calc(100%)" allowOuterScroll={true}>
+                        <div className="row thead">
+                            <div className="col-lg-1 th">{header[0]}</div>
+                            <div className="col-lg-2 th">{header[1]}</div>
+                            <div className="col-lg-6 th">{header[2]}</div>
+                            <div className="col-lg-2 th">{header[3]}</div>
+                            <div className="col-lg-1 th">{header[4]}</div>
+                        </div>
+                        <div className="tbody">
+                            {sortByDate(data.slice(upper,lower)).map((item, i) => <TableItem key={i} item={item} index={i} page={page} total={data.length} />)}
+                        </div>
+                    </CustomScroll>
+                </Paper>
+            
         </div>
     );
 }

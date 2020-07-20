@@ -2,7 +2,6 @@
 .flat-details-cont{
     width: 100%;
     height: 100%;
-    overflow-y: auto;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -203,3 +202,66 @@
         right: -10px;
     }
 }
+
+#create-form{
+    height: fit-content;
+    width: 100%;
+    padding: 20px;
+    margin: 0 !important;
+
+    .date1{
+        padding-top: 0px ;
+        padding-bottom: 0px;
+        margin: 0;
+    }
+
+    .row{
+        border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
+        margin: 10px 10px 20px;
+        padding: 10px 0 50px;
+    }
+
+    .btn{
+        padding: 10px 30px;
+        position: relative;
+        right: -10px;
+    }
+}
+
+
+.new-form-flat{
+    width: 70%;
+    height: 100%;
+    background-color: $background-white;
+    border-top: 1px solid rgba($color: #000000, $alpha: 0.1);
+
+    header{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid rgba($color: #000000, $alpha: 0.1);
+        padding: 15px;
+
+        .close{
+            &:focus, &:active{
+                outline-color: $primary-blue;
+            }
+        }
+    }
+
+    div{
+        padding: 15px;
+        margin: 0 !important;
+        
+        .add{
+            margin-left: 15px;
+        }
+    }
+
+    .rcs-custom-scroll, .rcs-outer-container, .rcs-positioning, .rcs-inner-container{
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+}
+

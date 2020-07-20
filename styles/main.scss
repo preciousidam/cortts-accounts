@@ -13,14 +13,23 @@
         min-height: 100%;
         padding: 0;
         margin: 0 !important;
+        position: relative;
 
         .body{
-            height: 85%;
+            height: calc(100% - 66px) !important;
+            max-height: calc(100% - 66px) !important;
             position: relative;
+            margin: 0;
+            padding: 0 !important;
         }
     }
 
     .sidebar-area{
         height: 100% !important;
+    }
+
+    #min{
+        max-width: 80px !important;
+        width: 80px !important;
     }
 }

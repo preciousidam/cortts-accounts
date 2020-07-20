@@ -21,10 +21,10 @@ export default function Budget() {
 
     return (
         <MainLayout title="budget">
-            <div className="body">
-                <Nav title="Budget" breadcrumb={breadcrumb} action={action} />
-                <Table data={budget} />
-            </div>
+                <div className=" container-fluid body">
+                    <Nav title="Budget" breadcrumb={breadcrumb} action={action} />
+                    <Table data={budget} />
+                </div>
         </MainLayout>
     );
 }
