@@ -536,6 +536,19 @@ hr{
                 padding: 5px;
                 text-transform: uppercase;
             }
+
+            ul{
+                margin: 0 !important;
+            }
+            .item-desc{
+                display: inline-block;
+                margin-right: 10px;
+
+                &:before {
+                    content: ' \2022';
+                    margin-right: 0.5em;
+                }
+            }
         }
     }
 

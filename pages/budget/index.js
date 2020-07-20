@@ -5,7 +5,7 @@ import {useRouter} from 'next/router';
 
 import MainLayout from "../../layouts/mainLayout";
 import Nav from "../../components/innerNav/innerNav";
-import Table from "../../components/table";
+import Table from "../../components/table/budget";
 import {budget} from '../../constants/data';
 
 
@@ -23,7 +23,9 @@ export default function Budget() {
         <MainLayout title="budget">
                 <div className=" container-fluid body">
                     <Nav title="Budget" breadcrumb={breadcrumb} action={action} />
-                    <Table data={budget} />
+                    <div className="container-fluid land-list">
+                        <Table data={budget} />
+                    </div>
                 </div>
         </MainLayout>
     );

@@ -109,4 +109,9 @@ export const flats = [
      landlord: "Modd Family", tenant: 'Flour mill', status: 'Vacant', toilet: 4, baths: 3, park: 2, tenacy: "",note: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'},
      {flat: 'AP11', property: 'Olympic Towers', address: '12B Somewhere in, Idowu martins, Victoria Island', beds: 3,furnished: 'No', rent: 15500000, charge: 5000000,
      landlord: "Modd Family", tenant: 'Flour mill', status: 'Occupied', toilet: 4, baths: 3, park: 2, tenacy: "",note: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'},
+];
+
+
+export const invoice = [
+    {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Modd Family', item: [{id: 1, type: 'rent', renewal: 'yes', flat: 'AR6'},{id: 1, type: 'charges', renewal: 'yes', flat: 'AR6'},]}
 ]
