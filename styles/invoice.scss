@@ -3,10 +3,6 @@
     height: calc(100% - 66px);
     max-height: calc(100% - 66px);
     min-height: calc(100% - 66px);
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
     position: relative;
     padding: 0 !important;
 
@@ -29,5 +25,33 @@
             }
         }
 
+    }
+
+    #inv-cont-inner{
+        height: 100%;
+        width: inherit;
+        padding: 0;
+
+        #padded{
+            margin: 0 !important;
+            padding: 20px 0;
+
+            #form-cont{
+                padding: 20px;
+                margin-top: 20px;
+
+                h4{
+                    padding-bottom: 0 !important;
+                    margin: 0 !important;
+                }
+                span{
+                    font-size: 13px;
+                }
+
+                .row{
+                    margin: 20px 0;
+                }
+            }
+        }
     }
 }
