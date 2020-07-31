@@ -9,7 +9,7 @@ import '../styles/styles.scss';
 export default function MainLayout({children, title, actionFooter}){
 
     const [min, setMin] = useState(false);
-    const className = min ? 'col-lg-11' : 'col-lg-10';
+    const className = min ? 'col-lg-11 max' : 'col-lg-10';
 
     const handleToogle = e => {
         e.preventDefault();

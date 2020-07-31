@@ -1,0 +1,68 @@
+#acct-list{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 50px;
+    margin: 0 !important;
+
+    .acct-bal{
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 250px;
+        padding: 20px 0;
+        margin: 10px;
+        cursor: pointer;
+
+        p{
+            margin: 0 !important;
+            color: $primary-green;
+        }
+
+        h4{
+            color: $primary-green;
+            font-weight: bolder;
+        }
+    }
+
+    .active{
+        background-color: $primary-green;
+        h4, p{
+            color: $text-color-dark-active;
+        }
+        
+    }
+
+}
+
+#trans{
+
+    padding: 0 50px 20px 50px;
+
+    #sect-head{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        button{
+            box-shadow: 2px 2px 2px 2px rgba($color: #000000, $alpha: .1);
+            font-weight: bolder;
+
+            svg{
+                margin-left: 5px;
+            }
+        }
+    }
+
+    #h4{
+        font-size: 15px;
+    }
+
+    #trans-inner{
+        margin-top: 30px;
+        padding: 0 20px;
+    }
+}

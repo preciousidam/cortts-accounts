@@ -133,4 +133,13 @@ export const invoice = [
     {invNo: `INV-1334-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'BM4', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'No'},],},
     {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AM6', items: [{id: 1, type: 'rent', renewal: 'yes'},{id: 1, type: 'charges', renewal: 'yes'},],},
     {invNo: `INV-1234-01`, date: "20 Jul, 2020", recipient: 'Flour Mill', total: 20000000, flat: 'AR6', items: [{id: 1, type: 'rent', renewal: 'No'},{id: 1, type: 'charges', renewal: 'yes'},],},
-]
+];
+
+
+
+export const bankaccounts = [
+    {no: '0123344556', name: "Cortts Real", sc: 123456, balance: '100000000.00', type: 'physical', bank: 'Access Bank',},
+    {no: '0123344346', name: "Cortts Limited", sc: 123456, balance: '10000000.00', type: 'physical', bank: 'Access Bank',},
+    {no: '0123344556', name: "Cortts Real", sc: 123456, balance: '25600000.00', type: 'physical', bank: 'Zenith Bank',},
+    {no: '0123344346', name: "Cortts Limited", sc: 123456, balance: '50000.00', type: 'physical', bank: 'Zenith Bank',},
+];
