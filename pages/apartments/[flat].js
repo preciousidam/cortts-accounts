@@ -12,9 +12,10 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import MainLayout from "../../layouts/mainLayout";
 import {getAllFlats, getFlatDetails} from '../../lib/flats';
 import {Form} from '../../components/forms/flatForm';
+import {ProtectRoute} from '../utility/route';
 
 
-export default function Flats({flatDetails}) {
+export function Flats({flatDetails}) {
     
     const {TabPane} = Tabs;
     const router = useRouter();
@@ -55,6 +56,8 @@ export default function Flats({flatDetails}) {
         </MainLayout>
     );
 }
+
+export default ProtectRoute(Flats);
 
 export async function getStaticPaths(){
     const paths = getAllFlats();

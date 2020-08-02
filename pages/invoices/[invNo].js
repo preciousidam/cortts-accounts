@@ -1,3 +1,4 @@
+import {ProtectRoute} from '../../utility/route';
 
 const Invoice = ({}) => {
     return (
@@ -7,4 +8,4 @@ const Invoice = ({}) => {
     );
 }
 
-export default Invoice;
+export default ProtectRoute(Invoice);

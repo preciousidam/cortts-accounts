@@ -10,9 +10,10 @@ import MainLayout from "../layouts/mainLayout";
 import Nav from "../components/innerNav/innerNav";
 import {landlords} from '../constants/data';
 import {StyledInput} from "../components/textinput/styledTextInput";
+import {ProtectRoute} from '../utility/route';
 
 
-export default function Landlords() {
+export function Landlords() {
     const breadcrumb = (<Breadcrumbs aria-label="breadcrumb">
                             <Link href="/"><a>Dashboard</a></Link>
                             <Typography color="textPrimary">Landlords</Typography>
@@ -68,3 +69,5 @@ export default function Landlords() {
         </MainLayout>
     );
 }
+
+export default ProtectRoute(Landlords);

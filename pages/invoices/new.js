@@ -8,10 +8,11 @@ import CustomScroll from 'react-custom-scroll';
 
 import MainLayout from "../../layouts/mainLayout";
 import {StyledInput, SelectInput} from '../../components/textinput/styledTextInput';
+import {ProtectRoute} from '../../utility/route';
 
 
 
-export default function New() {
+export function New() {
 
     const [old, setOld] = useState(undefined);
 
@@ -114,3 +115,5 @@ export const NewTenancy = ({}) => {
         </div>
     );
 }
+
+export default ProtectRoute(New);

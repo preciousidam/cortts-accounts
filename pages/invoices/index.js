@@ -7,9 +7,10 @@ import MainLayout from "../../layouts/mainLayout";
 import Nav from "../../components/innerNav/innerNav";
 import Table from "../../components/table/invoice";
 import {invoice} from '../../constants/data';
+import {ProtectRoute} from '../../utility/route';
 
 
-export default function Invoice() {
+export function Invoice() {
     const breadcrumb = (<Breadcrumbs aria-label="breadcrumb">
                             <Link href="/"><a>Dashboard</a></Link>
                             <Typography color="textPrimary">Invoice</Typography>
@@ -29,3 +30,5 @@ export default function Invoice() {
         </MainLayout>
     );
 }
+
+export default ProtectRoute(Invoice);

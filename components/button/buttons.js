@@ -1,31 +1,19 @@
+import React, {useEffect} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
 
-export const RoundedButton = ({state, text, href}) =>{
-    let display;
-    const router = useRouter()
+export const RoundedButton = ({state, text, onClick}) =>{
 
-    switch(state){
-        case 'loading':
-            display = <FontAwesomeIcon icon="spinner" spin/>;
-        case 'success':
-            display = <FontAwesomeIcon icon="check"/>;
-        default:
-            display =  text;
+    if (state == 'loading')
+        return (<div className="btnCont"><button className="btn btn-success submit" onClick={onClick}><FontAwesomeIcon icon="spinner" spin/></button></div>);
 
-
-    }
-    
-    const handleClick = (e) => {
-        e.preventDefault()
-        router.push(href)
-    }
+    else if (state == 'success')
+        return (<div className="btnCont"><button className="btn btn-success submit" onClick={onClick}><FontAwesomeIcon icon="check"/></button></div>);
 
 
     return (
         <div className="btnCont">
-            <button className="btn btn-success submit" onClick={handleClick}>{display}</button>
+            <button className="btn btn-success submit" onClick={onClick}>{text}</button>
         </div>
     );
 }

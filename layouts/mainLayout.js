@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Head from "next/head";
+import {useRouter} from 'next/router';
 
 import Sidebar, {MinSideBar} from '../components/sidebar/sidebar';
 import Header from '../components/header/header';
@@ -9,6 +10,8 @@ import '../styles/styles.scss';
 export default function MainLayout({children, title, actionFooter}){
 
     const [min, setMin] = useState(false);
+    //const [loggedIn, setLoggedIn] = useState(undefined);
+    const router = useRouter();
     const className = min ? 'col-lg-11 max' : 'col-lg-10';
 
     const handleToogle = e => {
@@ -16,6 +19,7 @@ export default function MainLayout({children, title, actionFooter}){
         setMin(!min);
     }
 
+    
     return (
         <div className="main">
             <Head>

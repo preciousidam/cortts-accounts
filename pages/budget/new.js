@@ -8,11 +8,12 @@ import {DeleteOutline} from '@material-ui/icons';
 import MainLayout from "../../layouts/mainLayout";
 import Nav from "../../components/innerNav/innerNav";
 import {StyledInput} from '../../components/textinput/styledTextInput';
+import {ProtectRoute} from '../../utility/route';
 
 
 
 
-export default function New() {
+export function New() {
 
     const [items, setItems] = useState([]);
 
@@ -97,3 +98,5 @@ export default function New() {
         </MainLayout>
     );
 }
+
+export default ProtectRoute(New);

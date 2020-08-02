@@ -26,7 +26,7 @@ export default function SideBar({min}){
         <SideBarLayout min={min}>
             <ul id="sidabar-content">
                 
-                <SidebarLink title="Dashboard" icon={<AccountBalance />} link="index" active={router.pathname == "/" || router.pathname == "/index" ? "active" : ""} />
+                <SidebarLink title="Dashboard" icon={<AccountBalance />} link="dashboard" active={router.pathname == "/" || router.pathname == "/dashboard" ? "active" : ""} />
                 {
                     links.map(
                         ({title,icon,link}, id) => <SidebarLink key={id} title={title} icon={icon} link={link} active={router.pathname.split('/')[1] == `${link}` ? "active" : ""} />

@@ -7,12 +7,12 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import {Add} from '@material-ui/icons';
 
-import AccountsTable from '../../components/table/account';
+
 import MainLayout from "../../layouts/mainLayout";
-import Nav from "../../components/innerNav/innerNav";
+import {ProtectRoute} from '../../utility/route';
 import {bankaccounts} from '../../constants/data';
 import {CommaFormatted} from '../../utility';
-import {StyledInput, SelectInput} from "../../components/textinput/styledTextInput";
+
 
 
 const useStyles = makeStyles({
@@ -37,7 +37,7 @@ const useStyles = makeStyles({
 });
 
 
-export default function Transactions(){
+export function Transactions(){
 
     const [active, setActive] = useState(0);
     const classes = useStyles();
@@ -97,3 +97,5 @@ export default function Transactions(){
         </MainLayout>
     )
 }
+
+export default ProtectRoute(Transactions);

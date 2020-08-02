@@ -11,9 +11,10 @@ import MainLayout from "../../layouts/mainLayout";
 import Nav from "../../components/innerNav/innerNav";
 import {flats} from '../../constants/data';
 import CreateForm from '../../components/forms/flatForm';
+import {ProtectRoute} from '../utility/route';
 
 
-export default function Apartments() {
+export function Apartments() {
     const breadcrumb = (<Breadcrumbs aria-label="breadcrumb">
                             <Link href="/"><a>Dashboard</a></Link>
                             <Typography color="textPrimary">Apartments</Typography>
@@ -79,3 +80,5 @@ export default function Apartments() {
         </MainLayout>
     );
 }
+
+export default ProtectRoute(Apartments);

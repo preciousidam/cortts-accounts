@@ -10,9 +10,10 @@ import MainLayout from "../layouts/mainLayout";
 import Nav from "../components/innerNav/innerNav";
 import {accounts} from '../constants/data';
 import {StyledInput, SelectInput} from "../components/textinput/styledTextInput";
+import {ProtectRoute} from '../utility/route';
 
 
-export default function Accounts() {
+export function Accounts() {
     const breadcrumb = (<Breadcrumbs aria-label="breadcrumb">
                             <Link href="/"><a>Dashboard</a></Link>
                             <Typography color="textPrimary">Accounts</Typography>
@@ -70,3 +71,5 @@ export default function Accounts() {
         </MainLayout>
     );
 }
+
+export default ProtectRoute(Accounts);

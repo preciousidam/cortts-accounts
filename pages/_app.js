@@ -8,6 +8,8 @@ import 'antd/dist/antd.css';
 import 'nprogress/nprogress.css';
 import 'react-custom-scroll/dist/customScroll.css';
 
+import {AuthProvider} from '../provider';
+
 
 config.autoAddCss = false;
  
@@ -25,7 +27,9 @@ Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
  
 const MyApp = ({ Component, pageProps }) => (
-    <Component {...pageProps} />
+    <AuthProvider>
+        <Component {...pageProps} />
+    </AuthProvider>
 );
  
 export default MyApp;

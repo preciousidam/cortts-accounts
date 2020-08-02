@@ -14,7 +14,7 @@ export default function header({toogle}){
         <header id="navbar">
             <nav id="navbar-content">
                 <ul id="navbar-content-left">
-                    <li className="nav-link"><Link href="/" onClick={toogle}><a><FontAwesomeIcon onClick={toogle} icon="bars" color="#000" size="lg" /></a></Link></li>
+                    <li className="nav-link" onClick={toogle}><Link href="/" ><a><FontAwesomeIcon onClick={toogle} icon="bars" color="#000" size="lg" /></a></Link></li>
                     <li className="nav-link">
                           
                         <input type="search"id="search" placeholder="Search Here" />

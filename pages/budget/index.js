@@ -7,10 +7,11 @@ import MainLayout from "../../layouts/mainLayout";
 import Nav from "../../components/innerNav/innerNav";
 import Table from "../../components/table/budget";
 import {budget} from '../../constants/data';
+import {ProtectRoute} from '../../utility/route';
 
 
 
-export default function Budget() {
+export function Budget() {
     const breadcrumb = (<Breadcrumbs aria-label="breadcrumb">
                             <Link href="/"><a>Dashboard</a></Link>
                             <Typography color="textPrimary">Budget</Typography>
@@ -30,3 +31,5 @@ export default function Budget() {
         </MainLayout>
     );
 }
+
+export default ProtectRoute(Budget);
