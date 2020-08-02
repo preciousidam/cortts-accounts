@@ -11,7 +11,7 @@ import MainLayout from "../../layouts/mainLayout";
 import Nav from "../../components/innerNav/innerNav";
 import {flats} from '../../constants/data';
 import CreateForm from '../../components/forms/flatForm';
-import {ProtectRoute} from '../utility/route';
+import {ProtectRoute} from '../../utility/route';
 
 
 export function Apartments() {

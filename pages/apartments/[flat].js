@@ -12,7 +12,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import MainLayout from "../../layouts/mainLayout";
 import {getAllFlats, getFlatDetails} from '../../lib/flats';
 import {Form} from '../../components/forms/flatForm';
-import {ProtectRoute} from '../utility/route';
+import {ProtectRoute} from '../../utility/route';
 
 
 export function Flats({flatDetails}) {
