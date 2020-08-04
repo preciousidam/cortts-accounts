@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 
@@ -16,7 +16,13 @@ export default function Login() {
 
     const {login, isAuthenticated} = useAuth();
 
-    
+    useEffect(
+        () => {
+            if( isAuthenticated){
+                router.push('/dashboard');
+            }
+        }
+    );
 
     const handleClick = async (e) => {
         setLoading('loading')
@@ -30,7 +36,6 @@ export default function Login() {
             setLoading('success');
             router.push('/dashboard');
         }
-        setLoading('')
     }
 
     return (

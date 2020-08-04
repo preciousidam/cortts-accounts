@@ -9,16 +9,20 @@ const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
 
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({});
     const [loading, setLoading] = useState(true);
 
     const loadUserFromCookies = async () => {
-        const token = Cookies.get('token')
+        const token = await Cookies.get('token');
+       
         if (token) {
-            const user = JwtDecode(token);
-            if (user) setUser(user);
+            const claim = await JwtDecode(token);
+            
+            if (claim) await setUser(claim.identity);
+            
         }
         setLoading(false);
+        
     }
 
     useEffect(() => {
@@ -43,8 +47,9 @@ export const AuthProvider = ({ children }) => {
         if (token) {
             
             Cookies.set('token', token, { expires: 7 })
-            const user = JwtDecode(token);
-            setUser(user)
+            const claim = JwtDecode(token);
+            if(claim) setUser(claim.identity);
+            
             return true;
         }
 

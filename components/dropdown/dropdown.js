@@ -25,13 +25,13 @@ export const ProfileDropdown = ({name, links}) =>{
 
     const classes = useStyles();
     const [dropdown, setDropdown] = useState(false);
-    const {logout} = useAuth();
+    const {logout, user} = useAuth();
 
     return(
         <div id="profileCont" onClick={() => setDropdown(!dropdown)}>
             <div id="profile">
-                <Avatar id="avater" className={classes.purple}>{name[0]}</Avatar>
-                <p>{name}</p>
+                <Avatar id="avater" className={classes.purple}>{user.username ? user.username[0] : 'C'}</Avatar>
+                <p>{user.username || 'Anonymous'}</p>
             </div>
             {dropdown && <div className="dropdown">
                 <ul className="dropdown-content">

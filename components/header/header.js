@@ -1,4 +1,4 @@
-import React, {useState, useLayoutEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Badge from '@material-ui/core/Badge';
 import MailIcon from '@material-ui/icons/Mail';
@@ -6,10 +6,11 @@ import Notifications from '@material-ui/icons/Notifications';
 import Link from 'next/link';
 import { useRouter } from "next/router";
 
+
 import {ProfileDropdown} from '../dropdown/dropdown';
 
 export default function header({toogle}){
-
+    
     return(
         <header id="navbar">
             <nav id="navbar-content">
@@ -37,7 +38,7 @@ export default function header({toogle}){
                         </Link>
                     </li>
                     <li className="nav-link">
-                        <ProfileDropdown name="Ebubechukwu" links={['Settings','Logout']} />                           
+                        <ProfileDropdown links={['Settings','Preference']} />                           
                     </li>
                 </ul>
             </nav>
