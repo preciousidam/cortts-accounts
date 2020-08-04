@@ -4,7 +4,6 @@ import Badge from '@material-ui/core/Badge';
 import MailIcon from '@material-ui/icons/Mail';
 import Notifications from '@material-ui/icons/Notifications';
 import Link from 'next/link';
-import { useRouter } from "next/router";
 
 
 import {ProfileDropdown} from '../dropdown/dropdown';
