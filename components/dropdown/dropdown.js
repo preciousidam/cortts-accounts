@@ -30,8 +30,8 @@ export const ProfileDropdown = ({name, links}) =>{
     return(
         <div id="profileCont" onClick={() => setDropdown(!dropdown)}>
             <div id="profile">
-                <Avatar id="avater" className={classes.purple}>{user.username ? user.username[0] : 'C'}</Avatar>
-                <p>{user.username || 'Anonymous'}</p>
+                <Avatar id="avater" className={classes.purple}>{user != null ? user.username[0] : 'C'}</Avatar>
+                <p>{user != null ? user.username : 'Anonymous'}</p>
             </div>
             {dropdown && <div className="dropdown">
                 <ul className="dropdown-content">
