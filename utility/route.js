@@ -6,9 +6,8 @@ import useAuth from '../provider';
 export function ProtectRoute(Component) {
     
     return (props) => {
-
        
-        const { user, isAuthenticated, loading } = useAuth();
+        const { isAuthenticated, loading } = useAuth();
         const router = useRouter();
         if (!isAuthenticated && !loading) router.push('/index');
         

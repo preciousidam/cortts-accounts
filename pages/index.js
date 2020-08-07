@@ -21,6 +21,7 @@ export default function Login() {
             if( isAuthenticated){
                 router.push('/dashboard');
             }
+            router.prefetch('/dashboard');
         }
     );
 

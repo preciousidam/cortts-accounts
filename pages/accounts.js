@@ -19,10 +19,12 @@ export function Accounts() {
                             <Typography color="textPrimary">Accounts</Typography>
                         </Breadcrumbs>);
 
-    const options = [{text: 'Modd Family', value: 'modd'},{text: 'Olympic Tower', value: 'Apapa'},{text: 'Idam Ebube', value: 'idam'}]
+    const options = [{text: 'Modd Family', value: 'modd'},
+                    {text: 'Olympic Tower', value: 'Apapa'},
+                    {text: 'Idam Ebube', value: 'idam'}]
 
-    const [open, setOpen] = useState(false)
-    const [data, setData] = useState(accounts)
+    const [open, setOpen] = useState(false);
+    const [data, setData] = useState(accounts);
 
     const add = (e) => {
         const name = document.getElementById('name').value;
@@ -63,7 +65,7 @@ export function Accounts() {
                             <SelectInput placeholder="owner" id="owner" type="text" options={options} defaultChoice="Select Owner" />
                             <StyledInput placeholder="Bank" id="bank" type="text" />
                             <StyledInput placeholder="Sort Code" id="sc" type="text" />
-                            <button className="btn btn-success add" onClick={add}>Save Detail</button>
+                            <button className="btn btn-success add" onClick={add}>Save Account</button>
                         </div>
                     </div>
                 </div>}

@@ -16,11 +16,13 @@ config.autoAddCss = false;
 import { faBars, faSpinner, faCheck, faEnvelope, faListAlt,
         faHome, faHandshake, faCarAlt, faBed, faToilet, faBath, 
         faMapMarkedAlt, faCouch, faMoneyBillWaveAlt, faCoins,
-        faCalendarAlt, faMoneyCheckAlt, faFilePdf} from '@fortawesome/free-solid-svg-icons';
+        faCalendarAlt, faMoneyCheckAlt, faFilePdf, faExchangeAlt, 
+        faCreditCard, faMoneyBillAlt, faEllipsisH, faCaretDown} from '@fortawesome/free-solid-svg-icons';
  
 library.add(faBars,faSpinner, faCheck, faEnvelope, faListAlt, faHome, faHandshake, faCalendarAlt,
            faCarAlt, faBed, faToilet, faBath, faMapMarkedAlt, faCouch, faMoneyBillWaveAlt, faCoins, 
-           faMoneyCheckAlt, faFilePdf);
+           faMoneyCheckAlt, faFilePdf, faExchangeAlt, faCreditCard, faMoneyBillAlt, faEllipsisH,
+           faCaretDown);
 
 Router.events.on('routeChangeStart', () => NProgress.start()); 
 Router.events.on('routeChangeComplete', () => NProgress.done()); 

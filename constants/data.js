@@ -138,8 +138,48 @@ export const invoice = [
 
 
 export const bankaccounts = [
-    {no: '0123344556', name: "Cortts Real", sc: 123456, balance: '100000000.00', type: 'physical', bank: 'Access Bank',},
-    {no: '0123344346', name: "Cortts Limited", sc: 123456, balance: '10000000.00', type: 'physical', bank: 'Access Bank',},
-    {no: '0123344556', name: "Cortts Real", sc: 123456, balance: '25600000.00', type: 'physical', bank: 'Zenith Bank',},
-    {no: '0123344346', name: "Cortts Limited", sc: 123456, balance: '50000.00', type: 'physical', bank: 'Zenith Bank',},
+    {id: 1, no: '0123344556', name: "Cortts Real", sc: 123456, balance: '100000000.00', type: 'physical', bank: 'Access Bank',},
+    {id: 2, no: '0123344346', name: "Cortts Limited", sc: 123456, balance: '10000000.00', type: 'physical', bank: 'Access Bank',},
+    {id: 3, no: '0123344556', name: "Cortts Real", sc: 123456, balance: '25600000.00', type: 'physical', bank: 'Zenith Bank',},
+    {id: 4, no: '0123344346', name: "Cortts Limited", sc: 123456, balance: '50000.00', type: 'physical', bank: 'Zenith Bank',},
 ];
+
+export const transactions = [
+    {id: 1, acct_id: 1, date: '04-08-2020', type: 'credit', desc: 'paid into bank by Ebube', amount: '100000000.00', thirdP: 'IHS'},
+    {id: 2, acct_id: 2, date: '07-07-2020', type: 'credit', desc: 'paid into bank by Aminat Adetoro', amount: '70000000.00', thirdP: 'Control Risk'},
+    {id: 4, acct_id: 3, date: '24-06-2020', type: 'credit', desc: 'paid into bank by Ebube', amount: '100000000.00', thirdP: 'Modd Family'},
+    {id: 4, acct_id: 4, date: '24-06-2020', type: 'credit', desc: 'paid into bank by Ebube', amount: '900000.00', thirdP: 'Flour Mill'},
+    {id: 5, acct_id: 1, date: '04-08-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '100000000.00', thirdP: 'Madam Amina'},
+    {id: 6, acct_id: 2, date: '07-07-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '70000000.00', thirdP: 'Madam Amina'},
+    {id: 7, acct_id: 3, date: '24-06-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '15000000.00', thirdP: 'Madam Amina'},
+    {id: 8, acct_id: 4, date: '24-06-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '20000.00', thirdP: 'Madam Amina'},
+    {id: 9, acct_id: 1, date: '04-08-2020', type: 'transfer', desc: 'Transfer to Petty cash', amount: '100000000.00', thirdP: 'Petty cash'},
+    {id: 10, acct_id: 2, date: '07-07-2020', type: 'transfer', desc: 'Transfer to Petty cash', amount: '70000000.00', thirdP: 'Petty cash'},
+    {id: 11, acct_id: 3, date: '24-06-2020', type: 'cancelled', desc: 'Transfer to Petty cash', amount: '15000000.00', thirdP: 'Petty cash'},
+    {id: 12, acct_id: 4, date: '24-06-2020', type: 'transfer', desc: 'Transfer to Petty cash', amount: '20000.00', thirdP: 'Petty cash'},
+    {id: 13, acct_id: 1, date: '04-08-2020', type: 'credit', desc: 'paid into bank by Ebube', amount: '100000000.00', thirdP: 'IHS'},
+    {id: 24, acct_id: 2, date: '07-07-2020', type: 'cancelled', desc: 'paid into bank by Aminat Adetoro', amount: '70000000.00', thirdP: 'Control Risk'},
+    {id: 45, acct_id: 3, date: '24-06-2020', type: 'credit', desc: 'paid into bank by Ebube', amount: '100000000.00', thirdP: 'Modd Family'},
+    {id: 47, acct_id: 4, date: '24-06-2020', type: 'credit', desc: 'paid into bank by Ebube', amount: '900000.00', thirdP: 'Flour Mill'},
+    {id: 52, acct_id: 1, date: '04-08-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '100000000.00', thirdP: 'Madam Amina'},
+    {id: 26, acct_id: 2, date: '07-07-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '70000000.00', thirdP: 'Madam Amina'},
+    {id: 47, acct_id: 3, date: '24-06-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '15000000.00', thirdP: 'Madam Amina'},
+    {id: 81, acct_id: 4, date: '24-06-2020', type: 'cancelled', desc: 'Transfer to Madam Aminat', amount: '20000.00', thirdP: 'Madam Amina'},
+    {id: 92, acct_id: 1, date: '04-08-2020', type: 'transfer', desc: 'Transfer to Petty cash', amount: '100000000.00', thirdP: 'Petty cash'},
+    {id: 61, acct_id: 2, date: '07-07-2020', type: 'transfer', desc: 'Transfer to Petty cash', amount: '70000000.00', thirdP: 'Petty cash'},
+    {id: 21, acct_id: 3, date: '24-06-2020', type: 'transfer', desc: 'Transfer to Petty cash', amount: '15000000.00', thirdP: 'Petty cash'},
+    {id: 22, acct_id: 4, date: '24-06-2020', type: 'transfer', desc: 'Transfer to Petty cash', amount: '20000.00', thirdP: 'Petty cash'},
+];
+
+
+export const banks = [
+    {text: 'Access Bank', value: 'access bank'},
+    {text: 'Zenith Bank', value: 'zenith bank'},
+    {text: 'Gauranty Trust Bank', value: 'gtbank'},
+    {text: 'First Bank', value: 'first bank'},
+    {text: 'Zenith Bank', value: 'zenith bank'},
+    {text: 'Gauranty Trust Bank', value: 'gtbank'},
+    {text: 'Access Bank', value: 'access bank'},
+    {text: 'Zenith Bank', value: 'zenith bank'},
+    {text: 'Gauranty Trust Bank', value: 'gtbank'},
+]

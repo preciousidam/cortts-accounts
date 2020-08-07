@@ -35,7 +35,7 @@ export const ProfileDropdown = ({name, links}) =>{
             </div>
             {dropdown && <div className="dropdown">
                 <ul className="dropdown-content">
-                    {links.map((x,i) => <li className="drop-link" key={i} onClick><a>{x}</a></li>)}
+                    {links.map((x,i) => <li className="drop-link" key={i} ><a>{x}</a></li>)}
                     <li className="drop-link" key={10} onClick={_ => logout()}><a>logout</a></li>
                 </ul>
             </div>}

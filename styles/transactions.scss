@@ -1,3 +1,12 @@
+#top{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0;
+    padding: 10px 20px;
+    background-color: $background-white;
+    box-shadow: 2px 2px 2px 2px rgba($color: #000000, $alpha: .1);
+}
 #acct-list{
     display: flex;
     flex-direction: row;
@@ -15,6 +24,29 @@
         padding: 20px 0;
         margin: 10px;
         cursor: pointer;
+            
+        .caret{
+            width: 30px;
+            height: 30px;
+            background-color: rgba($color: #000000, $alpha: .1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            right: -90px;
+            top: -10px;
+            margin: 0;
+
+            a{
+                text-decoration: none !important;
+            
+                svg{
+                    color: $primary-green;
+                }
+            }
+        }
+        
 
         p{
             margin: 0 !important;
@@ -24,6 +56,7 @@
         h4{
             color: $primary-green;
             font-weight: bolder;
+            font-size: 1.5vw;
         }
     }
 
@@ -39,8 +72,10 @@
 
 #trans{
 
-    padding: 0 50px 20px 50px;
-
+    //max-width: 1200px;
+    padding: 0 60px 20px 60px;
+    position: relative;
+    
     #sect-head{
         display: flex;
         flex-direction: row;
@@ -57,9 +92,99 @@
         }
     }
 
-    #h4{
+    .h4{
+        font-size: 15px;
+        font-weight: bolder;
+        display: inline-block;
+        margin-right: 20px;
+        margin-bottom: 20px;
+    }
+
+    .col-md-12{
+        margin-bottom: 20px;
+    }
+
+    #recent-trans{
+        padding: 20px;
+
+        .trans-item{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            width: 100%;
+
+            .fLeft{
+                display: flex;
+                flex-direction: row;
+                .trans-det{
+                    display: flex;
+                    flex-direction: column;
+                    padding-left: 10px;
+                    justify-content: center;
+                    
+                    p{
+                        margin: 0;
+                    }
+                    span{
+                        font-size: 12px;
+                    }
+                }
+            }
+            .debit{
+                color: $support-red;
+                text-align: right;
+            } 
+            .credit{
+                color: $primary-green;
+            }
+
+            .cancelled{
+                text-decoration: line-through;
+            }
+        }
+
+    }
+
+    #bar{
+        padding: 20px;
+    }
+
+    #pie{
+        padding: 20px 0;
+    }
+
+    #sum{
+        padding: 20px;
+
+        .sumDet{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin: 10px 0;
+
+            .trans-det{
+                display: flex;
+                flex-direction: column;
+                padding-left: 10px;
+                justify-content: center;
+                
+                p{
+                    margin: 0;
+                }
+                span{
+                    font-size: 12px;
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+
+
+    a{
         font-size: 15px;
     }
+
 
     #trans-inner{
         margin-top: 30px;
