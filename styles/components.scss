@@ -571,3 +571,42 @@ hr{
     height: 200px !important;
     width: 100%  !important;
 }
+
+
+//////////////////////TRANSACTION TABLE////////////
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+.trans-table{
+    width: 100%;
+    table{
+        width: 100%;
+        padding: 15px;
+
+        margin: auto;
+
+        tr{
+            border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
+
+            &:hover{
+                background-color: rgba($color: #000000, $alpha: 0.1);
+                cursor: pointer;
+            }
+
+            th{
+                text-transform: uppercase;
+                padding: 10px;
+            }
+            
+            td{
+                padding: 10px;
+            }
+
+        }
+
+        thead{
+            background-color: rgba($primary-blue, 0.2);
+
+        }
+    }
+}

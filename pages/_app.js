@@ -17,12 +17,13 @@ import { faBars, faSpinner, faCheck, faEnvelope, faListAlt,
         faHome, faHandshake, faCarAlt, faBed, faToilet, faBath, 
         faMapMarkedAlt, faCouch, faMoneyBillWaveAlt, faCoins,
         faCalendarAlt, faMoneyCheckAlt, faFilePdf, faExchangeAlt, 
-        faCreditCard, faMoneyBillAlt, faEllipsisH, faCaretDown} from '@fortawesome/free-solid-svg-icons';
+        faCreditCard, faMoneyBillAlt, faEllipsisH, faCaretDown,
+        faArrowUp, faArrowDown,} from '@fortawesome/free-solid-svg-icons';
  
 library.add(faBars,faSpinner, faCheck, faEnvelope, faListAlt, faHome, faHandshake, faCalendarAlt,
            faCarAlt, faBed, faToilet, faBath, faMapMarkedAlt, faCouch, faMoneyBillWaveAlt, faCoins, 
            faMoneyCheckAlt, faFilePdf, faExchangeAlt, faCreditCard, faMoneyBillAlt, faEllipsisH,
-           faCaretDown);
+           faCaretDown, faArrowUp, faArrowDown,);
 
 Router.events.on('routeChangeStart', () => NProgress.start()); 
 Router.events.on('routeChangeComplete', () => NProgress.done()); 

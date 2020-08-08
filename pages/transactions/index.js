@@ -79,7 +79,7 @@ export function Transactions(){
 
 
     return (
-        <MainLayout title="Accounts">
+        <MainLayout title="Transactions">
             <div className="body">
                 <div id='top'>
                     <h4>Overview</h4>
