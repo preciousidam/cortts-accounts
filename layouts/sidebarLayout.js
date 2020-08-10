@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CustomScroll from 'react-custom-scroll';
 
 import '../styles/styles.scss';
 
@@ -11,7 +12,9 @@ export default function SideBar({children, min=false}){
                 {!min && <h2>CORTTS</h2>}
             </div>
             <div>
-                {children}
+                <CustomScroll heightRelativeToParent="calc(100% - 67px)">
+                    {children}
+                </CustomScroll>
             </div>
         </aside>
     );

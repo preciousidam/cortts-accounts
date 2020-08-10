@@ -1,3 +1,4 @@
+import { Category } from "@material-ui/icons";
 
 export const budget = [
     {date: '12 Nov, 2019', items: [{desc: 'Fuel for the Marketers', rate: 5000, qty: 4, amount: 20000,},{desc: 'Fuel for the MD', rate: 8000, qty: 1, amount: 8000,},{desc: 'Toll Gate Payment', rate: 6000, qty: 4, amount: 24000,}]},
@@ -148,7 +149,7 @@ export const transactions = [
     {id: 1, acct_id: 1, date: '04-08-2020', type: 'credit', desc: 'paid into bank by Ebube', amount: '100000000.00', thirdP: 'IHS'},
     {id: 2, acct_id: 2, date: '07-07-2020', type: 'credit', desc: 'paid into bank by Aminat Adetoro', amount: '70000000.00', thirdP: 'Control Risk'},
     {id: 4, acct_id: 3, date: '24-06-2020', type: 'credit', desc: 'paid into bank by Ebube', amount: '100000000.00', thirdP: 'Modd Family'},
-    {id: 4, acct_id: 4, date: '24-06-2020', type: 'credit', desc: 'paid into bank by Ebube', amount: '900000.00', thirdP: 'Flour Mill'},
+    {id: 100, acct_id: 4, date: '24-06-2020', type: 'credit', desc: 'paid into bank by Ebube', amount: '900000.00', thirdP: 'Flour Mill'},
     {id: 5, acct_id: 1, date: '04-08-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '100000000.00', thirdP: 'Madam Amina'},
     {id: 6, acct_id: 2, date: '07-07-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '70000000.00', thirdP: 'Madam Amina'},
     {id: 7, acct_id: 3, date: '24-06-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '15000000.00', thirdP: 'Madam Amina'},
@@ -163,7 +164,7 @@ export const transactions = [
     {id: 47, acct_id: 4, date: '24-06-2020', type: 'credit', desc: 'paid into bank by Ebube', amount: '900000.00', thirdP: 'Flour Mill'},
     {id: 52, acct_id: 1, date: '04-08-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '100000000.00', thirdP: 'Madam Amina'},
     {id: 26, acct_id: 2, date: '07-07-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '70000000.00', thirdP: 'Madam Amina'},
-    {id: 47, acct_id: 3, date: '24-06-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '15000000.00', thirdP: 'Madam Amina'},
+    {id: 40, acct_id: 3, date: '24-06-2020', type: 'debit', desc: 'Transfer to Madam Aminat', amount: '15000000.00', thirdP: 'Madam Amina'},
     {id: 81, acct_id: 4, date: '24-06-2020', type: 'cancelled', desc: 'Transfer to Madam Aminat', amount: '20000.00', thirdP: 'Madam Amina'},
     {id: 92, acct_id: 1, date: '04-08-2020', type: 'transfer', desc: 'Transfer to Petty cash', amount: '100000000.00', thirdP: 'Petty cash'},
     {id: 61, acct_id: 2, date: '07-07-2020', type: 'transfer', desc: 'Transfer to Petty cash', amount: '70000000.00', thirdP: 'Petty cash'},
@@ -182,4 +183,70 @@ export const banks = [
     {text: 'Access Bank', value: 'access bank'},
     {text: 'Zenith Bank', value: 'zenith bank'},
     {text: 'Gauranty Trust Bank', value: 'gtbank'},
+];
+
+export const impress = {balance: '245790.00'}
+
+export const category = [
+    {id: 1, name: 'Transportation'},
+    {id: 2, name: 'Utility'},
+    {id: 3, name: 'Medical Expenses'},
+    {id: 4, name: 'office expenses'},
+    {id: 5, name: 'Telecommunication'},
+    {id: 6, name: 'Meal Entertainment'},
+];
+
+export const staff = [
+    {id: 1, name: 'Madam Stella'},
+    {id: 2, name: 'Madam Aminat'},
+    {id: 3, name: 'Ebube'},
+    {id: 4, name: 'Christy'},
+    {id: 5, name: 'Godwin'},
+    {id: 6, name: 'Anita'},
 ]
+
+
+export const expensesData = [
+    {id: 1, date: '24-06-2020', name: 3, desc: 'IPNX subscription', amount: '24000.00', category_id: 5},
+    {id: 2, date: '24-06-2020', name: 3, desc: 'Dstv subscription', amount: '13100.00', category_id: 5 },
+    {id: 3, date: '24-06-2020', name: 3, desc: 'Transport to Access Bank', amount: '500.00', category_id: 1 },
+    {id: 4, date: '25-06-2020', name: 3, desc: 'Drugs For the first Aid box', amount: '5000.00', category_id: 3 },
+    {id: 5, date: '25-06-2020', name: 3, desc: 'Telephone bill for the month', amount: '100000.00', category_id: 5 },
+    {id: 6, date: '26-06-2020', name: 3, desc: 'Binding Material', amount: '5000.00', category_id: 4 },
+    {id: 7, date: '27-06-2020', name: 3, desc: 'Electric unit for office', amount: '100000.00', category_id: 2 },
+    {id: 8, date: '24-06-2020', name: 2, desc: 'IPNX subscription', amount: '24000.00', category_id: 5},
+    {id: 9, date: '24-06-2020', name: 2, desc: 'Dstv subscription', amount: '13100.00', category_id: 5 },
+    {id: 10, date: '24-06-2020', name: 2, desc: 'Transport to Access Bank', amount: '500.00', category_id: 1 },
+    {id: 11, date: '25-06-2020', name: 2, desc: 'Drugs For the first Aid box', amount: '5000.00', category_id: 3 },
+    {id: 12, date: '25-06-2020', name: 2, desc: 'Telephone bill for the month', amount: '100000.00', category_id: 5 },
+    {id: 13, date: '26-06-2020', name: 2, desc: 'Binding Material', amount: '5000.00', category_id: 4 },
+    {id: 14, date: '27-06-2020', name: 2, desc: 'Electric unit for office', amount: '100000.00', category_id: 2 },
+    {id: 15, date: '24-06-2020', name: 5, desc: 'IPNX subscription', amount: '24000.00', category_id: 5},
+    {id: 16, date: '24-06-2020', name: 5, desc: 'Dstv subscription', amount: '13100.00', category_id: 5 },
+    {id: 17, date: '24-06-2020', name: 5, desc: 'Transport to Access Bank', amount: '500.00', category_id: 1 },
+    {id: 18, date: '25-06-2020', name: 5, desc: 'Drugs For the first Aid box', amount: '5000.00', category_id: 3 },
+    {id: 19, date: '25-06-2020', name: 5, desc: 'Telephone bill for the month', amount: '100000.00', category_id: 5 },
+    {id: 20, date: '26-06-2020', name: 5, desc: 'Binding Material', amount: '5000.00', category_id: 4 },
+    {id: 21, date: '27-06-2020', name: 5, desc: 'Electric unit for office', amount: '100000.00', category_id: 2 },
+    {id: 31, date: '24-06-2020', name: 3, desc: 'IPNX subscription', amount: '24000.00', category_id: 5},
+    {id: 32, date: '24-06-2020', name: 3, desc: 'Dstv subscription', amount: '13100.00', category_id: 5 },
+    {id: 33, date: '24-06-2020', name: 3, desc: 'Transport to Access Bank', amount: '500.00', category_id: 1 },
+    {id: 34, date: '25-06-2020', name: 3, desc: 'Drugs For the first Aid box', amount: '5000.00', category_id: 3 },
+    {id: 35, date: '25-06-2020', name: 3, desc: 'Telephone bill for the month', amount: '100000.00', category_id: 5 },
+    {id: 36, date: '26-06-2020', name: 3, desc: 'Binding Material', amount: '5000.00', category_id: 4 },
+    {id: 37, date: '27-06-2020', name: 3, desc: 'Electric unit for office', amount: '100000.00', category_id: 2 },
+    {id: 38, date: '24-06-2020', name: 2, desc: 'IPNX subscription', amount: '24000.00', category_id: 5},
+    {id: 39, date: '24-06-2020', name: 2, desc: 'Dstv subscription', amount: '13100.00', category_id: 5 },
+    {id: 40, date: '24-06-2020', name: 2, desc: 'Transport to Access Bank', amount: '500.00', category_id: 1 },
+    {id: 41, date: '25-06-2020', name: 2, desc: 'Drugs For the first Aid box', amount: '5000.00', category_id: 3 },
+    {id: 42, date: '25-06-2020', name: 2, desc: 'Telephone bill for the month', amount: '100000.00', category_id: 5 },
+    {id: 43, date: '26-06-2020', name: 2, desc: 'Binding Material', amount: '5000.00', category_id: 4 },
+    {id: 44, date: '27-06-2020', name: 2, desc: 'Electric unit for office', amount: '100000.00', category_id: 2 },
+    {id: 45, date: '24-06-2020', name: 5, desc: 'IPNX subscription', amount: '24000.00', category_id: 5},
+    {id: 46, date: '24-06-2020', name: 5, desc: 'Dstv subscription', amount: '13100.00', category_id: 5 },
+    {id: 47, date: '24-06-2020', name: 5, desc: 'Transport to Access Bank', amount: '500.00', category_id: 1 },
+    {id: 48, date: '25-06-2020', name: 5, desc: 'Drugs For the first Aid box', amount: '5000.00', category_id: 3 },
+    {id: 49, date: '25-06-2020', name: 5, desc: 'Telephone bill for the month', amount: '100000.00', category_id: 5 },
+    {id: 50, date: '26-06-2020', name: 5, desc: 'Binding Material', amount: '5000.00', category_id: 4 },
+    {id: 51, date: '27-06-2020', name: 5, desc: 'Electric unit for office', amount: '100000.00', category_id: 2 },
+];

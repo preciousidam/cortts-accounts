@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import Paper from '@material-ui/core/Paper';
-import { Select, Space, DatePicker, Modal } from 'antd';
+import { Select, Space, DatePicker } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,13 +12,13 @@ import MainLayout from "../../layouts/mainLayout";
 import {ProtectRoute} from '../../utility/route';
 import {CommaFormatted} from '../../utility';
 import {getAllAcct, getAcctDetails} from '../../lib/accounts';
-import {TransTable} from '../../components/table/transactions';
+import {ExpenseTable} from '../../components/table/expenses';
 import {StyledInput, SelectInput} from '../../components/textinput/styledTextInput';
-import {accounts} from '../../constants/data';
+import {accounts, expensesData, impress} from '../../constants/data';
 
 
 
-export function Id({AcctDetails}){
+export function Expenses(){
 
     const useStyles = makeStyles({
         credit: {
@@ -53,8 +53,8 @@ export function Id({AcctDetails}){
     const { Option } = Select;
     const {RangePicker} = DatePicker;
 
-    const {acctDetail, transactions} = AcctDetails;
-    const [trans, setTrans] = useState(transactions);
+    
+    const [expenses, setExpenses] = useState(expensesData);
     const classes = useStyles();
     const [type, setType] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -89,12 +89,11 @@ export function Id({AcctDetails}){
         </Space>
     );
 
-    const total = typ => {
+    const total = date => {
         let total = 0.0
 
-        transactions.forEach(({type,amount}) => {
-            if(type == typ )
-                total += parseFloat(amount);
+        expenses.forEach(({amount}) => {
+            total += parseFloat(amount);
         });
 
         return parseFloat(total).toFixed(2);
@@ -116,33 +115,28 @@ export function Id({AcctDetails}){
     }
 
     return (
-        <MainLayout title="Acct Details">
+        <MainLayout title="Expenses">
             <div className="body">
                 <div id='top'>
                     <div id="left">
                         <div>
-                            <span>Credit</span>
-                            <p>&#8358; {CommaFormatted(total('credit'))}</p>
+                            <span>Impress Balance</span>
+                            <p>&#8358; {CommaFormatted(impress.balance)}</p>
                         </div>
                         <div>
-                            <span>Debit</span>
+                            <span>Total Expenses</span>
                             <p>&#8358; {CommaFormatted(total('debit'))}</p>
-                        </div>
-                        <div>
-                            <span>Transfer</span>
-                            <p>&#8358; {CommaFormatted(total('transfer'))}</p>
                         </div>
                     
                     </div>
                     <div id="right">
-                        <Button onClick={_ => handle('debit')} className={classes.debit}  > Debit</Button>
-                        <Button onClick={_ => handle('credit')} className={classes.credit}  >Credit </Button>
+                        <Button onClick={_ => handle('credit')} className={classes.credit}  >New Expenses <Add /> </Button>
                     </div>
                 </div>
                 <CustomScroll heightRelativeToParent="calc(100% - 90px)">
                     <Paper id="transactions">
                         <header id="header">
-                            <h4>All Transactions</h4>
+                            <h4>All Expenses</h4>
                             <RangePicker
                                 className="date-sort"
                                 format="DD-MM-YYYY"
@@ -155,62 +149,12 @@ export function Id({AcctDetails}){
                                 <FontAwesomeIcon icon="file-pdf" color="#ED213A" />
                             </Button>
                         </header>
-                        <TransTable data={trans} />
+                        <ExpenseTable data={expenses} />
                     </Paper>
                 </CustomScroll>
-                <Modal
-                    title="New Transaction"
-                    visible={showModal}
-                    onOk={handleOk}
-                    confirmLoading={loading}
-                    onCancel={handleCancel}
-                >
-                    {type == 'debit' ? <DebitForm acct={acctDetail} /> : <CreditForm acct={acctDetail} />}
-                </Modal>
             </div>
         </MainLayout>
     )
 }
 
-export default ProtectRoute(Id);
-
-export async function getStaticPaths(){
-    const paths = getAllAcct();
-    return {
-        paths,
-        fallback: false,
-    }
-}
-
-export async function getStaticProps({ params }) {
-    const AcctDetails = getAcctDetails(params.id);
-    
-    return {
-        props: {AcctDetails}
-    }
-}
-
-
-const DebitForm = ({acct}) =>{
-    const options = accounts.map(({bank, number, name}) => ({value: number, text: `${bank}(${name} - ${number})`}))
-    return (
-        <div>
-            <StyledInput label="From" type="text" value={`${acct.bank}(${acct.name} - ${acct.no})`} disabled={true} />
-            <SelectInput label="To" options={options} defaultChoice="select account"/>
-            <StyledInput type="number" placeholder="Amount" />
-            <StyledInput type="text" placeholder="Description" />
-        </div>
-    );
-}
-
-const CreditForm = ({acct}) =>{
-    const options = accounts.map(({bank, number, name}) => ({value: number, text: `${bank}(${name} - ${number})`}))
-    return (
-        <div>
-            <SelectInput label="From" options={options} defaultChoice="select account"/>
-            <StyledInput label="To" type="text" value={`${acct.bank}(${acct.name} - ${acct.no})`} disabled={true} />
-            <StyledInput type="number" placeholder="Amount" />
-            <StyledInput type="text" placeholder="Description" />
-        </div>
-    );
-}
+export default ProtectRoute(Expenses);

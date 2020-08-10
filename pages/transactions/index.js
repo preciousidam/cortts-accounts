@@ -20,29 +20,19 @@ import {SelectInput, StyledInput} from '../../components/textinput/styledTextInp
 
 
 
-const useStyles = makeStyles({
-    root: {
-      background: 'linear-gradient(45deg, #85c226 30%, #25D366 90%)',
-      border: 0,
-      borderRadius: 20,
-      boxShadow: '0 3 5 2 rgba(#85c226, .3)',
-      color: 'white',
-      padding: '10px 30px',
-      margin: '0 10px',
-    },
-    pdf: {
-        background: '#ffffff',
-        border: 0,
-        borderRadius: 20,
-        boxShadow: '0 3px 5px 2px rgba(#85c226, .3)',
-        color: '#000000',
-        padding: '10px 30px',
-        margin: '0 10px',
-      },
-});
-
-
 export function Transactions(){
+
+    const useStyles = makeStyles({
+        root: {
+          background: 'linear-gradient(45deg, #85c226 30%, #25D366 90%)',
+          border: 0,
+          borderRadius: 20,
+          boxShadow: '0 3 5 2 rgba(#85c226, .3)',
+          color: 'white',
+          padding: '5px 30px',
+          margin: '0 10px',
+        },
+    });
 
     const [accounts, setAccounts] = useState(bankaccounts);
     const [active, setActive] = useState(accounts[0].id);
@@ -85,7 +75,7 @@ export function Transactions(){
                     <h4>Overview</h4>
                     <Button onClick={_ => setOpen(!open)} className={classes.root}  >New Account <Add /></Button>
                 </div>
-                <CustomScroll heightRelativeToParent="calc(100% - 60px)">
+                <CustomScroll heightRelativeToParent="calc(100% - 65px)">
                     <div id="acct-list">
                         {accounts.map(({balance, bank,name, id}, index) => 
                         (<Paper 

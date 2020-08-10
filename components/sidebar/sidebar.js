@@ -10,6 +10,7 @@ import {SidebarLink, MinSidebarLink} from '../button/sidebarLinks';
 const links = [
     {icon: <FontAwesomeIcon icon="money-check-alt" />, title: 'Transactions', link: 'transactions'},
     {icon: <FormatBoldOutlined />, title: 'Budget', link: 'budget'},
+    {icon: <FontAwesomeIcon icon={['fab',"etsy"]} />, title: 'Expenses', link: 'expenses'},
     {icon: <DescriptionOutlined />, title: 'Invoices', link: 'invoices'},
     {icon: <AccountBalanceWalletOutlined />, title: 'Accounts', link: 'accounts'},
     {icon: <Apartment />, title: 'Apartments', link: 'apartments'},

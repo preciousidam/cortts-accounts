@@ -16,12 +16,12 @@ export const TransTable = ({data}) =>{
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map(({date, amount, desc, type, thirdP}, i) => (
-                        <tr>
+                    {data.map(({id,date, amount, desc, type, thirdP}, i) => (
+                        <tr key={id}>
                             <td>{i+1}</td>
                             <td>{date}</td>
                             <td>{thirdP}</td>
-                            <td>{CommaFormatted(parseFloat(amount).toFixed(2))} <FontAwesomeIcon icon={type=='debit'|| type == 'transfer'? 'arrow-up': 'arrow-down'} color={type=='debit'|| type == 'transfer'? '#f00': '#0f0'} /></td>
+                            <td className="justify">{CommaFormatted(parseFloat(amount).toFixed(2))} <FontAwesomeIcon icon={type=='debit'|| type == 'transfer'? 'arrow-up': 'arrow-down'} color={type=='debit'|| type == 'transfer'? '#f00': '#0f0'} /></td>
                             <td>{type=='debit'|| type == 'transfer'? 'Debit transaction': 'Credit transaction'} | {desc}</td>
                         </tr>
                     ))}
