@@ -1,3 +1,20 @@
+import React, {useState} from 'react';
+import Paper from '@material-ui/core/Paper';
+import { Select, Space, DatePicker, Modal } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+import {Add} from '@material-ui/icons';
+import CustomScroll from 'react-custom-scroll';
+
+
+import MainLayout from "../../layouts/mainLayout";
+import {ProtectRoute} from '../../utility/route';
+import {CommaFormatted} from '../../utility';
+import {getAllAcct, getAcctDetails} from '../../lib/accounts';
+import {TransTable} from '../../components/table/transactions';
+import {StyledInput, SelectInput} from '../../components/textinput/styledTextInput';
+import {accounts} from '../../constants/data';
 
 export function Id({AcctDetails}){
     return (
@@ -6,6 +23,8 @@ export function Id({AcctDetails}){
         </div>
     );
 }
+
+export default ProtectRoute(Id);
 
 export async function getStaticPaths(){
     const paths = getAllAcct();
@@ -21,29 +40,4 @@ export async function getStaticProps({ params }) {
     return {
         props: {AcctDetails}
     }
-}
-
-
-const DebitForm = ({acct}) =>{
-    const options = accounts.map(({bank, number, name}) => ({value: number, text: `${bank}(${name} - ${number})`}))
-    return (
-        <div>
-            <StyledInput label="From" type="text" value={`${acct.bank}(${acct.name} - ${acct.no})`} disabled={true} />
-            <SelectInput label="To" options={options} defaultChoice="select account"/>
-            <StyledInput type="number" placeholder="Amount" />
-            <StyledInput type="text" placeholder="Description" />
-        </div>
-    );
-}
-
-const CreditForm = ({acct}) =>{
-    const options = accounts.map(({bank, number, name}) => ({value: number, text: `${bank}(${name} - ${number})`}))
-    return (
-        <div>
-            <SelectInput label="From" options={options} defaultChoice="select account"/>
-            <StyledInput label="To" type="text" value={`${acct.bank}(${acct.name} - ${acct.no})`} disabled={true} />
-            <StyledInput type="number" placeholder="Amount" />
-            <StyledInput type="text" placeholder="Description" />
-        </div>
-    );
 }
