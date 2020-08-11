@@ -22,7 +22,6 @@ export function New() {
         let qty = parseInt(document.getElementById('qty').value);
         let rate = parseInt(document.getElementById('amount').value);
         let amount = qty*rate;
-        console.log(rate)
         if(desc != '' && qty != NaN && rate != NaN){
             setItems([...items,{desc,qty,rate,amount}]);
             clearField();

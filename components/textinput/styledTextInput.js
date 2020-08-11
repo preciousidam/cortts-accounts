@@ -13,8 +13,8 @@ export function SelectInput({defaultChoice, options, label, id, ...rest}){
         <div className="form-group styled">
             {label && <label className="label" htmlFor={id}>{label}</label>}
             <select className="custom-select" id={id} {...rest}>
-                <option selected>{defaultChoice}</option>
-                {options.map(({text,value}) => <option value={value}>{text}</option>)}
+                <option key={1000} value={0}>{defaultChoice}</option>
+                {options.map(({text,value}, i) => <option key={i} value={value}>{text}</option>)}
             </select>
         </div>
     );

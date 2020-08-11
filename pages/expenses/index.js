@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import {Add} from '@material-ui/icons';
 import CustomScroll from 'react-custom-scroll';
+import {useRouter} from 'next/router';
 
 
 import MainLayout from "../../layouts/mainLayout";
@@ -58,7 +59,8 @@ export function Expenses(){
     const classes = useStyles();
     const [type, setType] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
 
     const onChange = (value, dateString) => {
@@ -110,8 +112,7 @@ export function Expenses(){
     };
 
     const handle = type => {
-        setType(type);
-        setShowModal(true);
+        router.push('/expenses/new');
     }
 
     return (

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { Pagination } from 'antd';
+import {useRouter} from 'next/router';
 
 
 import {CommaFormatted} from '../../utility';
@@ -10,6 +11,7 @@ export const ExpenseTable = ({data}) => {
 
     const [page, setPage] = useState(1)
     const offset = 20;
+    const router = useRouter();
 
     const onChange = pag => {
         setPage(pag)
@@ -26,17 +28,17 @@ export const ExpenseTable = ({data}) => {
         let date2 = new Date(y.date.split('-')[2],y.date.split('-')[1] - 1, y.date.split('-')[0]);
 
         if(date1 > date2){
-            console.log('this');
             return 1;
         }
         if (date1 < date2){
-            console.log('that');
             return -1;
         }
 
         return 0
     }
     
+    const view = id => router.push(`/expenses/${id}`);
+
     return (
         <div id="expense-table">
             <table>
@@ -51,14 +53,14 @@ export const ExpenseTable = ({data}) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.slice(upper,lower).sort(sortdata).map(({id,date, amount, desc, name}, i) => (
+                    {data.slice(upper,lower).sort(sortdata).map(({id,date, amount, desc, name, ref}, i) => (
                         <tr key={id}>
                             <td>{i+1}</td>
                             <td>{date}</td>
                             <td>{getName(name)}</td>
                             <td>{CommaFormatted(amount)} </td>
                             <td>{desc}</td>
-                            <td><ActionButton /></td>
+                            <td><ActionButton actions={{view: () => view(ref)}} /></td>
                         </tr>
                     ))}
                 </tbody>
