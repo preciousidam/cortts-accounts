@@ -11,14 +11,19 @@ export const AuthProvider = ({ children }) => {
 
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [token, setToken] = useState(null);
 
     const loadUserFromCookies = async () => {
         const token = await Cookies.get('token');
        
         if (token) {
+            setToken(token);
             const claim = await JwtDecode(token);
             
-            if (claim) await setUser(claim.identity);
+            if (claim) {
+                setUser(claim.identity);
+                
+            }
             
         }
         setLoading(false);
@@ -48,7 +53,10 @@ export const AuthProvider = ({ children }) => {
             
             Cookies.set('token', token, { expires: 7 })
             const claim = JwtDecode(token);
-            if(claim) setUser(claim.identity);
+            setToken(token);
+            if(claim) {
+                setUser(claim.identity);
+            }
             
             return true;
         }
@@ -57,14 +65,15 @@ export const AuthProvider = ({ children }) => {
     }
 
     const logout = () => {
-        Cookies.remove('token')
-        setUser(null)
+        Cookies.remove('token');
+        setUser(null);
+        setToken(null);
         return true;
     }
 
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated: !!user, user, login, loading, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated: !!user, user, token, login, loading, logout }}>
             {children}
         </AuthContext.Provider>
     );

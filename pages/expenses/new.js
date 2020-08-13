@@ -143,7 +143,7 @@ export function New() {
                                         <td>{i+1}</td>
                                         <td>{getCat(category_id)}</td>
                                         <td>{desc}</td>
-                                        <td>{amount}</td>
+                                        <td>&#8358; {CommaFormatted(amount)}</td>
                                         <td><IconButton className="del" onClick={e => deleteitem(i)}><DeleteOutline  /></IconButton></td>
                                     </tr>))}
                                 

@@ -1,24 +1,28 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Paper from '@material-ui/core/Paper';
-import { Select, Space, DatePicker, Modal } from 'antd';
+import { Radio, Select, Space, DatePicker, Modal, Spin, notification } from 'antd';
+import {CheckCircleOutlined, CloseCircleOutlined} from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import {Add} from '@material-ui/icons';
+import { useRouter } from 'next/router'
 import CustomScroll from 'react-custom-scroll';
+import moment from 'moment';
 
 
 import MainLayout from "../../layouts/mainLayout";
 import {ProtectRoute} from '../../utility/route';
 import {CommaFormatted} from '../../utility';
-import {getAllAcct, getAcctDetails} from '../../lib/accounts';
 import {TransTable} from '../../components/table/transactions';
 import {StyledInput, SelectInput} from '../../components/textinput/styledTextInput';
 import {accounts} from '../../constants/data';
+import {useSingleAccount} from '../../lib/hooks';
+import useAuth from '../../provider';
+import {setTran} from '../../utility/fetcher';
 
 
 
-export function Id({AcctDetails}){
+export function Id(){
 
     const useStyles = makeStyles({
         credit: {
@@ -52,18 +56,50 @@ export function Id({AcctDetails}){
 
     const { Option } = Select;
     const {RangePicker} = DatePicker;
+    
+    const {token} = useAuth();
 
-    const {acctDetail, transactions} = AcctDetails;
-    const [trans, setTrans] = useState(transactions);
+    const router = useRouter();
+
+    const { id } = router.query;
+    const { accts, isLoading, isError, mutate } = useSingleAccount(id);
+
+    const [trans, setTrans] = useState([]);
     const classes = useStyles();
     const [type, setType] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [date, setDate] = useState(moment(new Date(),"DD-MM-YYYY"));
+    const [cheTran, setCheTran] = useState('cheque');
+    const [filter, setFilter] = useState({date: [moment('01-01-2020', 'DD-MM-YYYY'), moment(new Date('09-12-2021'), 'DD-MM-YYYY')],transType: 'all'})
+
+
+    const dataLoaded = () => {
+        if(!isLoading && accts){
+            const transactions = accts?.transactions;
+            if(transactions)
+                setTrans(transactions);
+        }
+    }
+
+
+    useEffect(() => {
+        dataLoaded();
+    });
+
+    const openNotification = (status,msg) => {
+        notification.open({
+          message: status,
+          description: msg,
+          icon: status == 'success' ? <CheckCircleOutlined style={{ color: '#00ff00' }} /> : <CloseCircleOutlined style={{ color: '#ff0000' }} />,
+        });
+    };
 
 
     const onChange = (value, dateString) => {
-        console.log('Selected Time: ', value);
-        console.log('Formatted Selected Time: ', dateString);
+        //console.log('Selected Time: ', value);
+        //console.log('Formatted Selected Time: ', dateString);
+        setFilter({...filter,date: value})
     }
       
     const onOk = (value) => {
@@ -71,40 +107,54 @@ export function Id({AcctDetails}){
     }
 
     const handleChange = value => {
-        if(value == 'all')
-            setTrans(transactions);
-        else
-            setTrans(transactions.filter(({type}) => value == type));
+        setFilter({...filter, transType: value})
     }
 
 
-    const filter = () => (
-        <Space>
-            <Select defaultValue="all" onChange={handleChange} className="filter">
+    const filterView = () => (<Space>
+            <Select defaultValue={filter.transType} onChange={handleChange} className="filter">
                 <Option value="all">All</Option>
                 <Option value="credit">Credit</Option>
                 <Option value="debit">Debit</Option>
                 <Option value="transfer">Transfer</Option>
             </Select>
-        </Space>
-    );
+        </Space>);
 
     const total = typ => {
         let total = 0.0
 
-        transactions.forEach(({type,amount}) => {
-            if(type == typ )
-                total += parseFloat(amount);
-        });
-
+        if (accts){
+            accts.transactions.forEach(({transType,amount}) => {
+                if(transType == typ )
+                    total += parseFloat(amount);
+            });
+        }
         return parseFloat(total).toFixed(2);
     }
 
 
     const handleOk = async () => {
         setLoading(true);
-        
+        const acct_id = accts.id;
+        const beneficiary = document.getElementById('bene').value;
+        const dat = date;
+        const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
+        const description = `${document.getElementById('description').value} via ${cheTran}`;
+        const transType = type
+
+        const {msg, status, data} = await setTran({acct_id,beneficiary,date: date,amount,description, transType}, token);
+        if( status == 'success'){
+            mutate({...accts, transactions: data});
+            clear();
+        }
+        openNotification(status,msg);
+        setLoading(false);
+        setShowModal(false);
     };
+
+    const clear = () => {
+        document.getElementsByTagName('input').value = ""
+    }
     
     const handleCancel = async () => {
         setShowModal(false);
@@ -129,8 +179,8 @@ export function Id({AcctDetails}){
                             <p>&#8358; {CommaFormatted(total('debit'))}</p>
                         </div>
                         <div>
-                            <span>Transfer</span>
-                            <p>&#8358; {CommaFormatted(total('transfer'))}</p>
+                            <span>Balance</span>
+                            <p>&#8358; {CommaFormatted(accts? accts.balance : '0.00')}</p>
                         </div>
                     
                     </div>
@@ -139,7 +189,7 @@ export function Id({AcctDetails}){
                         <Button onClick={_ => handle('credit')} className={classes.credit}  >Credit </Button>
                     </div>
                 </div>
-                <CustomScroll heightRelativeToParent="calc(100% - 90px)">
+                {!isLoading ? <CustomScroll heightRelativeToParent="calc(100% - 90px)">
                     <Paper id="transactions">
                         <header id="header">
                             <h4>All Transactions</h4>
@@ -149,23 +199,25 @@ export function Id({AcctDetails}){
                                 onChange={onChange}
                                 onOk={onOk}
                                 id="date"
+                                defaultValue={filter.date}
                             />
-                            {filter()}
+                            {filterView()}
                             <Button className="elevated" onClick={_ => setOpen(!open)} className={classes.pdf} >Export as PDF 
                                 <FontAwesomeIcon icon="file-pdf" color="#ED213A" />
                             </Button>
                         </header>
-                        <TransTable data={trans} />
+                        <TransTable data={trans} filter={filter} />
                     </Paper>
-                </CustomScroll>
+                </CustomScroll>: isError ? <h1>Something Happened</h1>: <Spin size="large" />}
                 <Modal
-                    title="New Transaction"
+                    title={`${type == 'credit'? 'Credit': 'Debit'} Transaction`}
                     visible={showModal}
                     onOk={handleOk}
                     confirmLoading={loading}
                     onCancel={handleCancel}
                 >
-                    {type == 'debit' ? <DebitForm acct={acctDetail} /> : <CreditForm acct={acctDetail} />}
+                    {type == 'debit' ? <DebitForm acct={accts} setDate={setDate} cheTran={cheTran} setCheTran={setCheTran} /> 
+                                    : <CreditForm acct={accts} setDate={setDate} cheTran={cheTran} setCheTran={setCheTran} />}
                 </Modal>
             </div>
         </MainLayout>
@@ -174,43 +226,42 @@ export function Id({AcctDetails}){
 
 export default ProtectRoute(Id);
 
-export async function getStaticPaths(){
-    const paths = getAllAcct();
-    return {
-        paths,
-        fallback: false,
-    }
-}
 
-export async function getStaticProps({ params }) {
-    const AcctDetails = getAcctDetails(params.id);
+const DebitForm = ({acct, setDate, cheTran, setCheTran}) =>{
     
-    return {
-        props: {AcctDetails}
-    }
-}
-
-
-const DebitForm = ({acct}) =>{
-    const options = accounts.map(({bank, number, name}) => ({value: number, text: `${bank}(${name} - ${number})`}))
     return (
         <div>
-            <StyledInput label="From" type="text" value={`${acct.bank}(${acct.name} - ${acct.no})`} disabled={true} />
-            <SelectInput label="To" options={options} defaultChoice="select account"/>
-            <StyledInput type="number" placeholder="Amount" />
-            <StyledInput type="text" placeholder="Description" />
+            <StyledInput id="id" type="text" value={`${acct.bank}(${acct.name} - ${acct.number})`} disabled={true} />
+            <StyledInput type="text" id="bene" placeholder="beneficiary" />
+            <div className="sideByside">
+                <StyledInput id="amount" type="number" placeholder="Amount" />
+                <DatePicker format="DD-MM-YYYY" defaultValue={moment(new Date(), 'DD-MM-YYYY')} onChange={(date, dateString) => setDate(dateString)} />
+            </div>
+            <StyledInput id="description" type="text" placeholder="description" />
+            <span>Transaction done by?  </span>
+            <Radio.Group value={cheTran} onChange={e => setCheTran(e.target.value)}>
+                <Radio value={'cheque'}>Cheque</Radio>
+                <Radio value={'transfer'}>Transfer</Radio>
+            </Radio.Group>
         </div>
     );
 }
 
-const CreditForm = ({acct}) =>{
-    const options = accounts.map(({bank, number, name}) => ({value: number, text: `${bank}(${name} - ${number})`}))
+const CreditForm = ({acct, setDate}) =>{
     return (
         <div>
-            <SelectInput label="From" options={options} defaultChoice="select account"/>
-            <StyledInput label="To" type="text" value={`${acct.bank}(${acct.name} - ${acct.no})`} disabled={true} />
-            <StyledInput type="number" placeholder="Amount" />
-            <StyledInput type="text" placeholder="Description" />
+            <StyledInput type="text" placeholder="sender" id="bene" />
+            <StyledInput id="id" type="text" value={`${acct.bank}(${acct.name} - ${acct.number})`} disabled={true} />
+            <div className="sideByside">
+                <StyledInput id="amount" type="number" placeholder="Amount" />
+                <DatePicker format="DD-MM-YYYY" defaultValue={moment(new Date(), 'DD-MM-YYYY')} onChange={(date, dateString) => setDate(dateString)} />
+            </div>
+            <StyledInput id="description" type="text" placeholder="description" />
+            <span>Transaction done by?  </span>
+            <Radio.Group value={cheTran} onChange={e => setCheTran(e.target.value)}>
+                <Radio value={'cheque'}>Cheque</Radio>
+                <Radio value={'transfer'}>Transfer</Radio>
+            </Radio.Group>
         </div>
     );
 }

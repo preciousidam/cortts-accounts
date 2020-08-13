@@ -4,6 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import CustomScroll from 'react-custom-scroll';
 
 import ActionButton from '../button/actionButtons';
+import {CommaFormatted} from '../../utility';
 
 export default function BudgetTable({data}){
     
@@ -21,7 +22,7 @@ export default function BudgetTable({data}){
         let total = 0;
 
         items.forEach( ({amount}) => total += amount);
-        return total;
+        return parseFloat(total).toFixed(2);
     }
 
     const onChange = pag => {
@@ -47,7 +48,7 @@ export default function BudgetTable({data}){
                                 <td>{i+1}</td>
                                 <td>{date}</td>
                                 <td>{format(items)}</td>
-                                <td>&#8358; {getTotal(items)}</td>
+                                <td>&#8358; {CommaFormatted(getTotal(items))}</td>
                                 <td><ActionButton /></td>
                             </tr>
                         ))}

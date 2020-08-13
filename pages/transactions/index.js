@@ -1,7 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Paper from '@material-ui/core/Paper';
-import { Avatar, Menu, Dropdown } from 'antd';
+import { Avatar, Menu, Dropdown, notification, Spin } from 'antd';
+import {CheckCircleOutlined, CloseCircleOutlined} from '@ant-design/icons';
 import { StickyContainer, Sticky } from 'react-sticky';
+import useAuth from '../../provider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,10 +15,12 @@ import CustomScroll from 'react-custom-scroll';
 
 import MainLayout from "../../layouts/mainLayout";
 import {ProtectRoute} from '../../utility/route';
-import {banks, bankaccounts, transactions} from '../../constants/data';
+import {banks} from '../../constants/data';
 import {CommaFormatted} from '../../utility';
 import {BarChart, PieChart} from '../../components/charts';
 import {SelectInput, StyledInput} from '../../components/textinput/styledTextInput';
+import {useAccounts} from '../../lib/hooks';
+import {setAcct, delAcct} from '../../utility/fetcher';
 
 
 
@@ -34,39 +38,71 @@ export function Transactions(){
         },
     });
 
-    const [accounts, setAccounts] = useState(bankaccounts);
-    const [active, setActive] = useState(accounts[0].id);
-
-    const [trans, setTrans] = useState(
-        () => transactions.filter(({acct_id}) => acct_id == active)
-    );
+    const { accts, isLoading, isError, mutate } = useAccounts();
+    const {token} = useAuth();
+    
+    const [active, setActive] = useState(null);
+    const [trans, setTrans] = useState([]);
     const [open, setOpen] = useState(false)
     const classes = useStyles();
+
+    const dataLoaded = () => {
+        if(!isLoading && accts){
+            if(active == null)
+                setActive(accts[0].id);
+            const acct = accts.find(({id}) => id == active);
+            const transactions = acct?.transactions;
+            if(transactions){
+                setTrans(transactions);
+            }
+        }
+    }
+
+
+    useEffect(() => {
+            dataLoaded();
+        });
+
+    const openNotification = (status,msg) => {
+        notification.open({
+          message: status,
+          description: msg,
+          icon: status == 'success' ? <CheckCircleOutlined style={{ color: '#00ff00' }} /> : <CloseCircleOutlined style={{ color: '#ff0000' }} />,
+        });
+    };
     
-    const del = rid => {
-        setAccounts(accounts.filter(({id})=> id != rid));
-        setActive(accounts[0].id);
+    const del = async (rid) => {
+        const {msg, status, data} = await delAcct(rid,token);
+        if( status == 'success')
+            mutate(data);
+        openNotification(status,msg);
+        setActive(accts[0].id);
     }
     
-    const add = (e) => {
+    const add = async (e) => {
         const name = document.getElementById('name').value;
         const number = document.getElementById('number').value;
-        const owner = document.getElementById('owner').value;
+        const balance = parseFloat(document.getElementById('balance').value).toFixed(2);
         const bank = document.getElementById('bank').value;
         const sc = document.getElementById('sc').value;
 
-        setData([...data,{name,number,owner,bank,sc}]);
+        
+        const {msg, status, data} = await setAcct(balance,name,number,sc,bank,token);
+        if( status == 'success')
+            mutate(data);
+        openNotification(status,msg);
         clear();
     }
 
     const clear = () => {
         document.getElementById('name').value = "";
         document.getElementById('number').value = "";
-        document.getElementById('owner').value = "";
         document.getElementById('bank').value = "";
+        document.getElementById('balance').value = "";
         document.getElementById('sc').value = "";
     }
 
+    
 
     return (
         <MainLayout title="Transactions">
@@ -75,23 +111,22 @@ export function Transactions(){
                     <h4>Overview</h4>
                     <Button onClick={_ => setOpen(!open)} className={classes.root}  >New Account <Add /></Button>
                 </div>
-                <CustomScroll heightRelativeToParent="calc(100% - 65px)">
+                { !isLoading ? (<CustomScroll heightRelativeToParent="calc(100% - 65px)">
                     <div id="acct-list">
-                        {accounts.map(({balance, bank,name, id}, index) => 
-                        (<Paper 
-                            className={`acct-bal ${id == active? 'active':''}`}
-                            onClick={e => {
-                                setActive(id)
-                                setTrans(() => transactions.filter(({acct_id}) => acct_id == id))
-                            }}
-                            key={id}
-                        >   
+                        {accts.map(({balance, bank,name, id}, index) => 
+                            (<Paper 
+                                className={`acct-bal ${id == active? 'active':''}`}
+                                onClick={e => {
+                                    setActive(id)
+                                }}
+                                key={id}
+                            >   
+                                    
+                                <span className="caret"><ExtraMenu del={del} id={id} /></span>
                                 
-                            <span className="caret"><ExtraMenu del={del} id={id} /></span>
-                            
-                            <h4>&#8358; {CommaFormatted(balance)}</h4>
-                            <p>{name} - <span className="bank">{bank}</span></p>
-                        </Paper>)
+                                <h4>&#8358; {CommaFormatted(balance)}</h4>
+                                <p>{name} - <span className="bank">{bank}</span></p>
+                            </Paper>)
                         )}
                     </div>
                     <div id="trans" className="container-fluid">
@@ -100,7 +135,7 @@ export function Transactions(){
                                 <h4 className="h4">Recent Transactions</h4>
                                 <Paper id="recent-trans">
                                     <StickyContainer className="sticky">
-                                        {trans.map(({id, ...rest}) => (
+                                        {trans.reverse().map(({id, ...rest}) => (
                                             <TransactionElement key={id} {...rest}/>
                                         ))}
                                     </StickyContainer>
@@ -140,7 +175,7 @@ export function Transactions(){
                             </div>
                         </div>
                     </div>
-                </CustomScroll>
+                </CustomScroll>): isError ? (<p>Something happended</p>): <Spin size="large" /> }
                 {open && <div className="new-cont-overlay">
                     <div className="new-form">
                         <header>
@@ -150,7 +185,7 @@ export function Transactions(){
                         <div>
                             <StyledInput placeholder="Acct Name" id="name" type="text" />
                             <StyledInput placeholder="Acct Number" id="number" type="text" />
-                            <SelectInput placeholder="Bank" id="owner" type="text" options={banks} defaultChoice="Select Bank" />
+                            <SelectInput placeholder="Bank" id="bank" type="text" options={banks} defaultChoice="Select Bank" />
                             <StyledInput placeholder="Sort Code" id="sc" type="text" />
                             <StyledInput placeholder="Opening Balance" id="balance" type="number" />
                             <button className="btn btn-success add" onClick={add}>Save Account</button>
@@ -184,17 +219,17 @@ const styles = {
     },
 }
 
-const TransactionElement = ({thirdP, type, date, amount}) => (
+const TransactionElement = ({beneficiary, transType, date, amount}) => (
     <div className="trans-item">
         <div className="fLeft">
-            <Avatar style={styles[type]} >{icons[type]}</Avatar>
+            <Avatar style={styles[transType]} >{icons[transType]}</Avatar>
             <div className="trans-det">
-                <p className={type == 'cancelled'? 'cancelled': ''}>{thirdP}</p>
+                <p className={transType == 'cancelled'? 'cancelled': ''}>{beneficiary}</p>
                 <span>{date}</span>
             </div>
         </div>
-        <span className={`${type == 'cancelled'? 'cancelled': ''} ${type == 'credit'? 'credit': 'debit'}`}>
-            {type != 'credit'? '- ': ''}&#8358; {CommaFormatted(amount)}
+        <span className={`${transType == 'cancelled'? 'cancelled': ''} ${transType == 'credit'? 'credit': 'debit'}`}>
+            {transType != 'credit'? '- ': ''}&#8358; {CommaFormatted(amount)}
         </span>
     </div>
 );
@@ -206,8 +241,8 @@ const Summary = ({data}) => {
     const calcCredit = _ => {
         let cre = 0.0;
 
-        data.forEach(({type, amount}) => {
-            if(type === 'credit') 
+        data.forEach(({transType, amount}) => {
+            if(transType === 'credit') 
                 cre += parseFloat(amount)
         });
 
@@ -218,9 +253,9 @@ const Summary = ({data}) => {
     const calcDebit = _ => {
         let deb = 0.0;
 
-        data.forEach(({type, amount}) => {
+        data.forEach(({transType, amount}) => {
             
-            if(type === 'debit') 
+            if(transType === 'debit') 
                 deb += parseFloat(amount)
         });
 
@@ -230,8 +265,8 @@ const Summary = ({data}) => {
     const calcImp = _ => {
         let imp = 0.0;
 
-        data.forEach(({type, amount}) => {
-            if(type === 'transfer') 
+        data.forEach(({transType, amount}) => {
+            if(transType === 'transfer') 
                 imp += parseFloat(amount)
         });
 
