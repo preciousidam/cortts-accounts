@@ -247,7 +247,7 @@ const DebitForm = ({acct, setDate, cheTran, setCheTran}) =>{
     );
 }
 
-const CreditForm = ({acct, setDate}) =>{
+const CreditForm = ({acct, setDate, cheTran, setCheTran}) =>{
     return (
         <div>
             <StyledInput type="text" placeholder="sender" id="bene" />
