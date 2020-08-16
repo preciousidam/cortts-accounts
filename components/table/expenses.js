@@ -7,7 +7,7 @@ import {CommaFormatted} from '../../utility';
 import ActionButton from '../button/actionButtons';
 import {staff} from '../../constants/data';
 
-export const ExpenseTable = ({data}) => {
+export const ExpenseTable = ({data, actions}) => {
 
     const [page, setPage] = useState(1)
     const offset = 20;
@@ -19,7 +19,7 @@ export const ExpenseTable = ({data}) => {
     const [upper,lower] = [(offset * page) - offset, page * offset];
 
     const getName = name => {
-        const st = staff.find(({id}) => id == name);
+        const st = staff.find(({id}) => id == parseInt(name));
         return st.name;
     }
 
@@ -53,14 +53,14 @@ export const ExpenseTable = ({data}) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.slice(upper,lower).sort(sortdata).map(({id,date, amount, desc, name, ref}, i) => (
+                    {data.slice(upper,lower).sort(sortdata).map(({id,date, amount, items, recipient, ref}, i) => (
                         <tr key={id}>
                             <td>{i+1}</td>
                             <td>{date}</td>
-                            <td>{getName(name)}</td>
+                            <td>{getName(recipient)}</td>
                             <td>{CommaFormatted(amount)} </td>
-                            <td>{desc}</td>
-                            <td><ActionButton actions={{view: () => view(ref)}} /></td>
+                            <td>{items[0].description}</td>
+                            <td><ActionButton actions={{view: () => view(ref), del: _ => actions.del(id)}} /></td>
                         </tr>
                     ))}
                 </tbody>

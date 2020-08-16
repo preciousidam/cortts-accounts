@@ -19,8 +19,9 @@ import {banks} from '../../constants/data';
 import {CommaFormatted} from '../../utility';
 import {BarChart, PieChart} from '../../components/charts';
 import {SelectInput, StyledInput} from '../../components/textinput/styledTextInput';
-import {useAccounts} from '../../lib/hooks';
-import {setAcct, delAcct} from '../../utility/fetcher';
+import {getViewData} from '../../lib/hooks';
+import {setAcct, delData} from '../../utility/fetcher';
+import Loader from '../../components/loader';
 
 
 
@@ -38,7 +39,7 @@ export function Transactions(){
         },
     });
 
-    const { accts, isLoading, isError, mutate } = useAccounts();
+    const { data, isLoading, isError, mutate } = getViewData('accounts/');
     const {token} = useAuth();
     
     const [active, setActive] = useState(null);
@@ -47,10 +48,10 @@ export function Transactions(){
     const classes = useStyles();
 
     const dataLoaded = () => {
-        if(!isLoading && accts){
+        if(!isLoading && data){
             if(active == null)
-                setActive(accts[0].id);
-            const acct = accts.find(({id}) => id == active);
+                setActive(data[0].id);
+            const acct = data.find(({id}) => id == active);
             const transactions = acct?.transactions;
             if(transactions){
                 setTrans(transactions);
@@ -72,11 +73,11 @@ export function Transactions(){
     };
     
     const del = async (rid) => {
-        const {msg, status, data} = await delAcct(rid,token);
+        const {msg, status, data} = await delData('accounts/delete',rid,token);
         if( status == 'success')
             mutate(data);
         openNotification(status,msg);
-        setActive(accts[0].id);
+        setActive(data[0].id);
     }
     
     const add = async (e) => {
@@ -113,7 +114,7 @@ export function Transactions(){
                 </div>
                 { !isLoading ? (<CustomScroll heightRelativeToParent="calc(100% - 65px)">
                     <div id="acct-list">
-                        {accts.map(({balance, bank,name, id}, index) => 
+                        {data.map(({balance, bank,name, id}, index) => 
                             (<Paper 
                                 className={`acct-bal ${id == active? 'active':''}`}
                                 onClick={e => {
@@ -175,7 +176,7 @@ export function Transactions(){
                             </div>
                         </div>
                     </div>
-                </CustomScroll>): isError ? (<p>Something happended</p>): <Spin size="large" /> }
+                </CustomScroll>): isError ? (<p>Something happended</p>): <Loader /> }
                 {open && <div className="new-cont-overlay">
                     <div className="new-form">
                         <header>

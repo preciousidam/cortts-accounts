@@ -9,16 +9,17 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import Grow from '@material-ui/core/Grow';
 
-const options = ['Save and Close', 'Save and Continue', 'Discard and Close'];
 
-export const FooterWithButton = () => {
+export const FooterWithButton = ({action}) => {
 
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
     const [selectedIndex, setSelectedIndex] = React.useState(1);
 
     const handleClick = () => {
-        console.info(`You clicked ${options[selectedIndex]}`);
+        
+        const click = action[selectedIndex]['action'];
+        click();
     };
 
     const handleMenuItemClick = (event, index) => {
@@ -42,7 +43,7 @@ export const FooterWithButton = () => {
         <footer className="footer">
             <div className="footer-cont">
                 <ButtonGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button">
-                    <Button onClick={handleClick}>{options[selectedIndex]}</Button>
+                    <Button onClick={handleClick}>{action[selectedIndex]['text']}</Button>
                     <Button
                         color="primary"
                         size="small"
@@ -67,14 +68,14 @@ export const FooterWithButton = () => {
                         <Paper>
                             <ClickAwayListener onClickAway={handleClose}>
                             <MenuList id="split-button-menu">
-                                {options.map((option, index) => (
+                                {action.map(({text}, index) => (
                                 <MenuItem
-                                    key={option}
+                                    key={index}
                                     
                                     selected={index === selectedIndex}
                                     onClick={(event) => handleMenuItemClick(event, index)}
                                 >
-                                    {option}
+                                    {text}
                                 </MenuItem>
                                 ))}
                             </MenuList>

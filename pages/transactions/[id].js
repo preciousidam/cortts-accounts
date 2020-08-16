@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Paper from '@material-ui/core/Paper';
-import { Radio, Select, Space, DatePicker, Modal, Spin, notification } from 'antd';
+import { Radio, Select, Space, DatePicker, Modal, notification } from 'antd';
 import {CheckCircleOutlined, CloseCircleOutlined} from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@material-ui/core/Button';
@@ -14,11 +14,11 @@ import MainLayout from "../../layouts/mainLayout";
 import {ProtectRoute} from '../../utility/route';
 import {CommaFormatted} from '../../utility';
 import {TransTable} from '../../components/table/transactions';
-import {StyledInput, SelectInput} from '../../components/textinput/styledTextInput';
-import {accounts} from '../../constants/data';
-import {useSingleAccount} from '../../lib/hooks';
+import {StyledInput} from '../../components/textinput/styledTextInput';
+import {getViewData} from '../../lib/hooks';
 import useAuth from '../../provider';
 import {setTran} from '../../utility/fetcher';
+import Loader from '../../components/loader';
 
 
 
@@ -62,7 +62,7 @@ export function Id(){
     const router = useRouter();
 
     const { id } = router.query;
-    const { accts, isLoading, isError, mutate } = useSingleAccount(id);
+    const { data, isLoading, isError, mutate } = getViewData(`accounts/${id}`);
 
     const [trans, setTrans] = useState([]);
     const classes = useStyles();
@@ -71,12 +71,12 @@ export function Id(){
     const [loading, setLoading] = useState(false);
     const [date, setDate] = useState(moment(new Date(),"DD-MM-YYYY"));
     const [cheTran, setCheTran] = useState('cheque');
-    const [filter, setFilter] = useState({date: [moment('01-01-2020', 'DD-MM-YYYY'), moment(new Date('09-12-2021'), 'DD-MM-YYYY')],transType: 'all'})
+    const [filter, setFilter] = useState({date: [moment('01-01-2020', 'DD-MM-YYYY'), moment(new Date('09-12-2021'), 'DD-MM-YYYY')],transType: 'all'});
 
 
     const dataLoaded = () => {
-        if(!isLoading && accts){
-            const transactions = accts?.transactions;
+        if(!isLoading && data){
+            const transactions = data?.transactions;
             if(transactions)
                 setTrans(transactions);
         }
@@ -123,8 +123,8 @@ export function Id(){
     const total = typ => {
         let total = 0.0
 
-        if (accts){
-            accts.transactions.forEach(({transType,amount}) => {
+        if (data){
+            data.transactions.forEach(({transType,amount}) => {
                 if(transType == typ )
                     total += parseFloat(amount);
             });
@@ -135,7 +135,7 @@ export function Id(){
 
     const handleOk = async () => {
         setLoading(true);
-        const acct_id = accts.id;
+        const acct_id = data.id;
         const beneficiary = document.getElementById('bene').value;
         const dat = date;
         const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
@@ -144,7 +144,7 @@ export function Id(){
 
         const {msg, status, data} = await setTran({acct_id,beneficiary,date: date,amount,description, transType}, token);
         if( status == 'success'){
-            mutate({...accts, transactions: data});
+            mutate({...data, transactions: data});
             clear();
         }
         openNotification(status,msg);
@@ -180,7 +180,7 @@ export function Id(){
                         </div>
                         <div>
                             <span>Balance</span>
-                            <p>&#8358; {CommaFormatted(accts? accts.balance : '0.00')}</p>
+                            <p>&#8358; {CommaFormatted(data? data.balance : '0.00')}</p>
                         </div>
                     
                     </div>
@@ -208,7 +208,7 @@ export function Id(){
                         </header>
                         <TransTable data={trans} filter={filter} />
                     </Paper>
-                </CustomScroll>: isError ? <h1>Something Happened</h1>: <Spin size="large" />}
+                </CustomScroll>: isError ? <h1>Something Happened</h1>: <Loader />}
                 <Modal
                     title={`${type == 'credit'? 'Credit': 'Debit'} Transaction`}
                     visible={showModal}
@@ -216,8 +216,8 @@ export function Id(){
                     confirmLoading={loading}
                     onCancel={handleCancel}
                 >
-                    {type == 'debit' ? <DebitForm acct={accts} setDate={setDate} cheTran={cheTran} setCheTran={setCheTran} /> 
-                                    : <CreditForm acct={accts} setDate={setDate} cheTran={cheTran} setCheTran={setCheTran} />}
+                    {type == 'debit' ? <DebitForm acct={data} setDate={setDate} cheTran={cheTran} setCheTran={setCheTran} /> 
+                                    : <CreditForm acct={data} setDate={setDate} cheTran={cheTran} setCheTran={setCheTran} />}
                 </Modal>
             </div>
         </MainLayout>

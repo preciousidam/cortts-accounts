@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Paper from '@material-ui/core/Paper';
 import { Select, Space, DatePicker } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,16 +7,19 @@ import { makeStyles } from '@material-ui/core/styles';
 import {Add} from '@material-ui/icons';
 import CustomScroll from 'react-custom-scroll';
 import {useRouter} from 'next/router';
+import moment from 'moment';
+import {openNotification} from '../../components/notification';
 
 
 import MainLayout from "../../layouts/mainLayout";
 import {ProtectRoute} from '../../utility/route';
 import {CommaFormatted} from '../../utility';
-import {getAllAcct, getAcctDetails} from '../../lib/accounts';
 import {ExpenseTable} from '../../components/table/expenses';
-import {StyledInput, SelectInput} from '../../components/textinput/styledTextInput';
-import {accounts, expensesData, impress} from '../../constants/data';
-
+import {impress} from '../../constants/data';
+import {delData} from '../../utility/fetcher';
+import {getViewData} from '../../lib/hooks';
+import Loader from '../../components/loader';
+import useAuth from '../../provider';
 
 
 export function Expenses(){
@@ -54,20 +57,40 @@ export function Expenses(){
     const { Option } = Select;
     const {RangePicker} = DatePicker;
 
-    
-    const [expenses, setExpenses] = useState(expensesData);
+    const { data, isLoading, isError, mutate } = getViewData('expense/');
+    const {token} = useAuth();
+    const [expenses, setExpenses] = useState([]);
     const classes = useStyles();
-    const [type, setType] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [filter, setFilter] = useState({date: [moment('01-01-2020', 'DD-MM-YYYY'), moment(new Date('09-12-2021'), 'DD-MM-YYYY')],transType: 'all'});
     const router = useRouter();
+
+    const dataLoaded = () => {
+        if(!isLoading && data){
+            
+            const expense = data;
+            if(expense){
+                setExpenses(expense);
+            }
+        }
+    }
+
+
+    useEffect(() => {
+        dataLoaded();
+    });
+
+    const del = async id => {
+        const {data, status, msg} = await delData('expense/delete',id,token)
+        openNotification(status, msg)
+        if(status == 'success') mutate(data);
+    }
 
 
     const onChange = (value, dateString) => {
         console.log('Selected Time: ', value);
         console.log('Formatted Selected Time: ', dateString);
     }
-      
+    
     const onOk = (value) => {
         console.log('onOk: ', value);
     }
@@ -80,16 +103,14 @@ export function Expenses(){
     }
 
 
-    const filter = () => (
-        <Space>
+    const filterView = () => (<Space>
             <Select defaultValue="all" onChange={handleChange} className="filter">
                 <Option value="all">All</Option>
                 <Option value="credit">Credit</Option>
                 <Option value="debit">Debit</Option>
                 <Option value="transfer">Transfer</Option>
             </Select>
-        </Space>
-    );
+        </Space>);
 
     const total = date => {
         let total = 0.0
@@ -101,19 +122,10 @@ export function Expenses(){
         return parseFloat(total).toFixed(2);
     }
 
-
-    const handleOk = async () => {
-        setLoading(true);
-        
-    };
     
-    const handleCancel = async () => {
-        setShowModal(false);
-    };
-
-    const handle = type => {
-        router.push('/expenses/new');
-    }
+    const handleCancel = async _ => setShowModal(false);
+    const handle = _ => router.push('/expenses/new');
+    
 
     return (
         <MainLayout title="Expenses">
@@ -131,28 +143,29 @@ export function Expenses(){
                     
                     </div>
                     <div id="right">
-                        <Button onClick={_ => handle('credit')} className={classes.credit}  >New Expenses <Add /> </Button>
+                        <Button onClick={_ => handle()} className={classes.credit}  >New Expenses <Add /> </Button>
                     </div>
                 </div>
-                <CustomScroll heightRelativeToParent="calc(100% - 90px)">
+                {!isLoading ? <CustomScroll heightRelativeToParent="calc(100% - 90px)">
                     <Paper id="transactions">
                         <header id="header">
-                            <h4>All Expenses</h4>
+                            <h4>All Transactions</h4>
                             <RangePicker
                                 className="date-sort"
                                 format="DD-MM-YYYY"
                                 onChange={onChange}
                                 onOk={onOk}
                                 id="date"
+                                defaultValue={filter.date}
                             />
-                            {filter()}
+                            {filterView()}
                             <Button className="elevated" onClick={_ => setOpen(!open)} className={classes.pdf} >Export as PDF 
                                 <FontAwesomeIcon icon="file-pdf" color="#ED213A" />
                             </Button>
                         </header>
-                        <ExpenseTable data={expenses} />
+                        <ExpenseTable data={expenses} filter={filter} actions={{del}}/>
                     </Paper>
-                </CustomScroll>
+                </CustomScroll>: isError ? <h1>Something Happened</h1>: <Loader />}
             </div>
         </MainLayout>
     )

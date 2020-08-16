@@ -505,9 +505,8 @@ hr{
 
 .detail-table-cont{
     padding: 15px;
-    width: 90%;
-    max-height: calc(100% - 50px);
-    height: calc(100% - 50px);
+    width: 100%;
+    
     table{
         width: 100%;
         padding: 15px;
@@ -601,6 +600,16 @@ hr{
             
             td{
                 padding: 5px;
+            }
+
+            .item-desc{
+                display: inline-block;
+                margin-right: 10px;
+
+                &:before {
+                    content: ' \2022';
+                    margin-right: 0.5em;
+                }
             }
 
         }

@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
         if (token) {
             setToken(token);
             const claim = await JwtDecode(token);
-            
             if (claim) {
                 setUser(claim.identity);
                 
@@ -53,7 +52,6 @@ export const AuthProvider = ({ children }) => {
             
             Cookies.set('token', token, { expires: 7 })
             const claim = JwtDecode(token);
-            setToken(token);
             if(claim) {
                 setUser(claim.identity);
             }

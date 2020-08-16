@@ -2,8 +2,7 @@
 .land-list{
     display: flex;
     justify-content: space-around;
-    height: calc(100% - 110px);
-    max-height: calc(100% - 110px);
+    padding: 50px 30px;
 }
 .new-cont-overlay{
     position: absolute;

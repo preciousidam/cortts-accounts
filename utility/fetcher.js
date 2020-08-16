@@ -1,7 +1,12 @@
 import {backend} from '../constants/url';
 
 
-export const getAccts = async (...args) => {
+const headers = {
+    'content-type': 'application/json',
+    'Accept': 'application/json',
+}
+
+export const getData = async (...args) => {
     
     const res = await fetch(...args,{
         method: 'GET',
@@ -16,10 +21,7 @@ export const setAcct = async (balance, name, number, sc, bank,token) => {
   
     const res = await fetch(`${backend}/api/accounts/create`,{
         method: 'POST',
-        headers: {
-            'Authorization': `bearer ${token}`,
-            'content-type': 'application/json',
-        },
+        headers: {...headers, Authorization: `Bearer ${token}`},
         body: JSON.stringify({balance, bank, name, number, sc})
     });
     const json = await res.json();
@@ -27,14 +29,11 @@ export const setAcct = async (balance, name, number, sc, bank,token) => {
     return json;
 }
 
-export const delAcct = async (id,token) => {
+export const delData = async (url,id,token) => {
     
-    const res = await fetch(`${backend}/api/accounts/delete`,{
+    const res = await fetch(`${backend}/api/${url}`,{
         method: 'POST',
-        headers: {
-            'Authorization': `bearer ${token}`,
-            'content-type': 'application/json',
-        },
+        headers: {...headers, Authorization: `Bearer ${token}`},
         body: JSON.stringify({id})
     });
     const json = await res.json();
@@ -42,15 +41,22 @@ export const delAcct = async (id,token) => {
     return json;
 }
 
-
 export const setTran = async (body,token) => {
-    console.log(body)
     const res = await fetch(`${backend}/api/transactions/create`,{
         method: 'POST',
-        headers: {
-            'Authorization': `bearer ${token}`,
-            'content-type': 'application/json',
-        },
+        headers: {...headers, Authorization: `Bearer ${token}`},
+        body: JSON.stringify(body)
+    });
+    const json = await res.json();
+
+    return json;
+}
+
+
+export const setData = async (id,body,token) => {
+    const res = await fetch(`${backend}/api/${id}`,{
+        method: 'POST',
+        headers: {...headers, Authorization: `Bearer ${token}`},
         body: JSON.stringify(body)
     });
     const json = await res.json();

@@ -1,26 +1,36 @@
 import React, {useState} from 'react';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
-import {DeleteOutline, Done, Alarm} from '@material-ui/icons';
+import {DeleteOutline, Done} from '@material-ui/icons';
 import CustomScroll from 'react-custom-scroll';
-import { DatePicker, Space, Checkbox } from 'antd';
+import { DatePicker, Checkbox } from 'antd';
 import moment from 'moment';
+import {useRouter} from 'next/router';
+
 
 import MainLayout from "../../layouts/mainLayout";
 import {StyledInput, SelectInput} from '../../components/textinput/styledTextInput';
 import {CommaFormatted} from '../../utility';
 import {ProtectRoute} from '../../utility/route';
-import {accounts, expensesData, impress, staff, category} from '../../constants/data';
-import { get } from 'js-cookie';
-
+import { impress, staff, category} from '../../constants/data';
+import {FooterWithButton} from '../../components/footer';
+import {setData} from '../../utility/fetcher';
+import useAuth from '../../provider';
+import {openNotification} from '../../components/notification';
 
 
 
 export function New() {
 
+    
     const [items, setItems] = useState([]);
     const ref = parseInt(new Date().getTime().toString().slice(6,12));
+    const options = staff.map(({id, name}) => ({value: id, text: name}));
+    const acct = [{value: 1, text: 'Impress'}];
+    const methods = [{value: 1, text: 'cash'},{value: 2, text: 'transfer'},{value: 3, text: 'cheque'},]
+    const cat = category.map(({id, name}) => ({value: id, text: name}));
+    const {token} = useAuth();
+    const router = useRouter();
+
 
     const handleAdd = (e) =>{
         let desc = document.getElementById('desc').value || '';
@@ -56,12 +66,27 @@ export function New() {
         console.log(date, dateString);
     }
 
-    const onCheck = e => console.log(e.target.checked)
+    const onCheck = e => console.log(e.target.checked);
 
-    const options = staff.map(({id, name}) => ({value: id, text: name}));
-    const acct = [{value: 1, text: 'Impress'}];
-    const methods = [{value: 1, text: 'cash'},{value: 2, text: 'transfer'},{value: 3, text: 'cheque'},]
-    const cat = category.map(({id, name}) => ({value: id, text: name}));
+    const save = async _ => {
+        const date = moment(new Date(), "DD-MM-YYYY").format('DD-MM-YYYY');
+        const amount = calcTotal();
+        const recipient = document.getElementById('recipient').value;
+        const account = document.getElementById('acct').value;
+        const method = document.getElementById('met').value;
+
+        const {msg, status} = await setData('expense/create',{date,items,ref,amount, recipient,account,method},token);
+
+        openNotification(status,msg);
+
+        if( status == 'success'){
+            router.push('/expenses');
+        }
+        
+    }
+
+    const discard = _ => router.push('/budget');
+    const optAct = [{text: 'Discard and Close', action: discard},{text: 'Save and Close', action: save},];
 
     const getCat = i => {
         let cat = category.find(({id}) => id == i);
@@ -71,7 +96,7 @@ export function New() {
     const calcTotal = _ => {
         let total = 0.00;
         items.forEach(({amount}) => total += amount);
-        return parseFloat(total).toFixed(2) || 0.00;
+        return parseFloat(total).toFixed(2) || '0.00';
     }
 
     const avalBal = _ => {
@@ -86,10 +111,10 @@ export function New() {
                 <div id='top'>
                     <div id="left">
                         <div className="float-left">
-                            <SelectInput options={options} defaultChoice="Choose Payee" />
+                            <SelectInput options={options} defaultChoice="Choose Payee" id="recipient" />
                         </div>
                         <div>
-                            <SelectInput value={1} options={acct} defaultChoice="Select Account" />
+                            <SelectInput value={1} options={acct} defaultChoice="Select Account" id="acct" />
                         </div>
                         <div>
                             <h5>Balance: &#8358; {CommaFormatted(avalBal())}</h5>
@@ -143,7 +168,7 @@ export function New() {
                                         <td>{i+1}</td>
                                         <td>{getCat(category_id)}</td>
                                         <td>{desc}</td>
-                                        <td>&#8358; {CommaFormatted(amount)}</td>
+                                        <td>&#8358; {CommaFormatted(amount.toFixed(2))}</td>
                                         <td><IconButton className="del" onClick={e => deleteitem(i)}><DeleteOutline  /></IconButton></td>
                                     </tr>))}
                                 
@@ -159,6 +184,7 @@ export function New() {
                         </table>
                     </div>
                 </CustomScroll>
+                <FooterWithButton action={optAct} />
             </div>
         </MainLayout>
     );
