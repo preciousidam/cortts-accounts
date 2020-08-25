@@ -15,13 +15,13 @@ export const AuthProvider = ({ children }) => {
 
     const loadUserFromCookies = async () => {
         const token = await Cookies.get('token');
-       
+        
         if (token) {
             setToken(token);
             const claim = await JwtDecode(token);
+            
             if (claim) {
-                setUser(claim.identity);
-                
+                setUser(claim.identity);  
             }
             
         }

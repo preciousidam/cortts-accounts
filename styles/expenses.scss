@@ -1,6 +1,8 @@
 #total-cont{
     display: flex;
-    flex-direction: column;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
 
     #total{
         font-size: 2vw;
@@ -65,7 +67,7 @@
         }
 
         .eighty{
-            width: 60%;
+            width: 50%;
         }
 
         .form-group{
@@ -84,4 +86,10 @@
             }
         }
     }
+}
+
+.seperate{
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
 }

@@ -187,6 +187,8 @@ export const banks = [
 
 export const impress = {balance: '245790.00'}
 
+export const company = [{value: 1, text: 'Cortts Real'},{value: 2, text: 'Cortts Limited'}]
+
 export const category = [
     {id: 1, name: 'Transportation'},
     {id: 2, name: 'Utility'},

@@ -11,7 +11,8 @@ import MainLayout from "../../layouts/mainLayout";
 import {StyledInput, SelectInput} from '../../components/textinput/styledTextInput';
 import {CommaFormatted} from '../../utility';
 import {ProtectRoute} from '../../utility/route';
-import { impress, staff, category} from '../../constants/data';
+import { impress, staff, category, company} from '../../constants/data';
+import {getViewData} from '../../lib/hooks';
 import {FooterWithButton} from '../../components/footer';
 import {setData} from '../../utility/fetcher';
 import useAuth from '../../provider';
@@ -36,10 +37,11 @@ export function New() {
         let desc = document.getElementById('desc').value || '';
         let category_id = document.getElementById('category').value || '';
         let amount = parseFloat(document.getElementById('amt').value);
+        let company = parseFloat(document.getElementById('company').value);
         
         
         if(desc != '' && cat != '' && amt != NaN){
-            setItems([...items,{desc,category_id, amount}]);
+            setItems([...items,{desc,category_id, amount, company}]);
             clearField();
         }
     }
@@ -48,6 +50,7 @@ export function New() {
         document.getElementById('desc').value = "";
         document.getElementById('category').value = "";
         document.getElementById('amt').value = "";
+        document.getElementById('company').value = "";
     }
 
     const deleteitem = (id) => {
@@ -93,16 +96,21 @@ export function New() {
         return cat.name;
     };
 
+    const getName = i => {
+        let cat = company.find(({value}) => parseInt(value) == i);
+        return cat ? cat.text : '';
+    };
+
     const calcTotal = _ => {
         let total = 0.00;
-        items.forEach(({amount}) => total += amount);
+        items.forEach(({amount}) => total += parseFloat((amount != undefined && amount != '')  ? amount : 0));
         return parseFloat(total).toFixed(2) || '0.00';
     }
 
     const avalBal = _ => {
         let bal = parseFloat(impress.balance) - parseFloat(calcTotal());
 
-        return bal.toFixed(2) || 0.00;
+        return bal.toFixed(2) || '0.00';
     }
     
     return (
@@ -158,17 +166,19 @@ export function New() {
                                     <th className="ten">Category</th>
                                     <th className="eighty">Description</th>
                                     <th className="five">Amount</th>
+                                    <th className="five">Company</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {items.map(({category_id, desc, amount}, i) => 
+                                {items.map(({category_id, desc, amount, company}, i) => 
                                     (<tr key={i}>
                                         <td><Checkbox className="all" onChange={onCheck}></Checkbox></td>
                                         <td>{i+1}</td>
                                         <td>{getCat(category_id)}</td>
                                         <td>{desc}</td>
                                         <td>&#8358; {CommaFormatted(amount.toFixed(2))}</td>
+                                        <td>{getName(company)}</td>
                                         <td><IconButton className="del" onClick={e => deleteitem(i)}><DeleteOutline  /></IconButton></td>
                                     </tr>))}
                                 
@@ -178,6 +188,7 @@ export function New() {
                                     <td><SelectInput id="category" options={cat} defaultChoice="select category" /></td>
                                     <td><StyledInput id="desc" placeholder="Description" type="text" /></td>
                                     <td><StyledInput id="amt" placeholder="amount" type="number" /></td>
+                                    <td><SelectInput id="company" defaultChoice="Company" options={company} /></td>
                                     <td><IconButton onClick={handleAdd} className="done"><Done /></IconButton></td>
                                 </tr>
                             </tbody>
