@@ -59,7 +59,7 @@ export const ExpenseTable = ({data, del}) => {
                         <tr key={id}>
                             <td>{i+1}</td>
                             <td>{date}</td>
-                            <td>{getName(recipient)}</td>
+                            <td>{!staff.isLoading?getName(recipient): ''}</td>
                             <td>{CommaFormatted(amount)} </td>
                             <td>{items[0].description}</td>
                             <td className="action-space">
