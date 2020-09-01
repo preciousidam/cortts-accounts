@@ -13,7 +13,7 @@ export const ExpenseTable = ({data, del}) => {
     const offset = 20;
     const router = useRouter();
     const text = "Are you sure you want to delete?"
-    const {data, isError, isLoading} = getViewData('routes/staff');
+    const staff = getViewData('routes/staff');
 
     const onChange = pag => {
         setPage(pag)
@@ -21,7 +21,7 @@ export const ExpenseTable = ({data, del}) => {
     const [upper,lower] = [(offset * page) - offset, page * offset];
 
     const getName = name => {
-        const st = data.find(({id}) => id == parseInt(name));
+        const st = staff.data.find(({id}) => id == parseInt(name));
         return st.name;
     }
 
@@ -43,7 +43,7 @@ export const ExpenseTable = ({data, del}) => {
 
     return (
         <div id="expense-table">
-            {!isLoading ? <table>
+            {!staff.isLoading ? <table>
                 <thead>
                     <tr>
                         <th>Sn</th>
