@@ -5,7 +5,7 @@ import {useRouter} from 'next/router';
 
 
 import {CommaFormatted} from '../../utility';
-import {staff} from '../../constants/data';
+import {getViewData} from '../../lib/hooks';
 
 export const ExpenseTable = ({data, del}) => {
 
@@ -13,6 +13,7 @@ export const ExpenseTable = ({data, del}) => {
     const offset = 20;
     const router = useRouter();
     const text = "Are you sure you want to delete?"
+    const {data, isError, isLoading} = getViewData('routes/staff');
 
     const onChange = pag => {
         setPage(pag)
@@ -20,7 +21,7 @@ export const ExpenseTable = ({data, del}) => {
     const [upper,lower] = [(offset * page) - offset, page * offset];
 
     const getName = name => {
-        const st = staff.find(({id}) => id == parseInt(name));
+        const st = data.find(({id}) => id == parseInt(name));
         return st.name;
     }
 
@@ -42,7 +43,7 @@ export const ExpenseTable = ({data, del}) => {
 
     return (
         <div id="expense-table">
-            <table>
+            {!isLoading ? <table>
                 <thead>
                     <tr>
                         <th>Sn</th>
@@ -70,7 +71,7 @@ export const ExpenseTable = ({data, del}) => {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </table>: null}
             <div className="pagination">
                 <Pagination current={page} defaultCurrent={1} total={data.length - 1} onChange={onChange} />
             </div>
