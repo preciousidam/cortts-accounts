@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import {DeleteOutline, Done} from '@material-ui/icons';
 import CustomScroll from 'react-custom-scroll';
-import { DatePicker, Checkbox } from 'antd';
+import { DatePicker, Checkbox, message, Popover, Button } from 'antd';
+import {PlusOutlined} from '@ant-design/icons';
 import moment from 'moment';
 import {useRouter} from 'next/router';
 
@@ -11,7 +12,7 @@ import MainLayout from "../../layouts/mainLayout";
 import {StyledInput, SelectInput} from '../../components/textinput/styledTextInput';
 import {CommaFormatted} from '../../utility';
 import {ProtectRoute} from '../../utility/route';
-import { impress, staff, category, company} from '../../constants/data';
+import { category, company} from '../../constants/data';
 import {getViewData} from '../../lib/hooks';
 import {FooterWithButton} from '../../components/footer';
 import {setData} from '../../utility/fetcher';
@@ -24,14 +25,26 @@ export function New() {
 
     
     const [items, setItems] = useState([]);
+    
     const ref = parseInt(new Date().getTime().toString().slice(6,12));
-    const options = staff.map(({id, name}) => ({value: id, text: name}));
-    const acct = [{value: 1, text: 'Impress'}];
+    
     const methods = [{value: 1, text: 'cash'},{value: 2, text: 'transfer'},{value: 3, text: 'cheque'},]
-    const cat = category.map(({id, name}) => ({value: id, text: name}));
     const {token} = useAuth();
     const router = useRouter();
+    const accounts = getViewData('expense/account/');
+    const staff = getViewData('routes/staff');
+    const categories = getViewData('routes/categories');
+    const [selectedAcct, setSelectedAcct] = useState(null);
+    const [processing, setProcessing] = useState(false);
 
+    useEffect(() => {
+        if (selectedAcct != null) return;
+        if(!accounts.isLoading && accounts.data) setSelectedAcct(accounts.data[0])
+    },[selectedAcct, accounts]);
+
+    let opt = accounts.isLoading ? [] : accounts.data.map(({id, name}) => ({text: name, value: id}));
+    let cat = categories.isLoading ? [] : categories.data.map(({id, title}) => ({text: title, value: id}));
+    let staffOpt = staff.isLoading ? [] : staff.data.map(({id, name}) => ({text: name, value: id}));
 
     const handleAdd = (e) =>{
         let desc = document.getElementById('desc').value || '';
@@ -44,6 +57,7 @@ export function New() {
             setItems([...items,{desc,category_id, amount, company}]);
             clearField();
         }
+        else message.warning('All field except company cannot be empty')
     }
 
     const clearField = () => {
@@ -58,12 +72,6 @@ export function New() {
         setItems(filter);
     }
 
-    const getTotal = () => {
-        let total = 0;
-
-        items.forEach( ({amount}) => total += amount);
-        return total;
-    }
 
     const onChange = (date, dateString) => {
         console.log(date, dateString);
@@ -78,6 +86,14 @@ export function New() {
         const account = document.getElementById('acct').value;
         const method = document.getElementById('met').value;
 
+        if (recipient == 0 || recipient == '0' || recipient == ''){
+            message.warning('Select a Payee');
+            return
+        }
+        if (account == 0 || account == '0' || account == ''){
+            message.warning('Select an expense account');
+            return
+        }
         const {msg, status} = await setData('expense/create',{date,items,ref,amount, recipient,account,method},token);
 
         openNotification(status,msg);
@@ -92,8 +108,8 @@ export function New() {
     const optAct = [{text: 'Discard and Close', action: discard},{text: 'Save and Close', action: save},];
 
     const getCat = i => {
-        let cat = category.find(({id}) => id == i);
-        return cat.name;
+        let selCat = cat.find(({value}) => value == i);
+        return selCat.text;
     };
 
     const getName = i => {
@@ -107,25 +123,72 @@ export function New() {
         return parseFloat(total).toFixed(2) || '0.00';
     }
 
-    const avalBal = _ => {
-        let bal = parseFloat(impress.balance) - parseFloat(calcTotal());
+    const selectAcct = aid => setSelectedAcct(accounts.data.find(({id})=> id == aid));
 
-        return bal.toFixed(2) || '0.00';
-    }
+    const categoryForm = (<div>
+        <StyledInput type="text" placeholder="category" id="cate" />
+        <Button loading={processing} type="primary" onClick={e => addCategory()}>Add</Button>
+    </div>)
+
+    const staffForm = (<div>
+        <StyledInput type="text" placeholder="name" id="staff" />
+        <Button loading={processing} type="primary" onClick={e => addStaff()}>Add</Button>
+    </div>)
     
+    const addCategory = async _ => {
+        setProcessing(true);
+        const title = document.getElementById('cate').value
+        const body = {title}
+        const {status, msg, data} = await setData('routes/category/create', body,token);
+        setProcessing(false);
+        if(status == 'success'){
+            categories.mutate([...categories.data,data]);
+            message.success(msg)
+        }
+        else message.error(msg)
+    }
+
+    const addStaff = async _ => {
+        setProcessing(true);
+        const name = document.getElementById('staff').value
+        const body = {name}
+        const {status, msg, data} = await setData('routes/staff/create', body,token);
+        setProcessing(false);
+        if(status == 'success'){
+            staff.mutate([...staff.data,data]);
+            message.success(msg)
+        }
+        else message.error(msg)
+    }
+
+
+
     return (
         <MainLayout title="New Expense" actionFooter={true}>
             <div className="body">
                 <div id='top'>
                     <div id="left">
                         <div className="float-left">
-                            <SelectInput options={options} defaultChoice="Choose Payee" id="recipient" />
+                            <SelectInput options={staffOpt} defaultChoice="Choose Payee" id="recipient" />
+                            <Popover 
+                                trigger='click'
+                                content={staffForm}
+                                placement="bottomRight"
+                            >
+                                <IconButton><PlusOutlined /></IconButton> 
+                            </Popover>
                         </div>
                         <div>
-                            <SelectInput value={1} options={acct} defaultChoice="Select Account" id="acct" />
+                            <SelectInput 
+                                value={selectedAcct ? selectedAcct.id : 0}
+                                onChange={e => selectAcct(e.target.value)}
+                                options={opt} 
+                                defaultChoice="Select Account" 
+                                id="acct" 
+                            />
                         </div>
                         <div>
-                            <h5>Balance: &#8358; {CommaFormatted(avalBal())}</h5>
+                            <h5>Balance: &#8358; {CommaFormatted(selectedAcct? selectedAcct.balance: '0.00')}</h5>
                         </div>
                     </div>
                     <div id="right">
@@ -185,7 +248,15 @@ export function New() {
                                 <tr key={1000000}>
                                     <td><Checkbox className="all" onChange={onCheck}></Checkbox></td>
                                     <td>{items.length+1}</td>
-                                    <td><SelectInput id="category" options={cat} defaultChoice="select category" /></td>
+                                    <td className="sBs">
+                                        <SelectInput id="category" options={cat} defaultChoice="select category" /> 
+                                        <Popover 
+                                            trigger='click'
+                                            content={categoryForm}
+                                        >
+                                            <IconButton><PlusOutlined /></IconButton> 
+                                        </Popover>
+                                    </td>
                                     <td><StyledInput id="desc" placeholder="Description" type="text" /></td>
                                     <td><StyledInput id="amt" placeholder="amount" type="number" /></td>
                                     <td><SelectInput id="company" defaultChoice="Company" options={company} /></td>

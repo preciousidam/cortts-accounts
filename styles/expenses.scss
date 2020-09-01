@@ -58,6 +58,19 @@
         td, th{
             padding: 5px;
         }
+        .sBs{
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+            button{
+                outline: none;
+                svg{
+                    width: 10px;
+                    height: 10px;
+                    color: $primary-green;
+                }
+            }
+        }
         .five{
             width: 10%;
         }
@@ -88,8 +101,32 @@
     }
 }
 
-.seperate{
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 10px;
+.dropForm{
+    .seperate{
+        padding-bottom: 10px;
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 10px;
+    }
+
+    .history{
+        margin: 10px 0 10px 0;
+        border-top: 1px solid #ccc;
+        
+    }
+}
+
+.float-left{
+    display: inline-flex !important;
+    flex-direction: row !important;
+    
+    .form-group{
+        margin: 0 0 0 20px !important;
+    }
+
+    button{
+        outline: none;
+        svg{
+            color: $primary-green;
+        }
+    }
 }

@@ -178,11 +178,13 @@ export const banks = [
     {text: 'Zenith Bank', value: 'zenith bank'},
     {text: 'Gauranty Trust Bank', value: 'gtbank'},
     {text: 'First Bank', value: 'first bank'},
-    {text: 'Zenith Bank', value: 'zenith bank'},
-    {text: 'Gauranty Trust Bank', value: 'gtbank'},
-    {text: 'Access Bank', value: 'access bank'},
-    {text: 'Zenith Bank', value: 'zenith bank'},
-    {text: 'Gauranty Trust Bank', value: 'gtbank'},
+    {text: 'Keystone Bank', value: 'Keystone bank'},
+    {text: 'Ecobank', value: 'ecobank'},
+    {text: 'Wema Bank', value: 'wema bank'},
+    {text: 'Fcmb Bank', value: 'fcmb bank'},
+    {text: 'Union Bank', value: 'union bank'},
+    {text: 'UBA Bank', value: 'uba bank'},
+    {text: 'Fidelity Bank', value: 'fidelity bank'},
 ];
 
 export const impress = {balance: '245790.00'}

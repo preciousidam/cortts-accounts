@@ -600,6 +600,16 @@ hr{
             
             td{
                 padding: 5px;
+                
+            }
+
+            .action-space{
+                display: inline-flex;
+                justify-content: space-evenly;
+
+                button{
+                    margin: 5px;
+                }
             }
 
             .item-desc{

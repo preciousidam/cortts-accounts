@@ -4,7 +4,7 @@ import CustomScroll from 'react-custom-scroll';
 import '../styles/styles.scss';
 
 export default function SideBar({children, min=false}){
-    const className = min ? 'col-lg-1' : 'col-lg-2';
+    const className = min ? 'col-sm-1' : 'col-sm-2';
     return(
         <aside className={`sidebar ${className} sidebar-area position-sticky`} id={min ? 'min': ''}>
             <div id="brand">

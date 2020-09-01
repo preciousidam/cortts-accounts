@@ -1,17 +1,18 @@
 import React, {useState} from 'react';
-import { Pagination } from 'antd';
+import { Button, Pagination, Popconfirm } from 'antd';
+import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {useRouter} from 'next/router';
 
 
 import {CommaFormatted} from '../../utility';
-import ActionButton from '../button/actionButtons';
 import {staff} from '../../constants/data';
 
-export const ExpenseTable = ({data, actions}) => {
+export const ExpenseTable = ({data, del}) => {
 
     const [page, setPage] = useState(1)
     const offset = 20;
     const router = useRouter();
+    const text = "Are you sure you want to delete?"
 
     const onChange = pag => {
         setPage(pag)
@@ -60,7 +61,12 @@ export const ExpenseTable = ({data, actions}) => {
                             <td>{getName(recipient)}</td>
                             <td>{CommaFormatted(amount)} </td>
                             <td>{items[0].description}</td>
-                            <td><ActionButton actions={{view: () => view(ref), del: _ => actions.del(id)}} /></td>
+                            <td className="action-space">
+                                <Button icon={<EditOutlined />} type="primary" onClick={e => router.push(`/expenses/${ref}`)} />
+                                <Popconfirm placement="top" title={text} onConfirm={_ => del(id)} okText="Yes" cancelText="No">
+                                    <Button icon={<DeleteOutlined />} type="primary" danger/>
+                                </Popconfirm> 
+                            </td>
                         </tr>
                     ))}
                 </tbody>

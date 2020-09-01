@@ -6,18 +6,26 @@ import Sidebar, {MinSideBar} from '../components/sidebar/sidebar';
 import Header from '../components/header/header';
 import '../styles/styles.scss';
 
-export default function MainLayout({children, title, actionFooter}){
+export default function MainLayout({children, title}){
 
     const [min, setMin] = useState(false);
-    //const [loggedIn, setLoggedIn] = useState(undefined);
+    
     const router = useRouter();
-    const className = min ? 'col-lg-11 max' : 'col-lg-10';
+    const className = min ? 'col-sm-11 max' : 'col-sm-10';
 
     const handleToogle = e => {
         e.preventDefault();
         setMin(!min);
     }
 
+    useEffect(() => {
+        window.addEventListener('resize', resizeHandler)
+    },[min]);
+
+    const resizeHandler = _ => {
+        if (window.innerWidth < 1000) setMin(true)
+        else setMin(false)
+    }
     
     return (
         <div className="main">
