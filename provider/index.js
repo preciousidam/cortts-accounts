@@ -1,9 +1,9 @@
 import React, {createContext, useState, useContext, useEffect} from 'react';
 import Cookies from 'js-cookie';
 import JwtDecode from 'jwt-decode';
-
-
 import {backend} from '../constants/url';
+import {refreshToken} from '../utility/fetcher';
+
 
 const AuthContext = createContext({});
 
@@ -14,11 +14,15 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(null);
 
     const loadUserFromCookies = async () => {
-        const token = await Cookies.get('token');
+        const refresh_token = Cookies.get('refresh_token');
+        const newToken =  await refreshToken(refresh_token);
+    
         
-        if (token) {
-            setToken(token);
-            const claim = await JwtDecode(token);
+        Cookies.set('token', newToken);
+        
+        if (newToken) {
+            setToken(newToken);
+            const claim = await JwtDecode(newToken);
             
             if (claim) {
                 setUser(claim.identity);  
@@ -30,8 +34,10 @@ export const AuthProvider = ({ children }) => {
     }
 
     useEffect(() => {
+        if (token != null)
+            return
         loadUserFromCookies();
-    }, []);
+    }, [token]);
 
     const login = async (email, password) => {
         
@@ -46,11 +52,13 @@ export const AuthProvider = ({ children }) => {
 
         const json = await res.json();
 
-        const {token} = await json;
+        const {token, refreshToken} = await json;
 
-        if (token) {
+        if (token && refreshToken) {
             
-            Cookies.set('token', token, { expires: 7 })
+            Cookies.set('token', token, { expires: 7 });
+            Cookies.set('refresh_token', refreshToken);
+            setToken(token);
             const claim = JwtDecode(token);
             if(claim) {
                 setUser(claim.identity);
@@ -64,6 +72,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         Cookies.remove('token');
+        Cookies.remove('refresh_token')
         setUser(null);
         setToken(null);
         return true;

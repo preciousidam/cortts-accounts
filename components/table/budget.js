@@ -29,10 +29,10 @@ export const BudgetTable = ({data, actions}) => {
         let date2 = new Date(y.date.split('-')[2],y.date.split('-')[1] - 1, y.date.split('-')[0]);
 
         if(date1 > date2){
-            return 1;
+            return -1;
         }
         if (date1 < date2){
-            return -1;
+            return 1;
         }
 
         return 0

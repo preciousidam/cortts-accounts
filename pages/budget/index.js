@@ -111,15 +111,6 @@ export function Budget() {
     }
 
 
-    const filterView = () => (<Space>
-            <Select defaultValue="all" onChange={handleChange} className="filter">
-                <Option value="all">All</Option>
-                <Option value="credit">Credit</Option>
-                <Option value="debit">Debit</Option>
-                <Option value="transfer">Transfer</Option>
-            </Select>
-        </Space>);
-
     const total = _ => {
         let total = 0.0
 
@@ -152,7 +143,7 @@ export function Budget() {
                                 id="date"
                                 defaultValue={filter.date}
                             />
-                            {filterView()}
+        
                             <Button className="elevated" onClick={_ => setOpen(!open)} className={classes.pdf} >Export as PDF 
                                 <FontAwesomeIcon icon="file-pdf" color="#ED213A" />
                             </Button>

@@ -130,3 +130,25 @@
         }
     }
 }
+
+
+
+
+//////////////////////////////SUMMARY//////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
+#summary-cont{
+    width: 100%;
+    padding: 30px;
+    
+    .wrapped{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
+        margin: 0 0 0 30px;
+    }
+}
+

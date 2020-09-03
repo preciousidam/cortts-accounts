@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Paper from '@material-ui/core/Paper';
-import { Select, Space, DatePicker, Popover, Button as Btn } from 'antd';
+import { DatePicker, Popover, Button as Btn } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,7 +11,6 @@ import {useRouter} from 'next/router';
 import moment from 'moment';
 import {openNotification} from '../../components/notification';
 import {MoreVertOutlined} from '@material-ui/icons';
-import { LoadingOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 
 
@@ -58,9 +57,8 @@ export function Expenses(){
           },
     });
 
-    const { Option } = Select;
+
     const {RangePicker} = DatePicker;
-    const categories = getViewData('routes/categories');
     const accounts = getViewData('expense/account/');
     const { data, isLoading, isError, mutate } = getViewData('expense/');  
     let opt = accounts.isLoading ? [] : accounts.data.map(({id, name}) => ({text: name, value: id}))
@@ -68,8 +66,7 @@ export function Expenses(){
     const [expenses, setExpenses] = useState([]);
     const classes = useStyles();
     const [acct, setAcct] = useState(null);
-    const [formVisible, setFormVisible] = useState(false);
-    const [filter, setFilter] = useState({date: [moment('01-01-2020', 'DD-MM-YYYY'), moment(new Date('09-12-2021'), 'DD-MM-YYYY')],transType: 'all'});
+    const [filter, setFilter] = useState({date: [moment('01-01-2020', 'DD-MM-YYYY'), moment(new Date('09-12-2021'), 'DD-MM-YYYY')],category: 'all'});
     const router = useRouter();
     const [formData, setFormdata] = useState({title: '', balance: 0.00});
     const [processing, setProcessing] = useState(false);
@@ -83,7 +80,7 @@ export function Expenses(){
         }
     }
 
-    const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+
     useEffect(() => {
         if(!accounts.isLoading && accounts.data && acct == null) setAcct(accounts.data[0])
         if (!accounts.isLoading && accounts.data && acct != null){
@@ -105,8 +102,7 @@ export function Expenses(){
 
 
     const onChange = (value, dateString) => {
-        console.log('Selected Time: ', value);
-        console.log('Formatted Selected Time: ', dateString);
+        setFilter({...filter,date: value})
     }
     
     const onOk = (value) => {
@@ -114,17 +110,9 @@ export function Expenses(){
     }
 
     const handleChange = value => {
-        console.log(value)
+        setFilter({...filter, category: value});
     }
 
-
-    const filterView = () => (<Space>
-            <Select size={200} defaultValue={0} onChange={handleChange} className="filter">
-                <Option value={0}>All Categories</Option>
-                {categories.data.map(({id, title}) => 
-                    <Option key={id} value={id}>{title}</Option>)}
-            </Select>
-        </Space>);
 
     const total = _ => {
         let total = 0.0
@@ -249,9 +237,9 @@ export function Expenses(){
                                 id="date"
                                 defaultValue={filter.date}
                             />
-                            {filterView()}
-                            <Button className="elevated" onClick={_ => setOpen(!open)} className={classes.pdf} >View Report 
-                                <FontAwesomeIcon icon="file-pdf" color="#ED213A" />
+                            
+                            <Button className="elevated" onClick={_ => router.push('/expenses/summary')} className={classes.pdf} >View Report 
+                                <FontAwesomeIcon icon="file-pdf" color="#ED213A" style={{margin: 5}} />
                             </Button>
                         </header>
                         <ExpenseTable data={expenses.filter(({account}) => account == acct.id)} filter={filter} del={del}/>

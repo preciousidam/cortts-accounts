@@ -99,7 +99,7 @@ export function Id(){
     const onChange = (value, dateString) => {
         //console.log('Selected Time: ', value);
         //console.log('Formatted Selected Time: ', dateString);
-        setFilter({...filter,date: value})
+        setFilter({...filter,date: value});
     }
       
     const onOk = (value) => {
@@ -107,7 +107,7 @@ export function Id(){
     }
 
     const handleChange = value => {
-        setFilter({...filter, transType: value})
+        setFilter({...filter, transType: value});
     }
 
 

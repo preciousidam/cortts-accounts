@@ -63,3 +63,16 @@ export const setData = async (id,body,token) => {
 
     return json;
 }
+
+export const refreshToken = async (refresh_token) => {
+    
+    const res = await fetch(`${backend}/api/auth/refresh`,{
+        method: 'POST',
+        headers: {...headers, Authorization: `Bearer ${refresh_token}`},
+        body: JSON.stringify({token})
+    });
+    const json = await res.json();
+    const {token} = await json;
+    
+    return token;
+}

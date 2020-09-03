@@ -2,12 +2,13 @@ import React, {useState} from 'react';
 import { Button, Pagination, Popconfirm } from 'antd';
 import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import {useRouter} from 'next/router';
+import moment from 'moment';
 
 
 import {CommaFormatted} from '../../utility';
 import {getViewData} from '../../lib/hooks';
 
-export const ExpenseTable = ({data, del}) => {
+export const ExpenseTable = ({data, del, filter}) => {
 
     const [page, setPage] = useState(1)
     const offset = 20;
@@ -30,16 +31,17 @@ export const ExpenseTable = ({data, del}) => {
         let date2 = new Date(y.date.split('-')[2],y.date.split('-')[1] - 1, y.date.split('-')[0]);
 
         if(date1 > date2){
-            return 1;
+            return -1;
         }
         if (date1 < date2){
-            return -1;
+            return 1;
         }
 
         return 0
     }
+
+    const applyFilter = data => data.filter(({date}) => filter.date[0] <= moment(date, 'DD-MM-YYYY') && filter.date[1] >= moment(date, 'DD-MM-YYYY'));
     
-    const view = id => router.push(`/expenses/${id}`);
 
     return (
         <div id="expense-table">
@@ -55,7 +57,7 @@ export const ExpenseTable = ({data, del}) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.slice(upper,lower).sort(sortdata).map(({id,date, amount, items, recipient, ref}, i) => (
+                    {applyFilter(data.slice(upper,lower)).sort(sortdata).map(({id,date, amount, items, recipient, ref}, i) => (
                         <tr key={id}>
                             <td>{i+1}</td>
                             <td>{date}</td>
