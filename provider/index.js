@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
 
         const json = await res.json();
 
-        const {token, refreshToken} = await json;
+        const {token, refreshToken, status, msg} = await json;
 
         if (token && refreshToken) {
             
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
             return true;
         }
 
-        return false;
+        return {status, msg};
     }
 
     const logout = () => {

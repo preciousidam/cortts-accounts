@@ -13,7 +13,7 @@ import {AuthProvider} from '../provider';
 
 config.autoAddCss = false;
  
-import { faBars, faSpinner, faCheck, faEnvelope, faListAlt,
+import { faBars, faSpinner, faCheck, faEnvelope, faListAlt, faPlus,
         faHome, faHandshake, faCarAlt, faBed, faToilet, faBath, 
         faMapMarkedAlt, faCouch, faMoneyBillWaveAlt, faCoins,
         faCalendarAlt, faMoneyCheckAlt, faFilePdf, faExchangeAlt, 
@@ -25,7 +25,7 @@ import {fab,faEtsy} from '@fortawesome/free-brands-svg-icons';
 library.add(faBars,faSpinner, faCheck, faEnvelope, faListAlt, faHome, faHandshake, faCalendarAlt,
            faCarAlt, faBed, faToilet, faBath, faMapMarkedAlt, faCouch, faMoneyBillWaveAlt, faCoins, 
            faMoneyCheckAlt, faFilePdf, faExchangeAlt, faCreditCard, faMoneyBillAlt, faEllipsisH,
-           faCaretDown, faArrowUp, faArrowDown, faEtsy);
+           faCaretDown, faArrowUp, faArrowDown, faEtsy, faPlus,);
 
 Router.events.on('routeChangeStart', () => NProgress.start()); 
 Router.events.on('routeChangeComplete', () => NProgress.done()); 

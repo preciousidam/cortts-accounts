@@ -7,6 +7,7 @@ import moment from 'moment';
 
 import {CommaFormatted} from '../../utility';
 import {getViewData} from '../../lib/hooks';
+import Money from '../money';
 
 export const ExpenseTable = ({data, del, filter}) => {
 
@@ -62,7 +63,7 @@ export const ExpenseTable = ({data, del, filter}) => {
                             <td>{i+1}</td>
                             <td>{date}</td>
                             <td>{!staff.isLoading?getName(recipient): ''}</td>
-                            <td>{CommaFormatted(amount)} </td>
+                            <td><Money amount={CommaFormatted(amount)} /></td>
                             <td>{items[0].description}</td>
                             <td className="action-space">
                                 <Button icon={<EditOutlined />} type="primary" onClick={e => router.push(`/expenses/${ref}`)} />

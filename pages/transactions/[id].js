@@ -62,7 +62,7 @@ export function Id(){
     const router = useRouter();
 
     const { id } = router.query;
-    const { data, isLoading, isError, mutate } = getViewData(`accounts/${id}`);
+    const { data: account, isLoading, isError, mutate } = getViewData(`accounts/${id}`);
 
     const [trans, setTrans] = useState([]);
     const classes = useStyles();
@@ -75,8 +75,8 @@ export function Id(){
 
 
     const dataLoaded = () => {
-        if(!isLoading && data){
-            const transactions = data?.transactions;
+        if(!isLoading && account){
+            const transactions = account?.transactions;
             if(transactions)
                 setTrans(transactions);
         }
@@ -123,8 +123,8 @@ export function Id(){
     const total = typ => {
         let total = 0.0
 
-        if (data){
-            data.transactions.forEach(({transType,amount}) => {
+        if (account){
+            account.transactions.forEach(({transType,amount}) => {
                 if(transType == typ )
                     total += parseFloat(amount);
             });
@@ -135,7 +135,7 @@ export function Id(){
 
     const handleOk = async () => {
         setLoading(true);
-        const acct_id = data.id;
+        const acct_id = account.id;
         const beneficiary = document.getElementById('bene').value;
         const dat = date;
         const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
@@ -144,7 +144,7 @@ export function Id(){
 
         const {msg, status, data} = await setTran({acct_id,beneficiary,date: date,amount,description, transType}, token);
         if( status == 'success'){
-            mutate({...data, transactions: data});
+            mutate({...account, transactions: data});
             clear();
         }
         openNotification(status,msg);
@@ -180,7 +180,7 @@ export function Id(){
                         </div>
                         <div>
                             <span>Balance</span>
-                            <p>&#8358; {CommaFormatted(data? data.balance : '0.00')}</p>
+                            <p>&#8358; {CommaFormatted(account? account.balance : '0.00')}</p>
                         </div>
                     
                     </div>
@@ -216,8 +216,8 @@ export function Id(){
                     confirmLoading={loading}
                     onCancel={handleCancel}
                 >
-                    {type == 'debit' ? <DebitForm acct={data} setDate={setDate} cheTran={cheTran} setCheTran={setCheTran} /> 
-                                    : <CreditForm acct={data} setDate={setDate} cheTran={cheTran} setCheTran={setCheTran} />}
+                    {type == 'debit' ? <DebitForm acct={account} setDate={setDate} cheTran={cheTran} setCheTran={setCheTran} /> 
+                                    : <CreditForm acct={account} setDate={setDate} cheTran={cheTran} setCheTran={setCheTran} />}
                 </Modal>
             </div>
         </MainLayout>

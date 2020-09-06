@@ -39,7 +39,7 @@ export function Transactions(){
         },
     });
 
-    const { data, isLoading, isError, mutate } = getViewData('accounts/');
+    const { data: accounts, isLoading, isError, mutate } = getViewData('accounts/');
     const {token} = useAuth();
     
     const [active, setActive] = useState(null);
@@ -48,10 +48,10 @@ export function Transactions(){
     const classes = useStyles();
 
     const dataLoaded = () => {
-        if(!isLoading && data){
+        if(!isLoading && accounts){
             if(active == null)
-                setActive(data[0].id);
-            const acct = data.find(({id}) => id == active);
+                setActive(accounts[0].id);
+            const acct = accounts.find(({id}) => id == active);
             const transactions = acct?.transactions;
             if(transactions){
                 setTrans(transactions);
@@ -114,7 +114,7 @@ export function Transactions(){
                 </div>
                 { !isLoading ? (<CustomScroll heightRelativeToParent="calc(100% - 65px)">
                     <div id="acct-list">
-                        {data.map(({balance, bank,name, id}, index) => 
+                        {accounts.map(({balance, bank,name, id}, index) => 
                             (<Paper 
                                 className={`acct-bal ${id == active? 'active':''}`}
                                 onClick={e => {

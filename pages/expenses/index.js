@@ -59,9 +59,9 @@ export function Expenses(){
 
 
     const {RangePicker} = DatePicker;
-    const accounts = getViewData('expense/account/');
+    const {data: accounts, mutate: accountMutate, isLoading: fetchingAcct} = getViewData('expense/account/');
     const { data, isLoading, isError, mutate } = getViewData('expense/');  
-    let opt = accounts.isLoading ? [] : accounts.data.map(({id, name}) => ({text: name, value: id}))
+    let opt = fetchingAcct ? [] : accounts.map(({id, name}) => ({text: name, value: id}))
     const {token} = useAuth();
     const [expenses, setExpenses] = useState([]);
     const classes = useStyles();
@@ -82,9 +82,9 @@ export function Expenses(){
 
 
     useEffect(() => {
-        if(!accounts.isLoading && accounts.data && acct == null) setAcct(accounts.data[0])
-        if (!accounts.isLoading && accounts.data && acct != null){
-            let acc = accounts.data.find(({id}) => acct.id == id);
+        if(accounts && acct == null) setAcct(accounts[0])
+        if (accounts && acct != null){
+            let acc = accounts.find(({id}) => acct.id == id);
             setAcct(acc);
         }
     },[acct, accounts]);
@@ -109,10 +109,6 @@ export function Expenses(){
         console.log('onOk: ', value);
     }
 
-    const handleChange = value => {
-        setFilter({...filter, category: value});
-    }
-
 
     const total = _ => {
         let total = 0.0
@@ -125,9 +121,8 @@ export function Expenses(){
     }
 
     
-    const handleCancel = async _ => setShowModal(false);
     const handle = _ => router.push('/expenses/new');
-    const selectAcct = aid => setAcct(accounts.data.find(({id}) => aid == id))
+    const selectAcct = aid => setAcct(accounts.find(({id}) => aid == id))
     const createAcct = async _ => {
         setProcessing(true);
         const body = {...formData, balance: parseFloat(formData.balance).toFixed(2)}
@@ -135,7 +130,7 @@ export function Expenses(){
         openNotification(status,msg);
         setProcessing(false);
         if(status == 'success') 
-            accounts.mutate([...accounts.data,data]);
+            accountMutate([...accounts,data]);
     }
 
     const fundAcct = async _ => {
@@ -145,8 +140,8 @@ export function Expenses(){
         openNotification(status,msg);
         setProcessing(false);
         if(status == 'success'){
-            let arr = accounts.data.filter(({id}) => id != data.id)
-            accounts.mutate([...arr,data]);
+            let arr = accounts.filter(({id}) => id != data.id)
+            accountMutate([...arr,data]);
             //setAcct(data);
         }
     }

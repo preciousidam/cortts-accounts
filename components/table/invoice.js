@@ -1,8 +1,13 @@
 import React, {useState} from 'react';
-import { Pagination } from 'antd';
-import Paper from '@material-ui/core/Paper';
-import CustomScroll from 'react-custom-scroll';
+import { Button, Pagination, Popconfirm } from 'antd';
+import {DeleteOutlined, EditOutlined} from '@ant-design/icons';
+import {useRouter} from 'next/router';
+import moment from 'moment';
 
+
+import {CommaFormatted} from '../../utility';
+import {getViewData} from '../../lib/hooks';
+import Money from '../money';
 import ActionButton from '../button/actionButtons';
 
 
@@ -23,8 +28,7 @@ export default function InvoiceTable({data}){
 
     const [upper,lower] = [(offset * page) - offset, page * offset];
     return (
-        <Paper className="detail-table-cont">
-            <CustomScroll heightRelativeToParent="calc(100% - 60px)">
+        <div className="detail-table-cont">
                 <table>
                     <thead>
                         <tr>
@@ -35,6 +39,7 @@ export default function InvoiceTable({data}){
                             <th>Flat</th>
                             <th>Items</th>
                             <th>Amount</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -48,17 +53,17 @@ export default function InvoiceTable({data}){
                                     <td>{recipient}</td>
                                     <td>{flat}</td>
                                     <td>{format(items)}</td>
-                                    <td>&#8358; {total}</td>
+                                    <td><Money amount={total} /></td>
+                                    <td></td>
                                     <td><ActionButton /></td>
                                 </tr>
                             ))}
                         </tbody>
                     
                 </table>
-            </CustomScroll>
             <div className="pagination">
                 <Pagination current={page} defaultCurrent={1} total={data.length} onChange={onChange} />
             </div>
-        </Paper>
+        </div>
     );
 }

@@ -140,7 +140,7 @@
 
 #summary-cont{
     width: 100%;
-    padding: 30px;
+    padding: 30px 50px;
     
     .wrapped{
         display: flex;
@@ -149,6 +149,26 @@
         justify-content: flex-start;
         align-items: center;
         margin: 0 0 0 30px;
+    }
+
+    .items-cont{
+        padding: 30px;
+        margin-top: 30px;
+
+        table{
+            width: 80%;
+            margin-top: 40px;
+
+            td{
+                padding: 5px;
+            }
+
+            .total{
+                font-weight: bold;
+                border-top: solid 1px #000000;
+                border-bottom: solid 1px #000000;
+            }
+        }
     }
 }
 
