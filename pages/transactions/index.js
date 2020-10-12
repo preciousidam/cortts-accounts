@@ -1,9 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Paper from '@material-ui/core/Paper';
-import { Avatar, Menu, Dropdown, notification, Spin } from 'antd';
-import {CheckCircleOutlined, CloseCircleOutlined} from '@ant-design/icons';
-import { StickyContainer, Sticky } from 'react-sticky';
-import useAuth from '../../provider';
+import { Avatar, Menu, Dropdown } from 'antd';
+import { StickyContainer } from 'react-sticky';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
@@ -19,9 +17,7 @@ import {banks} from '../../constants/data';
 import {CommaFormatted} from '../../utility';
 import {BarChart, PieChart} from '../../components/charts';
 import {SelectInput, StyledInput} from '../../components/textinput/styledTextInput';
-import {getViewData} from '../../lib/hooks';
-import {setAcct, delData} from '../../utility/fetcher';
-import Loader from '../../components/loader';
+import {useAccounts} from '../../provider';
 
 
 
@@ -39,48 +35,13 @@ export function Transactions(){
         },
     });
 
-    const { data: accounts, isLoading, isError, mutate } = getViewData('accounts/');
-    const {token} = useAuth();
+    const {selectedAcct, done, transactions, add, del, accounts, setSelected} = useAccounts();
     
-    const [active, setActive] = useState(null);
-    const [trans, setTrans] = useState([]);
     const [open, setOpen] = useState(false)
     const classes = useStyles();
 
-    const dataLoaded = () => {
-        if(!isLoading && accounts){
-            if(active == null)
-                setActive(accounts[0].id);
-            const acct = accounts.find(({id}) => id == active);
-            const transactions = acct?.transactions;
-            if(transactions){
-                setTrans(transactions);
-            }
-        }
-    }
-
-
-    useEffect(() => {
-            dataLoaded();
-        });
-
-    const openNotification = (status,msg) => {
-        notification.open({
-          message: status,
-          description: msg,
-          icon: status == 'success' ? <CheckCircleOutlined style={{ color: '#00ff00' }} /> : <CloseCircleOutlined style={{ color: '#ff0000' }} />,
-        });
-    };
     
-    const del = async (rid) => {
-        const {msg, status, data} = await delData('accounts/delete',rid,token);
-        if( status == 'success')
-            mutate(data);
-        openNotification(status,msg);
-        setActive(data[0].id);
-    }
-    
-    const add = async (e) => {
+    const onClick = async (e) => {
         const name = document.getElementById('name').value;
         const number = document.getElementById('number').value;
         const balance = parseFloat(document.getElementById('balance').value).toFixed(2);
@@ -88,11 +49,8 @@ export function Transactions(){
         const sc = document.getElementById('sc').value;
 
         
-        const {msg, status, data} = await setAcct(balance,name,number,sc,bank,token);
-        if( status == 'success')
-            mutate(data);
-        openNotification(status,msg);
-        clear();
+        let result = await add({balance,name,number,sc,bank});
+        if(result) clear();
     }
 
     const clear = () => {
@@ -112,13 +70,13 @@ export function Transactions(){
                     <h4>Overview</h4>
                     <Button onClick={_ => setOpen(!open)} className={classes.root}  >New Account <Add /></Button>
                 </div>
-                { !isLoading ? (<CustomScroll heightRelativeToParent="calc(100% - 65px)">
+                { (done && accounts) && (<CustomScroll heightRelativeToParent="calc(100% - 65px)">
                     <div id="acct-list">
                         {accounts.map(({balance, bank,name, id}, index) => 
                             (<Paper 
-                                className={`acct-bal ${id == active? 'active':''}`}
+                                className={`acct-bal ${id == selectedAcct?.id? 'active':''}`}
                                 onClick={e => {
-                                    setActive(id)
+                                    setSelected(id)
                                 }}
                                 key={id}
                             >   
@@ -136,7 +94,7 @@ export function Transactions(){
                                 <h4 className="h4">Recent Transactions</h4>
                                 <Paper id="recent-trans">
                                     <StickyContainer className="sticky">
-                                        {trans.reverse().map(({id, ...rest}) => (
+                                        {transactions.reverse().map(({id, ...rest}) => (
                                             <TransactionElement key={id} {...rest}/>
                                         ))}
                                     </StickyContainer>
@@ -166,7 +124,7 @@ export function Transactions(){
                                             <StickyContainer className="sticky">
                                                 <div>
                                                     <div>
-                                                        <Summary data={trans}/>
+                                                        <Summary data={transactions}/>
                                                     </div>
                                                 </div>
                                             </StickyContainer>
@@ -176,7 +134,7 @@ export function Transactions(){
                             </div>
                         </div>
                     </div>
-                </CustomScroll>): isError ? (<p>Something happended</p>): <Loader /> }
+                </CustomScroll>)}
                 {open && <div className="new-cont-overlay">
                     <div className="new-form">
                         <header>
@@ -189,7 +147,7 @@ export function Transactions(){
                             <SelectInput placeholder="Bank" id="bank" type="text" options={banks} defaultChoice="Select Bank" />
                             <StyledInput placeholder="Sort Code" id="sc" type="text" />
                             <StyledInput placeholder="Opening Balance" id="balance" type="number" />
-                            <button className="btn btn-success add" onClick={add}>Save Account</button>
+                            <button className="btn btn-success add" onClick={onClick}>Save Account</button>
                         </div>
                     </div>
                 </div>}

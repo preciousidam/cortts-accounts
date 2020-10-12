@@ -1,3 +1,5 @@
+import React, {} from 'react';
+
 
 export function StyledInput({type, label, placeholder, id, ...rest}){
     return (
@@ -8,9 +10,9 @@ export function StyledInput({type, label, placeholder, id, ...rest}){
     );
 }
 
-export function SelectInput({defaultChoice, options, label, id, ...rest}){
+export function SelectInput({defaultChoice, containerStyle, options, label, id, ...rest}){
     return (
-        <div className="form-group styled">
+        <div className="form-group styled" style={containerStyle}>
             {label && <label className="label" htmlFor={id}>{label}</label>}
             <select className="custom-select" id={id} {...rest}>
                 <option key={1000} value={0}>{defaultChoice}</option>

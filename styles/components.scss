@@ -211,6 +211,7 @@ hr{
     display: inline-flex;
     flex-direction: row;
     align-items: center;
+    cursor: pointer;
     
     p{
         margin: 0 0 0 10px;
@@ -620,6 +621,25 @@ hr{
 
         }
 
+        .vacant{
+            color: $text-color-dark-active;
+            font-weight: bold;
+            font-size: 12px;
+            background-color: red;
+            border-radius: 3px;
+            padding: 5px;
+            text-transform: uppercase;
+        }
+        .occupied{
+            color: $text-color-dark-active;
+            font-weight: bold;
+            font-size: 12px;
+            background-color: $primary-green;
+            border-radius: 3px;
+            padding: 5px;
+            text-transform: uppercase;
+        }
+
         thead{
             background-color: rgba($primary-blue, 0.2);
         }
@@ -646,5 +666,43 @@ hr{
 
     span{
         font-weight: bold;
+    }
+}
+
+
+////////////////////DYNAMIC SELECT//////////////////
+///////////////////////////////////////////////////
+
+.dynamic{
+    display: flex !important;
+    flex-direction: column !important;
+    
+    .form-group{
+        margin: 0 !important;
+    }
+
+    span{
+        color: $primary-green;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+}
+
+.dynamicWithButton{
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    
+    .form-group{
+        margin-bottom: 0 !important;
+    }
+
+    button{
+        outline: none !important;
+        svg{
+            width: 10px !important;
+            height: 10px !important;
+            color: $primary-green !important;
+        }
     }
 }

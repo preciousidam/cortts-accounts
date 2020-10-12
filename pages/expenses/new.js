@@ -18,6 +18,7 @@ import {FooterWithButton} from '../../components/footer';
 import {setData} from '../../utility/fetcher';
 import useAuth from '../../provider';
 import {openNotification} from '../../components/notification';
+import {NameFromId} from '../../components/datatext';
 
 
 
@@ -104,7 +105,7 @@ export function New() {
         
     }
 
-    const discard = _ => router.push('/budget');
+    const discard = _ => router.push('/expenses');
     const optAct = [{text: 'Discard and Close', action: discard},{text: 'Save and Close', action: save},];
 
     const getCat = i => {
@@ -238,7 +239,7 @@ export function New() {
                                     (<tr key={i}>
                                         <td><Checkbox className="all" onChange={onCheck}></Checkbox></td>
                                         <td>{i+1}</td>
-                                        <td>{getCat(category_id)}</td>
+                                        <td><NameFromId id={category_id} link="routes/categories" /></td>
                                         <td>{desc}</td>
                                         <td>&#8358; {CommaFormatted(amount.toFixed(2))}</td>
                                         <td>{getName(company)}</td>

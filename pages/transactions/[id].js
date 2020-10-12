@@ -19,6 +19,7 @@ import {getViewData} from '../../lib/hooks';
 import useAuth from '../../provider';
 import {setTran} from '../../utility/fetcher';
 import Loader from '../../components/loader';
+import {useAccounts} from '../../provider';
 
 
 
@@ -57,14 +58,8 @@ export function Id(){
     const { Option } = Select;
     const {RangePicker} = DatePicker;
     
-    const {token} = useAuth();
-
-    const router = useRouter();
-
-    const { id } = router.query;
-    const { data: account, isLoading, isError, mutate } = getViewData(`accounts/${id}`);
-
-    const [trans, setTrans] = useState([]);
+    const { selectedAcct: account, done, transactions, addTransaction } = useAccounts();
+    
     const classes = useStyles();
     const [type, setType] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -73,27 +68,6 @@ export function Id(){
     const [cheTran, setCheTran] = useState('cheque');
     const [filter, setFilter] = useState({date: [moment('01-01-2020', 'DD-MM-YYYY'), moment(new Date('09-12-2021'), 'DD-MM-YYYY')],transType: 'all'});
 
-
-    const dataLoaded = () => {
-        if(!isLoading && account){
-            const transactions = account?.transactions;
-            if(transactions)
-                setTrans(transactions);
-        }
-    }
-
-
-    useEffect(() => {
-        dataLoaded();
-    });
-
-    const openNotification = (status,msg) => {
-        notification.open({
-          message: status,
-          description: msg,
-          icon: status == 'success' ? <CheckCircleOutlined style={{ color: '#00ff00' }} /> : <CloseCircleOutlined style={{ color: '#ff0000' }} />,
-        });
-    };
 
 
     const onChange = (value, dateString) => {
@@ -123,8 +97,8 @@ export function Id(){
     const total = typ => {
         let total = 0.0
 
-        if (account){
-            account.transactions.forEach(({transType,amount}) => {
+        if (transactions){
+            transactions.forEach(({transType,amount}) => {
                 if(transType == typ )
                     total += parseFloat(amount);
             });
@@ -137,28 +111,23 @@ export function Id(){
         setLoading(true);
         const acct_id = account.id;
         const beneficiary = document.getElementById('bene').value;
-        const dat = date;
         const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
         const description = `${document.getElementById('description').value} via ${cheTran}`;
         const transType = type
 
-        const {msg, status, data} = await setTran({acct_id,beneficiary,date: date,amount,description, transType}, token);
-        if( status == 'success'){
-            mutate({...account, transactions: data});
+        const result = addTransaction({acct_id,beneficiary,date,amount,description, transType});
+        if( result){
             clear();
+            setLoading(false);
+            setShowModal(false);
         }
-        openNotification(status,msg);
-        setLoading(false);
-        setShowModal(false);
     };
 
     const clear = () => {
         document.getElementsByTagName('input').value = ""
     }
     
-    const handleCancel = async () => {
-        setShowModal(false);
-    };
+    const handleCancel = async () => setShowModal(false);
 
     const handle = type => {
         setType(type);
@@ -180,7 +149,7 @@ export function Id(){
                         </div>
                         <div>
                             <span>Balance</span>
-                            <p>&#8358; {CommaFormatted(account? account.balance : '0.00')}</p>
+                            <p>&#8358; {CommaFormatted(account?.balance || '0.00')}</p>
                         </div>
                     
                     </div>
@@ -189,7 +158,7 @@ export function Id(){
                         <Button onClick={_ => handle('credit')} className={classes.credit}  >Credit </Button>
                     </div>
                 </div>
-                {!isLoading ? <CustomScroll heightRelativeToParent="calc(100% - 90px)">
+                { (done && transactions) && <CustomScroll heightRelativeToParent="calc(100% - 90px)">
                     <Paper id="transactions">
                         <header id="header">
                             <h4>All Transactions</h4>
@@ -206,9 +175,9 @@ export function Id(){
                                 <FontAwesomeIcon icon="file-pdf" color="#ED213A" />
                             </Button>
                         </header>
-                        <TransTable data={trans} filter={filter} />
+                        <TransTable data={transactions} filter={filter} />
                     </Paper>
-                </CustomScroll>: isError ? <h1>Something Happened</h1>: <Loader />}
+                </CustomScroll>}
                 <Modal
                     title={`${type == 'credit'? 'Credit': 'Debit'} Transaction`}
                     visible={showModal}

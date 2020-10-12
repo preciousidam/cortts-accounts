@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Paper from '@material-ui/core/Paper';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
@@ -11,15 +11,24 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import MainLayout from "../../layouts/mainLayout";
 import {getAllFlats, getFlatDetails} from '../../lib/flats';
-import {Form} from '../../components/forms/flatForm';
 import {ProtectRoute} from '../../utility/route';
+import { getViewData } from '../../lib/hooks';
+import Loader from '../../components/loader';
 
 
-export function Flats({flatDetails}) {
+export function Flats(props) {
     
     const {TabPane} = Tabs;
     const router = useRouter();
+    const {flat} = router.query;
     const [edit, setEdit] = useState(false);
+    const {data, isLoading, isError, mutate} = getViewData(`flats/${flat}`);
+    const {data: landlord, isLoading: isL} = getViewData(`landlords/${data?.landlord}`);
+    const {data: tenant, isLoading: isT} = getViewData(`tenants/${data?.tenant}`);
+
+    useEffect(() => {
+        console.log(data)
+    },[data]);
 
     const renderTabBar = (props, DefaultTabBar) => (
         <Sticky bottomOffset={80}>
@@ -34,23 +43,22 @@ export function Flats({flatDetails}) {
     if (router.isFallback) (<div>Loading...</div>)
 
     return (
-        <MainLayout title={`Flat ${flatDetails.flat}`}>
+        <MainLayout title={`Flat ${data?.name}`}>
             <div className="body">
                 <div className="container-fluid flat-details-cont">
-                    { edit == false? (<Paper className="container flat" >
+                {!isLoading ? <Paper className="container flat" >
                         <StickyContainer className="sticky">
                             <Tabs defaultActiveKey="1" renderTabBar={renderTabBar}>
                                 <TabPane tab="Basic" key="1">
-                                    {basicDetail(flatDetails)}
+                                    {basicDetail(data)}
                                 </TabPane>
                                 <TabPane tab="Information" key="2">
-                                    {info(flatDetails)}
+                                    {info(landlord, tenant)}
                                 </TabPane>
                             </Tabs>
                         </StickyContainer>
-                    </Paper>): 
-                    <Form close={showForm} details={flatDetails} showSaveBtn={false} />}
-                    {aside(flatDetails, showForm)}
+                    </Paper> : isError? <p>Something happened can not load data</p>: <Loader />}
+                    {aside(data, showForm)}
                 </div>     
             </div>
         </MainLayout>
@@ -59,69 +67,53 @@ export function Flats({flatDetails}) {
 
 export default ProtectRoute(Flats);
 
-export async function getStaticPaths(){
-    const paths = getAllFlats();
-    return {
-        paths,
-        fallback: false,
-    }
-}
-
-export async function getStaticProps({ params }) {
-    const flatDetails = getFlatDetails(params.flat);
-    
-    return {
-        props: {flatDetails}
-    }
-}
-
 
 export const basicDetail = (detail) => (
     <div id="basic">
-        <h4>Flat {detail.flat} <span className={detail.status.toLowerCase()}>{detail.status}</span></h4>
+        <h4>Flat {detail.name} <span className={detail.status.toLowerCase()}>{detail.status}</span></h4>
         <div className="row room"> 
             <div className="col-3">
                 <p><FontAwesomeIcon icon="bed" size='lg' /> Bedroom</p>
-                <span>{detail.beds}</span>
+                <span>{detail?.noOfBed}</span>
             </div>
             <div className="col-3">
                 <p><FontAwesomeIcon icon="bath" size='lg' /> Bathroom</p>
-                <span>{detail.baths}</span>
+                <span>{detail?.noOfBath}</span>
             </div>
             <div className="col-3">
                 <p><FontAwesomeIcon icon="toilet" size='lg' /> Toilet</p>
-                <span>{detail.toilet}</span>
+                <span>{detail?.noOfToilet}</span>
             </div>
             <div className="col-3">
                 <p><FontAwesomeIcon icon="car-alt" size='lg' /> Car Park</p>
-                <span>{detail.park}</span>
+                <span>{detail?.noOfPark}</span>
             </div>
         </div>
         <hr />
         <div className=" row lower">
             <div className="col-4">
                 <span><ApartmentOutlined /> Property</span>
-                <p>{detail.property}</p>
+                <p>{detail?.prop}</p>
             </div>
             <div className="col-4">
                 <span><FontAwesomeIcon icon="map-marked-alt" /> Address</span>
-                <p>{detail.address}</p>
+                <p>{detail?.address}</p>
             </div>
             <div className="col-4">
                 <span><FontAwesomeIcon icon="couch" /> Furnished</span>
-                <p>{detail.furnished}</p>
+                <p>{detail?.furnished? 'Yes': 'No'}</p>
             </div>
             <div className="col-4">
                 <span><FontAwesomeIcon icon="money-bill-wave-alt" /> Rent</span>
-                <p>&#8358;{detail.rent}</p>
+                <p>&#8358;{detail?.rent}</p>
             </div>
             <div className="col-4">
                 <span><FontAwesomeIcon icon="coins" /> Service Charge</span>
-                <p>&#8358;{detail.charge}</p>
+                <p>&#8358;{detail['serv_charge'] || ''}</p>
             </div>
             <div className="col-4">
                 <span><FontAwesomeIcon icon="calendar-alt" size='lg' /> Tenancy Period</span>
-                <p>{detail.tenacy}</p>
+                <p>{detail?.period}</p>
             </div>
             
         </div>
@@ -133,30 +125,30 @@ export const basicDetail = (detail) => (
 );
 
 
-export const info = ({landlord, tenant}) => (
+export const info = (landlord, tenant) => (
     <div id="info">
         <div id="landlord-info">
             <h5>Landload Information</h5>
             <div className="row">
                 <div className="col-4">
                     <span>Name</span>
-                    <p>{landlord.name}</p>
+                    <p>{landlord?.name}</p>
                 </div>
                 <div className="col-4">
                     <span>Email</span>
-                    <p>{landlord.email}</p>
+                    <p>{landlord?.email}</p>
                 </div>
                 <div className="col-4">
                     <span>Phone</span>
-                    <p>{landlord.phone}</p>
+                    <p>{landlord?.phone}</p>
                 </div>
                 <div className="col-4">
                     <span>Contact</span>
-                    <p>{landlord.cp}</p>
+                    <p>{landlord?.contactPerson}</p>
                 </div>
                 <div className="col-4">
                     <span>Address</span>
-                    <p>{landlord.address}</p>
+                    <p>{landlord?.address}</p>
                 </div>
             </div>
         </div>
@@ -166,23 +158,23 @@ export const info = ({landlord, tenant}) => (
             <div className="row">
                 <div className="col-4">
                     <span>Name</span>
-                    <p>{tenant.name}</p>
+                    <p>{tenant?.name}</p>
                 </div>
                 <div className="col-4">
                     <span>Email</span>
-                    <p>{tenant.email}</p>
+                    <p>{tenant?.email}</p>
                 </div>
                 <div className="col-4">
                     <span>Phone</span>
-                    <p>{tenant.phone}</p>
+                    <p>{tenant?.phone}</p>
                 </div>
                 <div className="col-4">
                     <span>Contact</span>
-                    <p>{tenant.cp}</p>
+                    <p>{tenant?.contactPerson}</p>
                 </div>
                 <div className="col-4">
                     <span>Address</span>
-                    <p>{tenant.address}</p>
+                    <p>{tenant?.address}</p>
                 </div>
             </div>
         </div>
@@ -204,7 +196,7 @@ export const aside = (flatDetails, edit) => (
                     <p className="no">AM6</p>
                     <Link href="AM6">
                         <a>
-                            <p>{flatDetails.beds} Bedroom</p>
+                            <p>{flatDetails?.beds} Bedroom</p>
                             <span>Olympic Tower</span>
                         </a>
                     </Link>
@@ -214,7 +206,7 @@ export const aside = (flatDetails, edit) => (
                     <p className="no">AM6</p>
                     <Link href="AM6">
                         <a>
-                            <p>{flatDetails.beds} Bedroom</p>
+                            <p>{flatDetails?.beds} Bedroom</p>
                             <span>Olympic Tower</span>
                         </a>
                     </Link>
@@ -223,7 +215,7 @@ export const aside = (flatDetails, edit) => (
                     <p className="no">AM6</p>
                     <Link href="AM6">
                         <a>
-                            <p>{flatDetails.beds} Bedroom</p>
+                            <p>{flatDetails?.beds} Bedroom</p>
                             <span>Olympic Tower</span>
                         </a>
                     </Link>
@@ -232,7 +224,7 @@ export const aside = (flatDetails, edit) => (
                     <p className="no">AM6</p>
                     <Link href="AM6">
                         <a>
-                            <p>{flatDetails.beds} Bedroom</p>
+                            <p>{flatDetails?.beds} Bedroom</p>
                             <span>Olympic Tower</span>
                         </a>
                     </Link>
