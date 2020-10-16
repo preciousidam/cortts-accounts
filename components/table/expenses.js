@@ -8,6 +8,7 @@ import moment from 'moment';
 import {CommaFormatted} from '../../utility';
 import {getViewData} from '../../lib/hooks';
 import Money from '../money';
+import {NameFromId} from '../datatext';
 
 export const ExpenseTable = ({data, del, filter}) => {
 
@@ -15,17 +16,12 @@ export const ExpenseTable = ({data, del, filter}) => {
     const offset = 20;
     const router = useRouter();
     const text = "Are you sure you want to delete?"
-    const staff = getViewData('routes/staff');
 
     const onChange = pag => {
         setPage(pag)
     };
     const [upper,lower] = [(offset * page) - offset, page * offset];
 
-    const getName = name => {
-        const st = staff.data.find(({id}) => id == parseInt(name));
-        return st.name;
-    }
 
     const sortdata = (x,y) =>{
         let date1 = new Date(x.date.split('-')[2],x.date.split('-')[1] - 1, x.date.split('-')[0]);
@@ -46,7 +42,7 @@ export const ExpenseTable = ({data, del, filter}) => {
 
     return (
         <div id="expense-table">
-            {!staff.isLoading ? <table>
+            <table>
                 <thead>
                     <tr>
                         <th>Sn</th>
@@ -62,7 +58,7 @@ export const ExpenseTable = ({data, del, filter}) => {
                         <tr key={id}>
                             <td>{i+1}</td>
                             <td>{date}</td>
-                            <td>{!staff.isLoading?getName(recipient): ''}</td>
+                            <td><NameFromId id={recipient} link="routes/staff" /></td>
                             <td><Money amount={CommaFormatted(amount)} /></td>
                             <td>{items[0].description}</td>
                             <td className="action-space">
@@ -74,7 +70,7 @@ export const ExpenseTable = ({data, del, filter}) => {
                         </tr>
                     ))}
                 </tbody>
-            </table>: null}
+            </table>
             <div className="pagination">
                 <Pagination current={page} defaultCurrent={1} total={data.length - 1} onChange={onChange} />
             </div>

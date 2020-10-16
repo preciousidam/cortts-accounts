@@ -2,8 +2,7 @@ import React, {useState, useEffect} from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import {DeleteOutline, Done} from '@material-ui/icons';
 import CustomScroll from 'react-custom-scroll';
-import { DatePicker, Checkbox, message, Popover, Button } from 'antd';
-import {PlusOutlined} from '@ant-design/icons';
+import { DatePicker, Checkbox, Button } from 'antd';
 import moment from 'moment';
 import {useRouter} from 'next/router';
 
@@ -19,7 +18,42 @@ import {setData} from '../../utility/fetcher';
 import useAuth from '../../provider';
 import {openNotification} from '../../components/notification';
 import Loader from '../../components/loader';
+import {NameFromId} from '../../components/datatext'; 
+import {withSwr, withDynamicData} from '../../utility/hoc';
 
+
+const Accounts = withSwr(SelectInput, 'expense/account/');
+
+
+const categoryForm = ({add, loading}) => {
+    const [title, setTitle] = useState('');
+
+    const onClick = _ => {
+        add({title});
+        setTitle('');
+    }
+    return (<div>
+        <StyledInput type="text" placeholder="category" id="cate" value={title} onChange={e => setTitle(e.target.value)} />
+        <Button loading={loading} type="primary" onClick={onClick}>Add</Button>
+    </div>)
+}
+
+
+const staffForm = ({add, loading}) => {
+    const [name, setName] = useState('');
+
+    const onClick = _ => {
+        add({name});
+        setName('');
+    }
+    return (<div>
+        <StyledInput type="text" placeholder="name" id="staff" value={name} onChange={e => setName(e.target.value)} />
+        <Button loading={loading} type="primary" onClick={onClick}>Add</Button>
+    </div>)
+}
+
+const Staff = withDynamicData(staffForm, 'routes/staff/');
+const Categories = withDynamicData(categoryForm, 'routes/categories/');
 
 
 export function Id() {
@@ -27,7 +61,6 @@ export function Id() {
     
     const [items, setItems] = useState([]);
     const [editing, setEditing] = useState(null);
-    let ref = null;
     const methods = [{value: 1, text: 'cash'},{value: 2, text: 'transfer'},{value: 3, text: 'cheque'},]
     const {token} = useAuth();
     const router = useRouter();
@@ -35,19 +68,8 @@ export function Id() {
     const [acct, setAcct] = useState(null);
     const [deletedItem, setDeletedItem] = useState([]);
     const accounts = getViewData('expense/account/');
-    const staff = getViewData('routes/staff');
-    const categories = getViewData('routes/categories');
     const {data,isError,isLoading} = getViewData(`expense/${id}`);
-    const [processing, setProcessing] = useState(false);
-
-    useEffect(() => {
-        if (acct != null) return;
-        if(!accounts.isLoading && accounts.data) setAcct(accounts.data[0])
-    },[acct, accounts]);
-
-    let opt = accounts.isLoading ? [] : accounts.data.map(({id, name}) => ({text: name, value: id}));
-    let cat = categories.isLoading ? [] : categories.data.map(({id, title}) => ({text: title, value: id}));
-    let staffOpt = staff.isLoading ? [] : staff.data.map(({id, name}) => ({text: name, value: id}));
+    
 
     const dataLoaded = () => {
         if(!isLoading && data ){
@@ -112,10 +134,6 @@ export function Id() {
     const discard = _ => router.push('/budget');
     const optAct = [{text: 'Discard and Close', action: discard},{text: 'Save and Close', action: save},];
 
-    const getCat = i => {
-        let selCat = cat.find(({value}) => value == i);
-        return selCat ? selCat.text : '';
-    };
 
     const getName = i => {
         let cat = cp.find(({value}) => parseInt(value) == i);
@@ -143,65 +161,23 @@ export function Id() {
 
     const selectAcct = aid => setAcct(accounts.data.find(({id})=> id == aid));
 
-    const categoryForm = (<div>
-        <StyledInput type="text" placeholder="category" id="cate" />
-        <Button loading={processing} type="primary" onClick={e => addCategory()}>Add</Button>
-    </div>)
-
-    const staffForm = (<div>
-        <StyledInput type="text" placeholder="name" id="staff" />
-        <Button loading={processing} type="primary" onClick={e => addStaff()}>Add</Button>
-    </div>)
-    
-    const addCategory = async _ => {
-        setProcessing(true);
-        const title = document.getElementById('cate').value
-        const body = {title}
-        const {status, msg, data} = await setData('routes/category/create', body,token);
-        setProcessing(false);
-        if(status == 'success'){
-            categories.mutate([...categories.data,data]);
-            message.success(msg)
-        }
-        else message.error(msg)
-    }
-
-    const addStaff = async _ => {
-        setProcessing(true);
-        const name = document.getElementById('staff').value
-        const body = {name}
-        const {status, msg, data} = await setData('routes/staff/create', body,token);
-        setProcessing(false);
-        if(status == 'success'){
-            staff.mutate([...staff.data,data]);
-            message.success(msg)
-        }
-        else message.error(msg)
-    }
     
     return (
         <MainLayout title="New Expense" actionFooter={true}>
             <div className="body">
                 <div id='top'>
                     <div id="left">
-                        <div className="float-left">
-                            <SelectInput 
+                        
+                            <Staff 
                                 value={data ? data.recipient : 0 } 
-                                options={staffOpt} 
+                                button
                                 defaultChoice="Choose Payee" 
-                                id="recipient" 
+                                id="recipient"
+                                containerStyle={{margin: 0}}
                             />
-                            <Popover 
-                                trigger='click'
-                                content={staffForm}
-                                placement="bottomRight"
-                            >
-                                <IconButton><PlusOutlined /></IconButton> 
-                            </Popover>
-                        </div>
+                        
                         <div>
-                            <SelectInput 
-                                options={opt} 
+                            <Accounts  
                                 onChange={e => selectAcct(e.target.value)} 
                                 value={!isLoading && data ? data.account : null} 
                                 defaultChoice="expense acct"
@@ -268,19 +244,13 @@ export function Id() {
                                                     <td><Checkbox className="all" onChange={onCheck}></Checkbox></td>
                                                     <td>{i+1}</td>
                                                     <td className="sBs">
-                                                        <SelectInput 
+                                                        <Categories 
                                                             onChange={value => onTextChange(value, 'category')} 
                                                             value={items[editing].category || ''} 
                                                             id="category" 
-                                                            options={cat} 
-                                                            defaultChoice="select category" 
+                                                            defaultChoice="select category"
+                                                            button
                                                         />
-                                                        <Popover 
-                                                            trigger='click'
-                                                            content={categoryForm}
-                                                        >
-                                                            <IconButton><PlusOutlined /></IconButton> 
-                                                        </Popover>
                                                     </td>
                                                     <td>
                                                         <StyledInput 
@@ -315,7 +285,7 @@ export function Id() {
                                             return (<tr onClick={_ => setEditing(i)} key={i}>
                                                         <td><Checkbox className="all" onChange={onCheck}></Checkbox></td>
                                                         <td>{i+1}</td>
-                                                        <td>{getCat(category)}</td>
+                                                        <td><NameFromId id={category} link="routes/categories" /></td>
                                                         <td>{description}</td>
                                                         <td>&#8358; {CommaFormatted(parseFloat(amount).toFixed(2))}</td>
                                                         <td>{getName(company)}</td>

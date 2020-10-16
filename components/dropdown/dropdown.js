@@ -30,7 +30,7 @@ export const ProfileDropdown = ({links}) =>{
     const {logout, user} = useAuth();
 
     const menu = _ => (<Menu>
-          {links.map((x,i) => <Menu.Item key={1} className="drop-link" key={i} ><a>{x}</a></Menu.Item>)}
+          {links.map((x,i) => <Menu.Item key={i} className="drop-link" key={i} ><a>{x}</a></Menu.Item>)}
           <Menu.Item onClick={_ => logout()} key={10}>logout</Menu.Item>
       </Menu>)
 
