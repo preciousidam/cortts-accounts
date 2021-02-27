@@ -1,8 +1,6 @@
 import React, {useState, Suspense} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Paper from '@material-ui/core/Paper';
-import {CloseOutlined} from '@material-ui/icons';
-import IconButton from '@material-ui/core/IconButton';
 import CustomScroll from 'react-custom-scroll';
 import { Breadcrumb, DatePicker, Button as Btn } from 'antd';
 import Button from '@material-ui/core/Button';
@@ -13,7 +11,6 @@ import MainLayout from "../../layouts/mainLayout";
 import CreateForm from '../../components/forms/flatForm';
 import {ProtectRoute} from '../../utility/route';
 import {hoc} from '../../utility/hoc';
-import useAuth from '../../provider';
 
 const Table = hoc(FlatsTable, `flats/`);
 const Form = hoc(CreateForm, `flats/create`);
@@ -34,9 +31,7 @@ export function Apartments() {
     const classes = useStyles();                        
     
     const [open, setOpen] = useState(false)
-    const [newData, setNewData] = useState(null);
-    const {token} = useAuth();
-
+    
     const renderBreadcrumb = _ => (<Breadcrumb>
         <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
         <Breadcrumb.Item>Apartments</Breadcrumb.Item>
@@ -59,7 +54,7 @@ export function Apartments() {
                         {!open && <header id="header">
                             <h4> All Apartments </h4>
                         </header>}
-                        {!open ? <Table newData={newData} />: <Form close={_ => setOpen(false)} />}
+                        {!open ? <Table />: <Form close={_ => setOpen(false)} />}
                     </Paper>
                 </CustomScroll>
             </div>

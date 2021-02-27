@@ -9,98 +9,95 @@ import {useRouter} from 'next/router';
 
 
 import MainLayout from "../../layouts/mainLayout";
-import {StyledInput, SelectInput} from '../../components/textinput/styledTextInput';
+import {StyledInput, SelectInput, DataSelectInput} from '../../components/textinput/styledTextInput';
 import {CommaFormatted} from '../../utility';
 import {ProtectRoute} from '../../utility/route';
-import { category, company} from '../../constants/data';
 import {getViewData} from '../../lib/hooks';
 import {FooterWithButton} from '../../components/footer';
 import {setData} from '../../utility/fetcher';
-import useAuth from '../../provider';
 import {openNotification} from '../../components/notification';
 import {NameFromId} from '../../components/datatext';
+import { mutate } from 'swr';
+import Money from '../../components/money';
 
-
+export const Category = DataSelectInput('categories/');
+export const Company = DataSelectInput('companies/');
+export const Staff = DataSelectInput('staff/');
+export const Account = DataSelectInput('accounts/expenses/');
 
 export function New() {
-
     
     const [items, setItems] = useState([]);
+    const [details, setDetails] = useState({});
+    const [item, setItem] = useState({});
+    const onChangeText = e => {
+        
+        let value = e.target.value;
+        let name = e.target.name;
+        
+        setItem(prev => ({...prev, [name]: value}))
+    }
     
-    const ref = parseInt(new Date().getTime().toString().slice(6,12));
-    
-    const methods = [{value: 1, text: 'cash'},{value: 2, text: 'transfer'},{value: 3, text: 'cheque'},]
-    const {token} = useAuth();
+    const onCategory = e => {
+        setItem(prev => ({...prev, category: e}))
+    }
+
+    const onCompany = e => {
+        setItem(prev => ({...prev, company: e}))
+    }
+
+    const methods = [{value: 1, text: 'Cash'},{value: 2, text: 'Transfer'},{value: 3, text: 'Cheque'},]
     const router = useRouter();
-    const accounts = getViewData('expense/account/');
-    const staff = getViewData('routes/staff');
-    const categories = getViewData('routes/categories');
-    const [selectedAcct, setSelectedAcct] = useState(null);
+
+
     const [processing, setProcessing] = useState(false);
 
-    useEffect(() => {
-        if (selectedAcct != null) return;
-        if(!accounts.isLoading && accounts.data) setSelectedAcct(accounts.data[0])
-    },[selectedAcct, accounts]);
-
-    let opt = accounts.isLoading ? [] : accounts.data.map(({id, name}) => ({text: name, value: id}));
-    let cat = categories.isLoading ? [] : categories.data.map(({id, title}) => ({text: title, value: id}));
-    let staffOpt = staff.isLoading ? [] : staff.data.map(({id, name}) => ({text: name, value: id}));
-
+    
     const handleAdd = (e) =>{
-        let desc = document.getElementById('desc').value || '';
-        let category_id = document.getElementById('category').value || '';
-        let amount = parseFloat(document.getElementById('amt').value);
-        let company = parseFloat(document.getElementById('company').value);
-        
-        
-        if(desc != '' && cat != '' && amt != NaN){
-            setItems([...items,{desc,category_id, amount, company}]);
-            clearField();
+        if(!item.description || !item.category || !item.amount){
+            message.warning('All field except company cannot be empty');
+            return;
         }
-        else message.warning('All field except company cannot be empty')
+        setItems(prev => ([...prev,item]));
+        
     }
 
-    const clearField = () => {
-        document.getElementById('desc').value = "";
-        document.getElementById('category').value = "";
-        document.getElementById('amt').value = "";
-        document.getElementById('company').value = "";
-    }
+    useEffect(() => {
+        setItem({});
+        setDetails(prev => ({...prev, items}))
+    }, [items])
 
     const deleteitem = (id) => {
         const filter = items.filter((x,i) => i != id);
         setItems(filter);
     }
 
-
     const onChange = (date, dateString) => {
-        console.log(date, dateString);
+        setDetails(prev => ({...prev, date: dateString}));
     }
 
     const onCheck = e => console.log(e.target.checked);
 
     const save = async _ => {
-        const date = moment(new Date(), "DD-MM-YYYY").format('DD-MM-YYYY');
-        const amount = calcTotal();
-        const recipient = document.getElementById('recipient').value;
-        const account = document.getElementById('acct').value;
-        const method = document.getElementById('met').value;
+        const date = moment(new Date(), "YYYY-MM-DD").format('YYYY-MM-DD');
+        console.log(details)
 
-        if (recipient == 0 || recipient == '0' || recipient == ''){
+        if (!details.recipient){
             message.warning('Select a Payee');
             return
         }
-        if (account == 0 || account == '0' || account == ''){
+        if (!details.account){
             message.warning('Select an expense account');
             return
         }
-        const {msg, status} = await setData('expense/create',{date,items,ref,amount, recipient,account,method},token);
-
-        openNotification(status,msg);
-
-        if( status == 'success'){
+        const {data, status} = await setData('expenses/',{...details, date: details.date || date });
+        if( status === 201 || status === 200){
+            openNotification('Expenses', "Data was save successfully", 'success');
             router.push('/expenses');
+            return;
+        }
+        for (let item in data){
+            openNotification(item.toUpperCase(), data[item]);
         }
         
     }
@@ -108,15 +105,6 @@ export function New() {
     const discard = _ => router.push('/expenses');
     const optAct = [{text: 'Discard and Close', action: discard},{text: 'Save and Close', action: save},];
 
-    const getCat = i => {
-        let selCat = cat.find(({value}) => value == i);
-        return selCat.text;
-    };
-
-    const getName = i => {
-        let cat = company.find(({value}) => parseInt(value) == i);
-        return cat ? cat.text : '';
-    };
 
     const calcTotal = _ => {
         let total = 0.00;
@@ -124,7 +112,7 @@ export function New() {
         return parseFloat(total).toFixed(2) || '0.00';
     }
 
-    const selectAcct = aid => setSelectedAcct(accounts.data.find(({id})=> id == aid));
+    const selectAcct = aid => setDetails(prev => ({...prev, account: aid}))
 
     const categoryForm = (<div>
         <StyledInput type="text" placeholder="category" id="cate" />
@@ -140,28 +128,31 @@ export function New() {
         setProcessing(true);
         const title = document.getElementById('cate').value
         const body = {title}
-        const {status, msg, data} = await setData('routes/category/create', body,token);
+        const {status, data} = await setData('categories/', body);
         setProcessing(false);
-        if(status == 'success'){
-            categories.mutate([...categories.data,data]);
-            message.success(msg)
+        if(status === 201 || status === 200){
+            message.success("Category Added")
+            mutate('categories/');
+            return;
         }
-        else message.error(msg)
+        for (let item in data)
+            message.error(data[item]);
     }
 
     const addStaff = async _ => {
         setProcessing(true);
         const name = document.getElementById('staff').value
         const body = {name}
-        const {status, msg, data} = await setData('routes/staff/create', body,token);
+        const {status, data} = await setData('staff/', body);
         setProcessing(false);
-        if(status == 'success'){
-            staff.mutate([...staff.data,data]);
-            message.success(msg)
+        if(status === 201 || status === 200){
+            message.success("Name Added")
+            mutate('staff/');
+            return;
         }
-        else message.error(msg)
+        for (let item in data)
+            message.error(data[item]);
     }
-
 
 
     return (
@@ -170,7 +161,10 @@ export function New() {
                 <div id='top'>
                     <div id="left">
                         <div className="float-left">
-                            <SelectInput options={staffOpt} defaultChoice="Choose Payee" id="recipient" />
+                            <Staff 
+                                onChange={e => setDetails(prev => ({...prev, recipient: e}))}
+                                value={details?.recipient}
+                            />
                             <Popover 
                                 trigger='click'
                                 content={staffForm}
@@ -180,22 +174,19 @@ export function New() {
                             </Popover>
                         </div>
                         <div>
-                            <SelectInput 
-                                value={selectedAcct ? selectedAcct.id : 0}
-                                onChange={e => selectAcct(e.target.value)}
-                                options={opt} 
-                                defaultChoice="Select Account" 
-                                id="acct" 
+                            <Account
+                                onChange={selectAcct}
+                                value={details?.account}
                             />
                         </div>
                         <div>
-                            <h5>Balance: &#8358; {CommaFormatted(selectedAcct? selectedAcct.balance: '0.00')}</h5>
+                            <h5>Balance: {details?.account && <Balance id={details?.account} />}</h5>
                         </div>
                     </div>
                     <div id="right">
                         <div id="total-cont">
                             <span>Amount</span>
-                            <h4 id="total">&#8358; {CommaFormatted(calcTotal())}</h4>
+                            <h6 id="total">&#8358; {CommaFormatted(calcTotal())}</h6>
                         </div>
                     </div>
                 </div>
@@ -206,19 +197,25 @@ export function New() {
                                 <span>Payment Date</span>
                                 <DatePicker 
                                     onChange={onChange}
-                                    format="DD-MM-YYYY" 
-                                    defaultValue={moment(new Date(), 'MM-DD-YYYY')} 
+                                    format="YYYY-MM-DD" 
+                                    defaultValue={moment(new Date(), 'YYYY-MM-DD')}
+                                    value={details?.date}
                                 />
                             </div>
                             <div id="method">
                                 <span>Payment Method</span>
-                                <SelectInput options={methods} defaultChoice="select method" id="met" />
+                                <SelectInput 
+                                    options={methods} 
+                                    defaultChoice="select method" 
+                                    id="met"
+                                    value={details?.pay_method}
+                                    onChange={e => setDetails(prev => ({...prev, pay_method: e}))}
+                                />
                             </div>
                         </div>
                         
                         <div id="ref-cont">
-                            <span>Ref No#</span>
-                            <StyledInput placeholder='ref' type="text" value={ref} id="ref" />
+                            
                         </div>
                     </div>
                     <div id="new-main" className="container-fluid">
@@ -235,14 +232,14 @@ export function New() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {items.map(({category_id, desc, amount, company}, i) => 
+                                {items.map(({category, description, amount, company}, i) => 
                                     (<tr key={i}>
                                         <td><Checkbox className="all" onChange={onCheck}></Checkbox></td>
                                         <td>{i+1}</td>
-                                        <td><NameFromId id={category_id} link="routes/categories" /></td>
-                                        <td>{desc}</td>
-                                        <td>&#8358; {CommaFormatted(amount.toFixed(2))}</td>
-                                        <td>{getName(company)}</td>
+                                        <td><NameFromId id={category} link="categories" /></td>
+                                        <td>{description}</td>
+                                        <td>&#8358; {CommaFormatted(parseFloat(amount).toFixed(2))}</td>
+                                        <td><NameFromId id={company} link="companies" /></td>
                                         <td><IconButton className="del" onClick={e => deleteitem(i)}><DeleteOutline  /></IconButton></td>
                                     </tr>))}
                                 
@@ -250,7 +247,7 @@ export function New() {
                                     <td><Checkbox className="all" onChange={onCheck}></Checkbox></td>
                                     <td>{items.length+1}</td>
                                     <td className="sBs">
-                                        <SelectInput id="category" options={cat} defaultChoice="select category" /> 
+                                        <Category id="category" name="category" onChange={onCategory} value={item?.category} /> 
                                         <Popover 
                                             trigger='click'
                                             content={categoryForm}
@@ -258,9 +255,9 @@ export function New() {
                                             <IconButton><PlusOutlined /></IconButton> 
                                         </Popover>
                                     </td>
-                                    <td><StyledInput id="desc" placeholder="Description" type="text" /></td>
-                                    <td><StyledInput id="amt" placeholder="amount" type="number" /></td>
-                                    <td><SelectInput id="company" defaultChoice="Company" options={company} /></td>
+                                    <td><StyledInput id="desc" placeholder="Description" type="text" name="description" onChange={onChangeText} value={item?.description} /></td>
+                                    <td><StyledInput id="amt" placeholder="amount" type="number" name="amount" onChange={onChangeText} value={item?.amount} /></td>
+                                    <td><Company id="company" name="company" onChange={onCompany} value={item?.company} /></td>
                                     <td><IconButton onClick={handleAdd} className="done"><Done /></IconButton></td>
                                 </tr>
                             </tbody>
@@ -271,6 +268,12 @@ export function New() {
             </div>
         </MainLayout>
     );
+}
+
+export const Balance = ({id}) => {
+    const {data, isLoading} = getViewData(`accounts/expenses/${id}/`);
+    
+    return (!isLoading && data && <Money amount={parseFloat(data?.balance).toFixed(2)} />)
 }
 
 export default ProtectRoute(New);

@@ -1,27 +1,26 @@
 import React, {useState, Suspense} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Paper from '@material-ui/core/Paper';
-import Link from 'next/link';
 import {CloseOutlined} from '@material-ui/icons';
 import IconButton from '@material-ui/core/IconButton';
 import CustomScroll from 'react-custom-scroll';
 import { Breadcrumb, DatePicker, Button as Btn } from 'antd';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import {mutate} from 'swr';
 
 import DetailsTable from '../components/table/details';
 import MainLayout from "../layouts/mainLayout";
 import {StyledInput} from "../components/textinput/styledTextInput";
 import {ProtectRoute} from '../utility/route';
-import {hoc} from '../utility/hoc';
 import {setData} from '../utility/fetcher';
-import useAuth from '../provider';
+
 import {openNotification} from '../components/notification';
 
 
-const Table = hoc(DetailsTable, `tenants/`);
+const Table = DetailsTable;
 
-export function Tenants() {
+export function Clients() {
    
     const useStyles = makeStyles({
         pdf: {
@@ -38,39 +37,41 @@ export function Tenants() {
     const classes = useStyles();                        
     
     const [open, setOpen] = useState(false)
-    const [newData, setNewData] = useState(null);
-    const {token} = useAuth();
+    const [newdata, setNewData] = useState({});
 
     const renderBreadcrumb = _ => (<Breadcrumb>
         <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
-        <Breadcrumb.Item>Tenants</Breadcrumb.Item>
+        <Breadcrumb.Item>Landlords</Breadcrumb.Item>
     </Breadcrumb>);
 
-    const add = async (e) => {
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const address = document.getElementById('address').value;
-        const phone = document.getElementById('phone').value;
-        const cp = document.getElementById('cp').value;
+    const onChange = e => {
+        
+        let value = e.target.value;
+        let name = e.target.name;
+        
+        setNewData(prev => ({...prev, [name]: value}))
+    }
 
-        const {data, status, msg} = await setData('tenants/create', {name,email,address,phone,contactPerson: cp}, token)
-        openNotification(status, msg)
-        if (status === 'success'){
-            setNewData(data);
-            clear()
+    const add = async (e) => {
+        e.preventDefault();
+        const {data, status} = await setData('contacts/clients/', newdata)
+        if (status === 200 || status === 201){
+            openNotification("Success", 'Record saved successfully', 'success')
+            mutate('contacts/clients/');
+            clear();
+            return;
         }
+        for (let item in data)
+            openNotification(item.toUpperCase(), data[item])
+        return;
     }
 
     const clear = () => {
-        document.getElementById('name').value = "";
-        document.getElementById('email').value = "";
-        document.getElementById('address').value = "";
-        document.getElementById('phone').value = "";
-        document.getElementById('cp').value = "";
+        setNewData({});
     }
 
     return (
-        <MainLayout title="Tenants">
+        <MainLayout title="Landlords">
             <div className="body">
                 <div id='top'>
                     {renderBreadcrumb()}
@@ -83,9 +84,9 @@ export function Tenants() {
                 <CustomScroll heightRelativeToParent="calc(100% - 60px)">
                     <Paper id="transactions">
                         <header id="header">
-                            <h4>All flat owners</h4>
+                            <h4>Landlords & Tenants Info</h4>
                         </header>
-                        <Table newData={newData} />
+                        <Table />
                     </Paper>
                 </CustomScroll>
 
@@ -96,11 +97,12 @@ export function Tenants() {
                             <IconButton className="close" onClick={_ => setOpen(false)}><CloseOutlined /></IconButton>
                         </header>
                         <div>
-                            <StyledInput placeholder="Name" id="name" type="text" />
-                            <StyledInput placeholder="Address" id="address" type="text" />
-                            <StyledInput placeholder="Email" id="email" type="email" />
-                            <StyledInput placeholder="Contact person" id="cp" type="text" />
-                            <StyledInput placeholder="Phone" id="phone" type="tel" />
+                            <StyledInput placeholder="Name" id="name" type="text" name="name" value={newdata?.name} onChange={onChange} />
+                            <StyledInput placeholder="Address" id="address" type="text" name="address" value={newdata?.address} onChange={onChange} />
+                            <StyledInput placeholder="Email" id="email" type="email" name="email" value={newdata?.email} onChange={onChange} />
+                            <StyledInput placeholder="Phone" id="phone" type="tel" name="phone" value={newdata?.phone} onChange={onChange} />
+                            <StyledInput placeholder="Contact person" id="cpn" type="text" name="contact_name" value={newdata?.contact_name} onChange={onChange} />
+                            <StyledInput placeholder="Contact phone number" id="cpp" type="text" name="contact_phone" value={newdata?.contact_phone} onChange={onChange} />
                             <button className="btn btn-success add" onClick={add}>Save Detail</button>
                         </div>
                     </div>
@@ -110,4 +112,4 @@ export function Tenants() {
     );
 }
 
-export default ProtectRoute(Tenants);
+export default ProtectRoute(Clients);

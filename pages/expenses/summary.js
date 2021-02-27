@@ -42,34 +42,12 @@ export function Summary(){
 
     const classes = useStyles();
 
-    const {data, isError, isLoading} = getViewData('expense/summary');
-    const [showItems, setShowItems] = useState(false);
-    const [items, setItems] = useState(null);
-    const [summary, setSummary] = useState([]);
-    const [caption, setCaption] = useState([]);
-    const [date, setDate] = useState([moment(new Date(), 'MM-YYYY'), moment(new Date(), 'MM-YYYY')]);
-    const title = `Expense Report from ${months[date[0].format('MM-YYYY').split('-')[0]]} ${date[0].format('MM-YYYY').split('-')[1]}
-    - ${months[date[1].format('MM-YYYY').split('-')[0]]} ${date[1].format('MM-YYYY').split('-')[1]}`;
-
-
-    const total = items => {
-        let tot = 0.0;
-
-        const filteredItems = items.filter(({created_at}) => moment(created_at.slice(3,), 'MM-YYYY') >= 
-                                date[0] && moment(created_at.slice(3,), 'MM-YYYY') <= date[1] )
-
-        filteredItems.forEach(item => {
-            tot += parseFloat(item.amount);
-        });
-
-        return parseFloat(tot).toFixed(2);
-    }
+    const {data, isError, isLoading} = getViewData('accounts/expenses');
+    
 
     
     useEffect(() => {
-        if(data){
-            setSummary(data);
-        }
+        
     }, [data]);
 
     const renderBreadcrumb = _ => (<Breadcrumb>
@@ -91,31 +69,18 @@ export function Summary(){
             <div className="body">
                 <div id='top'>
                     {renderBreadcrumb()}
-                    <RangePicker onChange={onChange} picker="month" value={date} format="MM-YYYY" />
+                    
                     <Button className="elevated" onClick={_ => router.push('/expenses/summary')} className={classes.pdf} >
                         Download Report 
                         <FontAwesomeIcon icon="file-pdf" color="#ffffff" style={{margin: 5}} />
                     </Button>
                 </div>
                 <CustomScroll heightRelativeToParent="calc(100% - 60px)">
-                    {!isLoading ? <div id='summary-cont'>
-                        <h5>{title}</h5>
-                        {showItems ? (
-                            <ItemHistory 
-                                items={items} 
-                                caption={caption} 
-                                total={total(items)} 
-                                onClick={_ => setShowItems(false)}
-                            />) :<div className="wrapped">
-                            {summary.map(({category, items}, id) => 
-                                <Card key={id} 
-                                    title={category.title} 
-                                    total={total(items)} 
-                                    onClick={_ => handleClick(items, category.title)} 
-                                />
-                            )}
-                        </div>}
-                    </div>: isError ? <p>Something happened cannot fetch data </p>: <Loader />}
+                    <div id='summary-cont'>
+                        
+                        
+                        
+                    </div>
                 </CustomScroll>
             </div>
         </MainLayout>

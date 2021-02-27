@@ -39,9 +39,9 @@ export default function ActionButton({ind,actions}){
                 }}
             >
                 <div className="actions">
-                    {actions.edit && <div className="actions-items edit" onClick={e => actions.edit(ind)}><CreateOutlined />Edit</div>}
-                    {actions.view && <div className="actions-items view" onClick={e => actions.view(ind)}><RemoveRedEyeOutlined />View</div>}
-                    {actions.del && <div className="actions-items del" onClick={e => actions.del(ind)}><DeleteOutline />Delete</div>}
+                    {actions?.edit && <div className="actions-items edit" onClick={e => actions?.edit(ind)}><CreateOutlined />Edit</div>}
+                    {actions?.view && <div className="actions-items view" onClick={e => actions?.view(ind)}><RemoveRedEyeOutlined />View</div>}
+                    {actions?.del && <div className="actions-items del" onClick={e => actions?.del(ind)}><DeleteOutline />Delete</div>}
                 </div>
             </Popover>
         </div>

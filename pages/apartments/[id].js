@@ -20,11 +20,10 @@ export function Flats(props) {
     
     const {TabPane} = Tabs;
     const router = useRouter();
-    const {flat} = router.query;
+    const {id} = router.query;
     const [edit, setEdit] = useState(false);
-    const {data, isLoading, isError, mutate} = getViewData(`flats/${flat}`);
-    const {data: landlord, isLoading: isL} = getViewData(`landlords/${data?.landlord}`);
-    const {data: tenant, isLoading: isT} = getViewData(`tenants/${data?.tenant}`);
+    const {data, isLoading, isError, mutate} = getViewData(`apartments/${id}/`);
+    
 
     useEffect(() => {
         console.log(data)
@@ -53,7 +52,7 @@ export function Flats(props) {
                                     {basicDetail(data)}
                                 </TabPane>
                                 <TabPane tab="Information" key="2">
-                                    {info(landlord, tenant)}
+                                    {/*info(landlord, tenant)*/}
                                 </TabPane>
                             </Tabs>
                         </StickyContainer>
@@ -70,30 +69,35 @@ export default ProtectRoute(Flats);
 
 export const basicDetail = (detail) => (
     <div id="basic">
-        <h4>Flat {detail.name} <span className={detail.status.toLowerCase()}>{detail.status}</span></h4>
+        <h4>Flat {detail?.flat} 
+            <span 
+                className={detail?.is_occupied? 'Occupied'.toLowerCase() : 'Vacant'.toLowerCase()}>
+                {detail?.is_occupied? 'Occupied': "Vacant"}
+            </span>
+        </h4>
         <div className="row room"> 
             <div className="col-3">
                 <p><FontAwesomeIcon icon="bed" size='lg' /> Bedroom</p>
-                <span>{detail?.noOfBed}</span>
+                <span>{detail?.no_of_bed}</span>
             </div>
             <div className="col-3">
                 <p><FontAwesomeIcon icon="bath" size='lg' /> Bathroom</p>
-                <span>{detail?.noOfBath}</span>
+                <span>{detail?.no_of_bath}</span>
             </div>
             <div className="col-3">
                 <p><FontAwesomeIcon icon="toilet" size='lg' /> Toilet</p>
-                <span>{detail?.noOfToilet}</span>
+                <span>{detail?.no_of_toilet}</span>
             </div>
             <div className="col-3">
                 <p><FontAwesomeIcon icon="car-alt" size='lg' /> Car Park</p>
-                <span>{detail?.noOfPark}</span>
+                <span>{detail?.no_of_park}</span>
             </div>
         </div>
         <hr />
         <div className=" row lower">
             <div className="col-4">
                 <span><ApartmentOutlined /> Property</span>
-                <p>{detail?.prop}</p>
+                <p>{detail?.building}</p>
             </div>
             <div className="col-4">
                 <span><FontAwesomeIcon icon="map-marked-alt" /> Address</span>
@@ -101,25 +105,25 @@ export const basicDetail = (detail) => (
             </div>
             <div className="col-4">
                 <span><FontAwesomeIcon icon="couch" /> Furnished</span>
-                <p>{detail?.furnished? 'Yes': 'No'}</p>
+                <p>{detail?.is_furnished? 'Yes': 'No'}</p>
             </div>
             <div className="col-4">
                 <span><FontAwesomeIcon icon="money-bill-wave-alt" /> Rent</span>
-                <p>&#8358;{detail?.rent}</p>
+                <p>&#8358; {detail?.rent}</p>
             </div>
             <div className="col-4">
                 <span><FontAwesomeIcon icon="coins" /> Service Charge</span>
-                <p>&#8358;{detail['serv_charge'] || ''}</p>
+                <p>&#8358; {detail?.service_charge}</p>
             </div>
-            <div className="col-4">
+            {/*<div className="col-4">
                 <span><FontAwesomeIcon icon="calendar-alt" size='lg' /> Tenancy Period</span>
                 <p>{detail?.period}</p>
-            </div>
+            </div>*/}
             
         </div>
         <div className="note">
             <h5>Additional Note</h5>
-            <p>{detail.note}</p>
+            <p>{detail?.other_info}</p>
         </div>
     </div>
 );

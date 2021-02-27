@@ -18,14 +18,14 @@ import { faBars, faSpinner, faCheck, faEnvelope, faListAlt, faPlus,
         faMapMarkedAlt, faCouch, faMoneyBillWaveAlt, faCoins,
         faCalendarAlt, faMoneyCheckAlt, faFilePdf, faExchangeAlt, 
         faCreditCard, faMoneyBillAlt, faEllipsisH, faCaretDown,
-        faArrowUp, faArrowDown} from '@fortawesome/free-solid-svg-icons';
+        faArrowUp, faArrowDown, faChartPie} from '@fortawesome/free-solid-svg-icons';
 
 import {fab,faEtsy} from '@fortawesome/free-brands-svg-icons';
  
 library.add(faBars,faSpinner, faCheck, faEnvelope, faListAlt, faHome, faHandshake, faCalendarAlt,
            faCarAlt, faBed, faToilet, faBath, faMapMarkedAlt, faCouch, faMoneyBillWaveAlt, faCoins, 
            faMoneyCheckAlt, faFilePdf, faExchangeAlt, faCreditCard, faMoneyBillAlt, faEllipsisH,
-           faCaretDown, faArrowUp, faArrowDown, faEtsy, faPlus,);
+           faCaretDown, faArrowUp, faArrowDown, faEtsy, faPlus, faChartPie);
 
 Router.events.on('routeChangeStart', () => NProgress.start()); 
 Router.events.on('routeChangeComplete', () => NProgress.done()); 

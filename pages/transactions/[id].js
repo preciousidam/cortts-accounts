@@ -21,7 +21,18 @@ import {setTran} from '../../utility/fetcher';
 import Loader from '../../components/loader';
 import {useAccounts} from '../../provider';
 
+const addTransaction = async body => {
 
+    const {status, data} = await setData('accounts/transactions/', body);
+    console.log(data)
+    if( status == 200 || status === 201){
+        //mt([data, ...transactions]);
+        openNotification("Success","Transaction has been saved", 'success');
+        return true;
+    }
+    for (let m in data) openNotification(m.toUpperCase(),data[m]);
+    return false;
+}
 
 export function Id(){
 
@@ -57,74 +68,79 @@ export function Id(){
 
     const { Option } = Select;
     const {RangePicker} = DatePicker;
+    const router = useRouter();
+
     
-    const { selectedAcct: account, done, transactions, addTransaction } = useAccounts();
+    const { selectedAcct: account, done, setSelected } = useAccounts();
+    const {id} = router.query;
     
+    useEffect(() => {
+        setSelected(id);
+    }, [])
+
     const classes = useStyles();
     const [type, setType] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [date, setDate] = useState(moment(new Date(),"DD-MM-YYYY"));
-    const [cheTran, setCheTran] = useState('cheque');
+    const [cheTran, setCheTran] = useState('Cheque');
     const [filter, setFilter] = useState({date: [moment('01-01-2020', 'DD-MM-YYYY'), moment(new Date('09-12-2021'), 'DD-MM-YYYY')],transType: 'all'});
-
+    const [form, setForm] = useState({mode: 'Cheque', account: account?.id})
 
 
     const onChange = (value, dateString) => {
-        //console.log('Selected Time: ', value);
-        //console.log('Formatted Selected Time: ', dateString);
         setFilter({...filter,date: value});
     }
       
-    const onOk = (value) => {
-        console.log('onOk: ', value);
-    }
+   
 
     const handleChange = value => {
         setFilter({...filter, transType: value});
     }
 
 
-    const filterView = () => (<Space>
+    const filterView = () => (
+        <Space>
             <Select defaultValue={filter.transType} onChange={handleChange} className="filter">
                 <Option value="all">All</Option>
                 <Option value="credit">Credit</Option>
                 <Option value="debit">Debit</Option>
-                <Option value="transfer">Transfer</Option>
             </Select>
-        </Space>);
+        </Space>
+    );
 
-    const total = typ => {
-        let total = 0.0
+    const onChangeText = (e) => {
+        let name = e.target.name;
+        let value = e.target.value;
+        let file = (e.target.type === 'file'&& e.target.files.length > 0) ? e.target.files[0] : null
 
-        if (transactions){
-            transactions.forEach(({transType,amount}) => {
-                if(transType == typ )
-                    total += parseFloat(amount);
-            });
-        }
-        return parseFloat(total).toFixed(2);
+        setForm(prev => ({...prev, [name]: file||value}));
+       
     }
 
+    const onDateChanged = (date, field) => {
+        setForm(prev => ({...prev, [field]: date}));
+    }
 
     const handleOk = async () => {
         setLoading(true);
-        const acct_id = account.id;
-        const beneficiary = document.getElementById('bene').value;
+        const acct = account?.id;
+        const ben_name = document.getElementById('bene').value;
         const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
-        const description = `${document.getElementById('description').value} via ${cheTran}`;
-        const transType = type
+        const desc = `${document.getElementById('description').value} via ${cheTran}`;
+       
 
-        const result = addTransaction({acct_id,beneficiary,date,amount,description, transType});
+        const result = await addTransaction({account: acct, ben_name, amount, desc, type, mode: cheTran});
         if( result){
             clear();
             setLoading(false);
             setShowModal(false);
         }
+        setLoading(false);
     };
 
     const clear = () => {
-        document.getElementsByTagName('input').value = ""
+        setForm({mode: 'Cheque'});
     }
     
     const handleCancel = async () => setShowModal(false);
@@ -141,15 +157,19 @@ export function Id(){
                     <div id="left">
                         <div>
                             <span>Credit</span>
-                            <p>&#8358; {CommaFormatted(total('credit'))}</p>
+                            <h5>&#8358; {CommaFormatted(parseFloat(account?.total_credit).toFixed(2))}</h5>
                         </div>
                         <div>
                             <span>Debit</span>
-                            <p>&#8358; {CommaFormatted(total('debit'))}</p>
+                            <h5>&#8358; {CommaFormatted(parseFloat(account?.total_debit).toFixed(2))}</h5>
+                        </div>
+                        <div>
+                            <span>Opening Balance</span>
+                            <h5>&#8358; {CommaFormatted(parseFloat(account?.open_balance).toFixed(2))}</h5>
                         </div>
                         <div>
                             <span>Balance</span>
-                            <p>&#8358; {CommaFormatted(account?.balance || '0.00')}</p>
+                            <h5>&#8358; {CommaFormatted(parseFloat(account?.balance).toFixed(2))}</h5>
                         </div>
                     
                     </div>
@@ -158,7 +178,7 @@ export function Id(){
                         <Button onClick={_ => handle('credit')} className={classes.credit}  >Credit </Button>
                     </div>
                 </div>
-                { (done && transactions) && <CustomScroll heightRelativeToParent="calc(100% - 90px)">
+                { (done) && <CustomScroll heightRelativeToParent="calc(100% - 90px)">
                     <Paper id="transactions">
                         <header id="header">
                             <h4>All Transactions</h4>
@@ -166,7 +186,7 @@ export function Id(){
                                 className="date-sort"
                                 format="DD-MM-YYYY"
                                 onChange={onChange}
-                                onOk={onOk}
+                                
                                 id="date"
                                 defaultValue={filter.date}
                             />
@@ -175,7 +195,7 @@ export function Id(){
                                 <FontAwesomeIcon icon="file-pdf" color="#ED213A" />
                             </Button>
                         </header>
-                        <TransTable data={transactions} filter={filter} />
+                        <TransTable filter={filter} />
                     </Paper>
                 </CustomScroll>}
                 <Modal
@@ -185,8 +205,9 @@ export function Id(){
                     confirmLoading={loading}
                     onCancel={handleCancel}
                 >
-                    {type == 'debit' ? <DebitForm acct={account} setDate={setDate} cheTran={cheTran} setCheTran={setCheTran} /> 
-                                    : <CreditForm acct={account} setDate={setDate} cheTran={cheTran} setCheTran={setCheTran} />}
+                    {type == 'debit' ? 
+                        <DebitForm onChange={onChangeText} form={form} /> 
+                        : <CreditForm  onChange={onChangeText} form={form} />}
                 </Modal>
             </div>
         </MainLayout>
@@ -196,40 +217,39 @@ export function Id(){
 export default ProtectRoute(Id);
 
 
-const DebitForm = ({acct, setDate, cheTran, setCheTran}) =>{
+const DebitForm = ({form, onChange}) =>{
     
     return (
         <div>
-            <StyledInput id="id" type="text" value={`${acct.bank}(${acct.name} - ${acct.number})`} disabled={true} />
-            <StyledInput type="text" id="bene" placeholder="beneficiary" />
+            <StyledInput type="text" id="bene" placeholder="beneficiary" name="ben_name" onChange={onChange} value={form.ben_name} />
             <div className="sideByside">
-                <StyledInput id="amount" type="number" placeholder="Amount" />
+                <StyledInput id="amount" type="number" placeholder="Amount" name="amount" onChange={onChange} value={form.amount} />
                 <DatePicker format="DD-MM-YYYY" defaultValue={moment(new Date(), 'DD-MM-YYYY')} onChange={(date, dateString) => setDate(dateString)} />
             </div>
-            <StyledInput id="description" type="text" placeholder="description" />
+            <StyledInput id="description" type="text" placeholder="description" name="desc" value={form.desc} onChange={onChange} />
             <span>Transaction done by?  </span>
-            <Radio.Group value={cheTran} onChange={e => setCheTran(e.target.value)}>
-                <Radio value={'cheque'}>Cheque</Radio>
-                <Radio value={'transfer'}>Transfer</Radio>
+            <Radio.Group value={form.mode} onChange={onChange} name="mode">
+                <Radio value={'Cheque'}>Cheque</Radio>
+                <Radio value={'Transfer'}>Transfer</Radio>
             </Radio.Group>
         </div>
     );
 }
 
-const CreditForm = ({acct, setDate, cheTran, setCheTran}) =>{
+const CreditForm = ({ form, onChange }) =>{
+    
     return (
         <div>
-            <StyledInput type="text" placeholder="sender" id="bene" />
-            <StyledInput id="id" type="text" value={`${acct.bank}(${acct.name} - ${acct.number})`} disabled={true} />
+            <StyledInput type="text" id="bene" placeholder="beneficiary" name="ben_name" onChange={onChange} value={form.ben_name} />
             <div className="sideByside">
-                <StyledInput id="amount" type="number" placeholder="Amount" />
+                <StyledInput id="amount" type="number" placeholder="Amount" name="amount" onChange={onChange} value={form.amount} />
                 <DatePicker format="DD-MM-YYYY" defaultValue={moment(new Date(), 'DD-MM-YYYY')} onChange={(date, dateString) => setDate(dateString)} />
             </div>
-            <StyledInput id="description" type="text" placeholder="description" />
+            <StyledInput id="description" type="text" placeholder="description" name="desc" value={form.desc} onChange={onChange} />
             <span>Transaction done by?  </span>
-            <Radio.Group value={cheTran} onChange={e => setCheTran(e.target.value)}>
-                <Radio value={'cheque'}>Cheque</Radio>
-                <Radio value={'transfer'}>Transfer</Radio>
+            <Radio.Group value={form.mode} onChange={onChange} name="mode">
+                <Radio value={'Cheque'}>Cheque</Radio>
+                <Radio value={'Transfer'}>Transfer</Radio>
             </Radio.Group>
         </div>
     );

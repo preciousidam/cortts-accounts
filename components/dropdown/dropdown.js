@@ -37,8 +37,8 @@ export const ProfileDropdown = ({links}) =>{
     return(
         <Dropdown id="profileCont" onClick={() => setDropdown(!dropdown)} overlay={menu}>
             <div id="profile">
-                <Avatar id="avater" className={classes.purple}>{user != null ? user.username[0] : 'A'}</Avatar>
-                <p>{user != null ? user.username : 'Anonymous'}</p>
+                <Avatar id="avater" className={classes.purple}>{user != null ? user?.first_name[0] : 'A'}</Avatar>
+                <p>{user != null ? `Hi, ${user?.first_name}` : 'Anonymous'}</p>
             </div>
         </Dropdown>
     );

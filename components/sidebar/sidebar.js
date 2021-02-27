@@ -14,8 +14,8 @@ const links = [
     {icon: <DescriptionOutlined />, title: 'Invoices', link: 'invoices'},
     {icon: <AccountBalanceWalletOutlined />, title: 'Accounts', link: 'accounts'},
     {icon: <Apartment />, title: 'Apartments', link: 'apartments'},
-    {icon: <Person />, title: 'landlords', link: 'landlords'},
-    {icon: <HotelOutlined />, title: 'Tenants', link: 'tenants'},
+    {icon: <Person />, title: 'Clients', link: 'clients'},
+    {icon: <Person />, title: 'Vendors', link: 'vendors'},
     {icon: <Badge badgeContent={2} color="error"><FontAwesomeIcon icon="handshake" /></Badge>, 
         title: 'Agreements', link: 'agreements'},
 ]

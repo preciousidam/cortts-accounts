@@ -6,8 +6,6 @@ import IconButton from '@material-ui/core/IconButton';
 import {DeleteOutline} from '@material-ui/icons';
 import CustomScroll from 'react-custom-scroll';
 import moment from 'moment';
-import { notification } from 'antd';
-import {CheckCircleOutlined, CloseCircleOutlined} from '@ant-design/icons';
 
 
 import MainLayout from "../../layouts/mainLayout";
@@ -17,12 +15,12 @@ import {FooterWithButton} from '../../components/footer';
 import {setData} from '../../utility/fetcher';
 import useAuth from '../../provider';
 import {CommaFormatted} from '../../utility';
+import { openNotification } from '../../components/notification';
 
 
 export function New() {
 
     const [items, setItems] = useState([]);
-    const {token} = useAuth();
     const router = useRouter();
 
 
@@ -32,32 +30,25 @@ export function New() {
         let rate = parseInt(document.getElementById('amount').value);
         let amount = qty*rate;
         if(desc != '' && qty != NaN && rate != NaN){
-            setItems([...items,{desc,qty,rate,amount: parseFloat(amount).toFixed(2)}]);
+            setItems([...items,{description: desc, quantity:qty, rate,amount: parseFloat(amount).toFixed(2)}]);
             clearField();
         }
     }
 
-    const openNotification = (status,msg) => {
-        notification.open({
-          message: status,
-          description: msg,
-          icon: status == 'success' ? <CheckCircleOutlined style={{ color: '#00ff00' }} /> : <CloseCircleOutlined style={{ color: '#ff0000' }} />,
-        });
-    };
 
     const save = async _ => {
         const date = moment(new Date(), "DD-MM-YYYY").format('DD-MM-YYYY');
         const amount = getTotal();
         const ref = parseInt(new Date().getTime().toString().slice(6,12));
 
-        const {msg, status} = await setData('budget/create',{date,items,ref,amount},token);
-
-        openNotification(status,msg);
-
-        if( status == 'success'){
+        const {data, status} = await setData('budgets/',{items});
+        if (status === 200 || status === 201){
             router.push('/budget');
+            return;
         }
-        
+
+        for(let item in data)
+            openNotification(item.toUpperCase(), data[item]);
     }
 
     const discard = _ => router.push('/budget');   
@@ -104,11 +95,11 @@ export function New() {
                                             <div className="col-1"><span>Action</span></div>
                                         </div>
                                         {
-                                            items.map(({desc,qty,rate,amount},i)=>(
+                                            items.map(({description,quantity,rate,amount},i)=>(
                                                 <div key={i} className="row">
                                                     <div className="col-1"><span>{i+1}</span></div>
-                                                    <div className="col-5"><span>{desc}</span></div>
-                                                    <div className="col-1"><span>{qty}</span></div>
+                                                    <div className="col-5"><span>{description}</span></div>
+                                                    <div className="col-1"><span>{quantity}</span></div>
                                                     <div className="col-2"><span>{rate}</span></div>
                                                     <div className="col-2"><span>{amount}</span></div>
                                                     <div className="col-1">

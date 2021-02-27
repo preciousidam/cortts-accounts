@@ -9,16 +9,14 @@ import CustomScroll from 'react-custom-scroll';
 import {useRouter} from 'next/router';
 import moment from 'moment';
 import {CheckCircleOutlined, CloseCircleOutlined} from '@ant-design/icons';
+import {mutate} from 'swr';
 
 
 import MainLayout from "../../layouts/mainLayout";
 import {ProtectRoute} from '../../utility/route';
-import {CommaFormatted} from '../../utility';
 import {BudgetTable} from '../../components/table/budget';
 import {delData} from '../../utility/fetcher';
-import {getViewData} from '../../lib/hooks';
-import Loader from '../../components/loader';
-import useAuth from '../../provider';
+import { openNotification } from '../../components/notification';
 
 
 export function Budget() {
@@ -53,39 +51,13 @@ export function Budget() {
           },
     });
 
-    const { Option } = Select;
+    
     const {RangePicker} = DatePicker;
 
-    const { data, isLoading, isError, mutate } = getViewData('budget/');
-    const {token} = useAuth();
-    const [budgets, setBudgets] = useState([]);
+    
     const classes = useStyles();
-    const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState({date: [moment('01-01-2020', 'DD-MM-YYYY'), moment(new Date('09-12-2021'), 'DD-MM-YYYY')],transType: 'all'});
     const router = useRouter();
-
-    const dataLoaded = () => {
-        if(!isLoading && data){
-            
-            const budgets = data;
-            if(budgets){
-                setBudgets(budgets);
-            }
-        }
-    }
-
-    const openNotification = (status,msg) => {
-        notification.open({
-          message: status,
-          description: msg,
-          icon: status == 'success' ? <CheckCircleOutlined style={{ color: '#00ff00' }} /> : <CloseCircleOutlined style={{ color: '#ff0000' }} />,
-        });
-    };
-
-
-    useEffect(() => {
-        dataLoaded();
-    });
 
 
     const onChange = (value, dateString) => {
@@ -94,32 +66,17 @@ export function Budget() {
     }
 
     const del = async id => {
-        const {data, status, msg} = await delData('budget/delete',id,token)
-        openNotification(status, msg)
-        if(status == 'success') mutate(data);
+        const {status, data} = delData(`budgets/${id}/`)
+        if(status === 204) {
+            openNotification('Item', "Deleted successfully", 'success');
+            mutate('budgets/')
+            return;
+        }
+        for (let item in data)
+            openNotification(item.toUpperCase(), data[item]);
+        
     }
       
-    const onOk = (value) => {
-        console.log('onOk: ', value);
-    }
-
-    const handleChange = value => {
-        if(value == 'all')
-            setTrans(transactions);
-        else
-            setTrans(transactions.filter(({type}) => value == type));
-    }
-
-
-    const total = _ => {
-        let total = 0.0
-
-        expenses.forEach(({amount}) => {
-            total += parseFloat(amount);
-        });
-
-        return parseFloat(total).toFixed(2);
-    }
 
     const handle = _ => router.push('/budget/new');
    
@@ -131,26 +88,26 @@ export function Budget() {
                         <h4>Overview</h4>
                         <Button onClick={_ => handle()} className={classes.credit}  >New Account <Add /></Button>
                     </div>
-                    {!isLoading ? <CustomScroll heightRelativeToParent="calc(100% - 90px)">
-                    <Paper id="transactions">
-                        <header id="header">
-                            <h4>All Transactions</h4>
-                            <RangePicker
-                                className="date-sort"
-                                format="DD-MM-YYYY"
-                                onChange={onChange}
-                                onOk={onOk}
-                                id="date"
-                                defaultValue={filter.date}
-                            />
-        
-                            <Button className="elevated" onClick={_ => setOpen(!open)} className={classes.pdf} >Export as PDF 
-                                <FontAwesomeIcon icon="file-pdf" color="#ED213A" />
-                            </Button>
-                        </header>
-                        <BudgetTable data={budgets} filter={filter} actions={{del}}/>
-                    </Paper>
-                </CustomScroll>: isError ? <h1>Something Happened</h1>: <Loader />}
+                    <CustomScroll heightRelativeToParent="calc(100% - 90px)">
+                        <Paper id="transactions">
+                            <header id="header">
+                                <h4>All Budgets</h4>
+                                <RangePicker
+                                    className="date-sort"
+                                    format="DD-MM-YYYY"
+                                    onChange={onChange}
+                                    
+                                    id="date"
+                                    defaultValue={filter.date}
+                                />
+            
+                                <Button className="elevated" onClick={_ => setOpen(!open)} className={classes.pdf} >Export as PDF 
+                                    <FontAwesomeIcon icon="file-pdf" color="#ED213A" />
+                                </Button>
+                            </header>
+                            <BudgetTable filter={filter} actions={{del}}/>
+                        </Paper>
+                    </CustomScroll>
                 </div>
         </MainLayout>
     );

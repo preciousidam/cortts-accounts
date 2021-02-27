@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { Pagination } from 'antd';
 import {useRouter} from 'next/router';
+import moment from 'moment';
 
 import ActionButton from '../button/actionButtons';
 import {getViewData} from '../../lib/hooks';
@@ -10,12 +11,11 @@ import {openNotification} from '../../components/notification';
 import {setData, delData} from '../../utility/fetcher';
 import CreateForm from '../../components/forms/flatForm';
 import {hoc} from '../../utility/hoc';
-import {NameFromId} from '../datatext';
 
 
 export default function FlatsTable({linkId, newData, callback}){
     
-    const {data, isError, isLoading, mutate} = getViewData(linkId);
+    const {data, isError, isLoading, mutate} = getViewData('apartments/');
     const [page, setPage] = useState(1)
     const offset = 8;
     const [holdEdit, setHoldEdit] = useState({});
@@ -67,21 +67,26 @@ export default function FlatsTable({linkId, newData, callback}){
                         </tr>
                     </thead>
                     <tbody>
-                        {data.slice(upper,lower).map(({id, name, prop, period, status,noOfBed, landlord, tenant, note },i) => (
+                        {data?.map(({id, flat, building, current_tenancy_period, is_occupied, 
+                                        no_of_bed, get_landlord, get_tenant, other_info },i) => (
                             <tr key={id}>
                                 <td>{i+1}</td>
-                                <td>{name}</td>
-                                <td>{prop}</td>
-                                <td><span className={status.toLowerCase()}>{status}</span></td>
-                                <td>{period}</td>
-                                <td>{noOfBed}</td>
-                                <td><NameFromId id={landlord} link="landlords" /></td>
-                                <td><NameFromId id={tenant} link="tenants" /></td>
-                                <td>{note}</td>
+                                <td>{flat}</td>
+                                <td>{building}</td>
+                                <td><span className={is_occupied? 'Occupied'.toLowerCase() : 'Vacant'.toLowerCase()}>
+                                    {is_occupied? 'Occupied' : 'Vacant'}</span>
+                                </td>
+                                <td>
+                                    {moment(current_tenancy_period?.start).format("MMM Do YY")} to {moment(current_tenancy_period?.end).format("MMM Do YY")}
+                                </td>
+                                <td>{no_of_bed}</td>
+                                <td>{get_landlord}</td>
+                                <td>{get_tenant}</td>
+                                <td>{other_info}</td>
                                 <td><ActionButton 
                                         ind={id} 
                                         actions={{
-                                            view: _ => router.push(`/apartments/${name}`),
+                                            view: _ => router.push(`/apartments/${id}`),
                                             del: _ => del(id), 
                                             edit: _ => edit(id)}} 
                                     />

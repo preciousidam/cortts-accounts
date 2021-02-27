@@ -1,39 +1,44 @@
 import React, {useState, useEffect} from 'react';
 import { Pagination, Modal } from 'antd';
+import {mutate} from 'swr';
 
 import ActionButton from '../button/actionButtons';
 import {getViewData} from '../../lib/hooks';
-import Loader from '../loader';
-import useAuth from '../../provider';
 import {openNotification} from '../../components/notification';
-import {setData, delData} from '../../utility/fetcher';
+import { delData, editData} from '../../utility/fetcher';
 import {StyledInput} from "../textinput/styledTextInput";
 
 export default function DetailsTable({linkId, newData}){
     
-    const {data, isError, isLoading, mutate} = getViewData(linkId);
+    const {data, isError, isLoading, mutate} = getViewData('contacts/clients/');
     const [page, setPage] = useState(1)
-    const offset = 8;
+   
     const [holdEdit, setHoldEdit] = useState({});
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const {token} = useAuth();
+    
 
     const handleOk = async () => {
         setLoading(true);
-        const {data: dt, status, msg} = await setData(`${linkId}edit`,holdEdit, token)
-        openNotification(status, msg)
-        if (status === 'success'){
-            setShowModal(false);
-            mutate([...data, dt]);
-        }
+        const {data, status} = await editData(`contacts/clients/${holdEdit?.id}/`,holdEdit)
         setLoading(false);
+        if (status === 200 || status === 201){
+            openNotification("Success", 'Record saved successfully', 'success')
+            setShowModal(false);
+            mutate('contacts/clients/');
+            return;
+        }
+        for (let item in data)
+            openNotification(item.toUpperCase(), data[item])
+        return;
     }
 
-    const onTextChange = (id,value) => {
-        let hold = holdEdit;
-        hold[id] = value;
-        setHoldEdit({...hold});
+    const onChange = e => {
+        
+        let value = e.target.value;
+        let name = e.target.name;
+        
+        setHoldEdit(prev => ({...prev, [name]: value}))
     }
 
     const handleCancel = () => {
@@ -45,24 +50,23 @@ export default function DetailsTable({linkId, newData}){
         mutate(newData);
     }, [newData])
 
-    const onChange = pag => {
-        setPage(pag)
-    };
-
     const edit = data => {
         setShowModal(true);
         setHoldEdit(data);
     }
     const del = async id => {
-        const {msg, status, data} = await delData(`${linkId}delete`,id,token);
-        if( status == 'success')
-            mutate(data);
-        openNotification(status,msg);
+        const {status, data} = await delData(`contacts/clients/${id}/`);
+        if(status === 204) {
+            openNotification('Item', "Deleted successfully", 'success');
+            mutate('contacts/clients/');
+            return;
+        }
+        for (let item in data)
+            openNotification(item.toUpperCase(), data[item]);
     }
-
-    const [upper,lower] = [(offset * page) - offset, page * offset];
+    
     return (
-        !isLoading ? <div id="expense-table">
+        <div id="expense-table">
                 <table>
                     <thead>
                         <tr>
@@ -70,28 +74,30 @@ export default function DetailsTable({linkId, newData}){
                             <th>Name</th>
                             <th>Address</th>
                             <th>Email</th>
-                            <th>Contact</th>
                             <th>Phone</th>
+                            <th>Contact Person Name</th>
+                            <th>Contact Person Phone</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {data.slice(upper,lower).map(({id, name,email,address,contactPerson,phone},i) => (
+                        {data?.map(({id, name,email,address,phone,contact_name,contact_phone},i) => (
                             <tr key={id}>
                                 <td>{i+1}</td>
                                 <td>{name}</td>
                                 <td>{address}</td>
                                 <td>{email}</td>
-                                <td>{contactPerson}</td>
                                 <td>{phone}</td>
-                                <td><ActionButton actions={{edit: _ => edit({id, name,email,address,contactPerson,phone}), 
+                                <td>{contact_name}</td>
+                                <td>{contact_phone}</td>
+                                <td><ActionButton actions={{edit: _ => edit({id, name,email,address,phone,contact_name,contact_phone}), 
                                                             del: _ => del(id) }} /></td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             <div className="pagination">
-                <Pagination current={page} defaultCurrent={1} total={data.length} onChange={onChange} />
+                <Pagination current={page} defaultCurrent={1} total={data?.length} />
             </div>
             <Modal
                 title="Edit detail"
@@ -101,13 +107,121 @@ export default function DetailsTable({linkId, newData}){
                 onCancel={handleCancel}
             >
                 <div>
-                    <StyledInput placeholder="Name" id="name" type="text" value={holdEdit.name} onChange={val => onTextChange('name', val.target.value)} />
-                    <StyledInput placeholder="Address" id="address" type="text" value={holdEdit.address} onChange={val => onTextChange('address', val.target.value)} />
-                    <StyledInput placeholder="Email" id="email" type="email" value={holdEdit.email} onChange={val => onTextChange('email', val.target.value)} />
-                    <StyledInput placeholder="Contact person" id="cp" type="text" value={holdEdit.contactPerson} onChange={val => onTextChange('contactPerson', val.target.value)} />
-                    <StyledInput placeholder="Phone" id="phone" type="tel" value={holdEdit.phone} onChange={val => onTextChange('phone', val.target.value)} />
+                    <StyledInput placeholder="Name" id="name" type="text" name="name" value={holdEdit?.name} onChange={onChange} />
+                    <StyledInput placeholder="Address" id="address" type="text" name="address" value={holdEdit?.address} onChange={onChange} />
+                    <StyledInput placeholder="Email" id="email" type="email" name="email" value={holdEdit?.email} onChange={onChange} />
+                    <StyledInput placeholder="Phone" id="phone" type="tel" name="phone" value={holdEdit?.phone} onChange={onChange} />
+                    <StyledInput placeholder="Contact person" id="cpn" type="text" name="contact_name" value={holdEdit?.contact_name} onChange={onChange} />
+                    <StyledInput placeholder="Contact phone number" id="cpp" type="text" name="contact_phone" value={holdEdit?.contact_phone} onChange={onChange} />
                 </div>
             </Modal>
-        </div> : isError ? <p>Something happened cannot load data right now</p> : <Loader />
+        </div>
+    );
+}
+
+export function VendorDetailsTable({linkId, newData}){
+    
+    const {data, isError, isLoading, mutate} = getViewData('contacts/vendors/');
+    const [page, setPage] = useState(1)
+   
+    const [holdEdit, setHoldEdit] = useState({});
+    const [showModal, setShowModal] = useState(false);
+    const [loading, setLoading] = useState(false);
+    
+
+    const handleOk = async () => {
+        setLoading(true);
+        const {data, status} = await editData(`contacts/vendors/${holdEdit?.id}/`,holdEdit)
+        setLoading(false);
+        if (status === 200 || status === 201){
+            openNotification("Success", 'Record saved successfully', 'success')
+            setShowModal(false);
+            mutate('contacts/vendors/');
+            return;
+        }
+        for (let item in data)
+            openNotification(item.toUpperCase(), data[item])
+        return;
+    }
+
+    const onChange = e => {
+        
+        let value = e.target.value;
+        let name = e.target.name;
+        
+        setHoldEdit(prev => ({...prev, [name]: value}))
+    }
+
+    const handleCancel = () => {
+        setShowModal(false);
+    }
+    
+    useEffect(()=>{
+        if(!newData) return
+        mutate(newData);
+    }, [newData])
+
+    
+
+    const edit = data => {
+        setShowModal(true);
+        setHoldEdit(data);
+    }
+    const del = async id => {
+        const {status, data} = await delData(`contacts/vendors/${id}/`);
+        if(status === 204) {
+            openNotification('Item', "Deleted successfully", 'success');
+            mutate('contacts/vendors/');
+            return;
+        }
+        for (let item in data)
+            openNotification(item.toUpperCase(), data[item]);
+    }
+    
+    return (
+        <div id="expense-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Address</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data?.map(({id, name,email,address,phone,contact_name,contact_phone},i) => (
+                            <tr key={id}>
+                                <td>{i+1}</td>
+                                <td>{name}</td>
+                                <td>{address}</td>
+                                <td>{email}</td>
+                                <td>{phone}</td>
+                                <td><ActionButton actions={{edit: _ => edit({id, name,email,address,phone}), 
+                                                            del: _ => del(id) }} /></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            <div className="pagination">
+                <Pagination current={page} defaultCurrent={1} total={data?.length} />
+            </div>
+            <Modal
+                title="Edit detail"
+                visible={showModal}
+                onOk={handleOk}
+                confirmLoading={loading}
+                onCancel={handleCancel}
+            >
+                <div>
+                    <StyledInput placeholder="Name" id="name" type="text" name="name" value={holdEdit?.name} onChange={onChange} />
+                    <StyledInput placeholder="Address" id="address" type="text" name="address" value={holdEdit?.address} onChange={onChange} />
+                    <StyledInput placeholder="Email" id="email" type="email" name="email" value={holdEdit?.email} onChange={onChange} />
+                    <StyledInput placeholder="Phone" id="phone" type="tel" name="phone" value={holdEdit?.phone} onChange={onChange} />
+                </div>
+            </Modal>
+        </div>
     );
 }

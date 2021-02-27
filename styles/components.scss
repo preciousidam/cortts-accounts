@@ -5,6 +5,7 @@
     border-right: 1px solid #c9c9c9;
     padding: 0;
 
+
     ul{
         text-decoration: none;
         padding: 0;
@@ -139,6 +140,7 @@ hr{
         }
         svg{
             color: $text-color-light;
+            font-size: 18px;
         }
     }
 }
@@ -186,7 +188,7 @@ hr{
 
         svg{
             color: $text-color-light;
-            font-size: x-large;
+            font-size: 18px;
         }
     }
 

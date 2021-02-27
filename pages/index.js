@@ -32,15 +32,16 @@ export default function Login() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        const res = await login(email,password);
+        const {status, msg} = await login(email,password);
         
-        if (res == true){
+        if (status === true){
             setLoading('success');
             router.push('/dashboard');
         }
-        else{
+        else if( status === false ){
             setLoading('');
-            openNotification(res.status, res.msg);
+            for(let m in msg)
+                openNotification(m.toUpperCase(), msg[m]);
         }
     }
 

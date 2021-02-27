@@ -2,143 +2,121 @@ import React, {useState, useEffect} from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import {DeleteOutline, Done} from '@material-ui/icons';
 import CustomScroll from 'react-custom-scroll';
-import { DatePicker, Checkbox, Button } from 'antd';
+import { DatePicker, Checkbox, message, Popover, Button } from 'antd';
+import {PlusOutlined} from '@ant-design/icons';
 import moment from 'moment';
 import {useRouter} from 'next/router';
 
 
 import MainLayout from "../../layouts/mainLayout";
-import {StyledInput, SelectInput} from '../../components/textinput/styledTextInput';
+import {StyledInput, SelectInput, DataSelectInput} from '../../components/textinput/styledTextInput';
 import {CommaFormatted} from '../../utility';
 import {ProtectRoute} from '../../utility/route';
-import { company as cp} from '../../constants/data';
-import {FooterWithButton} from '../../components/footer';
 import {getViewData} from '../../lib/hooks';
-import {setData} from '../../utility/fetcher';
-import useAuth from '../../provider';
+import {FooterWithButton} from '../../components/footer';
+import {editData} from '../../utility/fetcher';
 import {openNotification} from '../../components/notification';
-import Loader from '../../components/loader';
-import {NameFromId} from '../../components/datatext'; 
-import {withSwr, withDynamicData} from '../../utility/hoc';
+import {NameFromId} from '../../components/datatext';
+import { mutate } from 'swr';
+import Money from '../../components/money';
 
+export const Category = DataSelectInput('categories/');
+export const Company = DataSelectInput('companies/');
+export const Staff = DataSelectInput('staff/');
+export const Account = DataSelectInput('accounts/expenses/');
 
-const Accounts = withSwr(SelectInput, 'expense/account/');
+export function ID() {
 
-
-const categoryForm = ({add, loading}) => {
-    const [title, setTitle] = useState('');
-
-    const onClick = _ => {
-        add({title});
-        setTitle('');
-    }
-    return (<div>
-        <StyledInput type="text" placeholder="category" id="cate" value={title} onChange={e => setTitle(e.target.value)} />
-        <Button loading={loading} type="primary" onClick={onClick}>Add</Button>
-    </div>)
-}
-
-
-const staffForm = ({add, loading}) => {
-    const [name, setName] = useState('');
-
-    const onClick = _ => {
-        add({name});
-        setName('');
-    }
-    return (<div>
-        <StyledInput type="text" placeholder="name" id="staff" value={name} onChange={e => setName(e.target.value)} />
-        <Button loading={loading} type="primary" onClick={onClick}>Add</Button>
-    </div>)
-}
-
-const Staff = withDynamicData(staffForm, 'routes/staff/');
-const Categories = withDynamicData(categoryForm, 'routes/categories/');
-
-
-export function Id() {
-
-    
-    const [items, setItems] = useState([]);
-    const [editing, setEditing] = useState(null);
-    const methods = [{value: 1, text: 'cash'},{value: 2, text: 'transfer'},{value: 3, text: 'cheque'},]
-    const {token} = useAuth();
     const router = useRouter();
     const {id} = router.query;
-    const [acct, setAcct] = useState(null);
-    const [deletedItem, setDeletedItem] = useState([]);
-    const accounts = getViewData('expense/account/');
-    const {data,isError,isLoading} = getViewData(`expense/${id}`);
+    const {data, isLoading} = getViewData(`expenses/${id}/`);
+    const [items, setItems] = useState([]);
+    const [details, setDetails] = useState({});
+    const [item, setItem] = useState({});
+
+    useEffect(() => {
+        if(!isLoading && data){
+            const hold = {...data};
+            const items = data?.items;
+            delete hold['items'];
+            setDetails(hold);
+            setItems(items);
+        }
+    },[data, isLoading])
+
+    const onChangeText = e => {
+        
+        let value = e.target.value;
+        let name = e.target.name;
+        
+        setItem(prev => ({...prev, [name]: value}))
+    }
     
-
-    const dataLoaded = () => {
-        if(!isLoading && data ){
-            const its = data?.items;
-            if(its){
-                setItems([...its,{}]);
-            }
-        }
+    const onCategory = e => {
+        setItem(prev => ({...prev, category: e}))
     }
 
-    useEffect(() => {
-        if (acct != null) return;
-        if(!accounts.isLoading && accounts.data) setAcct(accounts.data[0])
-    },[acct, accounts]);
+    const onCompany = e => {
+        setItem(prev => ({...prev, company: e}))
+    }
 
-    useEffect(() => {
-        if (items.length != 0) return
-            
-        dataLoaded();
-    },[data]);
+    const methods = [{value: 1, text: 'Cash'},{value: 2, text: 'Transfer'},{value: 3, text: 'Cheque'},]
 
-    useEffect(() => {
-        if (editing == null && items.length > 0 ) setEditing(items.length - 1);
-    },[items]);
+    const [processing, setProcessing] = useState(false);
 
+    
     const handleAdd = (e) =>{
-        if (editing != items.length - 1) setEditing(items.length -1);
-        else{ 
-            setItems([...items,{}]);
-            setEditing(null);
+        if(!item.description || !item.category || !item.amount){
+            message.warning('All field except company cannot be empty');
+            return;
         }
+        setItems(prev => ([...prev,item]));
+        
     }
 
+    useEffect(() => {
+        setItem({});
+        setDetails(prev => ({...prev, items}))
+    }, [items])
 
     const deleteitem = (id) => {
-        const item = items[id];
-        if(item.hasOwnProperty('id'))
-            setDeletedItem([...deletedItem,item]);
-
         const filter = items.filter((x,i) => i != id);
         setItems(filter);
     }
 
     const onChange = (date, dateString) => {
-        console.log(date, dateString);
+        setDetails(prev => ({...prev, date: dateString}));
     }
 
     const onCheck = e => console.log(e.target.checked);
 
     const save = async _ => {
-        const itemsdata = items.filter((x,id) => id != items.length-1)
-        const {msg, status} = await setData('expense/edit',{...data, amount: calcTotal(),items: itemsdata,deletedItem},token);
+        const date = moment(new Date(), "YYYY-MM-DD").format('YYYY-MM-DD');
+        console.log(details)
 
-        openNotification(status,msg);
-
-        if( status == 'success'){
+        if (!details.recipient){
+            message.warning('Select a Payee');
+            return
+        }
+        if (!details.account){
+            message.warning('Select an expense account');
+            return
+        }
+        const {data, status} = await editData(`expenses/${id}/`,{...details, date: details.date || date });
+        if( status === 201 || status === 200){
+            openNotification('Expenses', "Data was save successfully", 'success');
             router.push('/expenses');
+            return;
+        }
+        for (let item in data){
+            openNotification(item.toUpperCase(), data[item]);
         }
         
     }
 
-    const discard = _ => router.push('/budget');
+    const discard = _ => router.push('/expenses');
     const optAct = [{text: 'Discard and Close', action: discard},{text: 'Save and Close', action: save},];
 
-
-    const getName = i => {
-        let cat = cp.find(({value}) => parseInt(value) == i);
-        return cat ? cat.text : '';
-    };
 
     const calcTotal = _ => {
         let total = 0.00;
@@ -146,80 +124,110 @@ export function Id() {
         return parseFloat(total).toFixed(2) || '0.00';
     }
 
-    
+    const selectAcct = aid => setDetails(prev => ({...prev, account: aid}))
 
-    const onTextChange = (value, id) => {
-        const edit = items[editing];
-        edit[id] = value.target.value;
-        let newItems = [];
-        items.forEach((x,i) => {
-            if(i == editing) newItems.push(edit);
-            else newItems.push(x);
-        });
-        setItems(newItems);
+    const categoryForm = (<div>
+        <StyledInput type="text" placeholder="category" id="cate" />
+        <Button loading={processing} type="primary" onClick={e => addCategory()}>Add</Button>
+    </div>)
+
+    const staffForm = (<div>
+        <StyledInput type="text" placeholder="name" id="staff" />
+        <Button loading={processing} type="primary" onClick={e => addStaff()}>Add</Button>
+    </div>)
+    
+    const addCategory = async _ => {
+        setProcessing(true);
+        const title = document.getElementById('cate').value
+        const body = {title}
+        const {status, data} = await setData('categories/', body);
+        setProcessing(false);
+        if(status === 201 || status === 200){
+            message.success("Category Added")
+            mutate('categories/');
+            return;
+        }
+        for (let item in data)
+            message.error(data[item]);
     }
 
-    const selectAcct = aid => setAcct(accounts.data.find(({id})=> id == aid));
+    const addStaff = async _ => {
+        setProcessing(true);
+        const name = document.getElementById('staff').value
+        const body = {name}
+        const {status, data} = await setData('staff/', body);
+        setProcessing(false);
+        if(status === 201 || status === 200){
+            message.success("Name Added")
+            mutate('staff/');
+            return;
+        }
+        for (let item in data)
+            message.error(data[item]);
+    }
 
-    
+
     return (
         <MainLayout title="New Expense" actionFooter={true}>
             <div className="body">
                 <div id='top'>
                     <div id="left">
-                        
+                        <div className="float-left">
                             <Staff 
-                                value={data ? data.recipient : 0 } 
-                                button
-                                defaultChoice="Choose Payee" 
-                                id="recipient"
-                                containerStyle={{margin: 0}}
+                                onChange={e => setDetails(prev => ({...prev, recipient: e}))}
+                                value={details?.recipient}
                             />
-                        
+                            <Popover 
+                                trigger='click'
+                                content={staffForm}
+                                placement="bottomRight"
+                            >
+                                <IconButton><PlusOutlined /></IconButton> 
+                            </Popover>
+                        </div>
                         <div>
-                            <Accounts  
-                                onChange={e => selectAcct(e.target.value)} 
-                                value={!isLoading && data ? data.account : null} 
-                                defaultChoice="expense acct"
-                                disabled
+                            <Account
+                                onChange={selectAcct}
+                                value={details?.account}
                             />
                         </div>
                         <div>
-                            <h5>Balance: &#8358; {acct ? CommaFormatted(acct.balance): '0.00'}</h5>
+                            <h5>Balance: {details?.account && <Balance id={details?.account} />}</h5>
                         </div>
                     </div>
                     <div id="right">
                         <div id="total-cont">
                             <span>Amount</span>
-                            <h4 id="total">&#8358; {CommaFormatted(calcTotal())}</h4>
+                            <h6 id="total">&#8358; {CommaFormatted(calcTotal())}</h6>
                         </div>
                     </div>
                 </div>
-                {!isLoading ? <CustomScroll heightRelativeToParent="calc(100% - 90px)">
+                <CustomScroll heightRelativeToParent="calc(100% - 90px)">
                     <div id="extra">
                         <div>
                             <div id="date">
                                 <span>Payment Date</span>
                                 <DatePicker 
                                     onChange={onChange}
-                                    format="DD-MM-YYYY" 
-                                    defaultValue={moment(data.date, 'DD-MM-YYYY')} 
+                                    format="YYYY-MM-DD" 
+                                    defaultValue={moment(new Date(), 'YYYY-MM-DD')}
+                                    value={moment(new Date(details?.date), 'YYYY-MM-DD')}
                                 />
                             </div>
                             <div id="method">
                                 <span>Payment Method</span>
                                 <SelectInput 
-                                    value={data.payMethod} 
                                     options={methods} 
                                     defaultChoice="select method" 
-                                    id="met" 
+                                    id="met"
+                                    value={details?.pay_method}
+                                    onChange={e => setDetails(prev => ({...prev, pay_method: e}))}
                                 />
                             </div>
                         </div>
                         
                         <div id="ref-cont">
-                            <span>Ref No#</span>
-                            <StyledInput placeholder='ref' type="text" value={data.ref} id="ref" />
+                            
                         </div>
                     </div>
                     <div id="new-main" className="container-fluid">
@@ -237,70 +245,47 @@ export function Id() {
                             </thead>
                             <tbody>
                                 {items.map(({category, description, amount, company}, i) => 
-                                        {      
-                                            if (i == editing){
-                                                return(
-                                                    <tr key={1000000}>
-                                                    <td><Checkbox className="all" onChange={onCheck}></Checkbox></td>
-                                                    <td>{i+1}</td>
-                                                    <td className="sBs">
-                                                        <Categories 
-                                                            onChange={value => onTextChange(value, 'category')} 
-                                                            value={items[editing].category || ''} 
-                                                            id="category" 
-                                                            defaultChoice="select category"
-                                                            button
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <StyledInput 
-                                                            onChange={value => onTextChange(value, 'description')}
-                                                            value={items[editing].description || ''} 
-                                                            id="desc" 
-                                                            placeholder="Description" 
-                                                            type="text" 
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <StyledInput
-                                                            onChange={value => onTextChange(value, 'amount')}
-                                                            value={items[editing].amount || ''} 
-                                                            id="amt" 
-                                                            placeholder="amount" 
-                                                            type="number" 
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <SelectInput
-                                                            onChange={value => onTextChange(value, 'company')}
-                                                            value={items[editing].company || ''} 
-                                                            id="company" 
-                                                            defaultChoice="Company" 
-                                                            options={cp} 
-                                                        />
-                                                    </td>
-                                                    <td><IconButton onClick={handleAdd} className="done"><Done /></IconButton></td>
-                                                </tr>)
-                                            }
-                                            return (<tr onClick={_ => setEditing(i)} key={i}>
-                                                        <td><Checkbox className="all" onChange={onCheck}></Checkbox></td>
-                                                        <td>{i+1}</td>
-                                                        <td><NameFromId id={category} link="routes/categories" /></td>
-                                                        <td>{description}</td>
-                                                        <td>&#8358; {CommaFormatted(parseFloat(amount).toFixed(2))}</td>
-                                                        <td>{getName(company)}</td>
-                                                        <td><IconButton className="del" onClick={e => deleteitem(i)}><DeleteOutline  /></IconButton></td>
-                                                    </tr>)
-                                        })}
+                                    (<tr key={i}>
+                                        <td><Checkbox className="all" onChange={onCheck}></Checkbox></td>
+                                        <td>{i+1}</td>
+                                        <td><NameFromId id={category} link="categories" /></td>
+                                        <td>{description}</td>
+                                        <td>&#8358; {CommaFormatted(parseFloat(amount).toFixed(2))}</td>
+                                        <td><NameFromId id={company} link="companies" /></td>
+                                        <td><IconButton className="del" onClick={e => deleteitem(i)}><DeleteOutline  /></IconButton></td>
+                                    </tr>))}
                                 
+                                <tr key={1000000}>
+                                    <td><Checkbox className="all" onChange={onCheck}></Checkbox></td>
+                                    <td>{items.length+1}</td>
+                                    <td className="sBs">
+                                        <Category id="category" name="category" onChange={onCategory} value={item?.category} /> 
+                                        <Popover 
+                                            trigger='click'
+                                            content={categoryForm}
+                                        >
+                                            <IconButton><PlusOutlined /></IconButton> 
+                                        </Popover>
+                                    </td>
+                                    <td><StyledInput id="desc" placeholder="Description" type="text" name="description" onChange={onChangeText} value={item?.description} /></td>
+                                    <td><StyledInput id="amt" placeholder="amount" type="number" name="amount" onChange={onChangeText} value={item?.amount} /></td>
+                                    <td><Company id="company" name="company" onChange={onCompany} value={item?.company} /></td>
+                                    <td><IconButton onClick={handleAdd} className="done"><Done /></IconButton></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
-                </CustomScroll>: isError ? <h1>Something Happened</h1>: <Loader />}
+                </CustomScroll>
                 <FooterWithButton action={optAct} />
             </div>
         </MainLayout>
     );
 }
 
-export default ProtectRoute(Id);
+export const Balance = ({id}) => {
+    const {data, isLoading} = getViewData(`accounts/expenses/${id}/`);
+    
+    return (!isLoading && data && <Money amount={parseFloat(data?.balance).toFixed(2)} />)
+}
+
+export default ProtectRoute(ID);

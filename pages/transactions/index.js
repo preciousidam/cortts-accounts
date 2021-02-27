@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton'
 import {Add, CloseOutlined} from '@material-ui/icons';
 import Link from 'next/link';
 import CustomScroll from 'react-custom-scroll';
+import moment from 'moment';
 
 
 import MainLayout from "../../layouts/mainLayout";
@@ -35,7 +36,7 @@ export function Transactions(){
         },
     });
 
-    const {selectedAcct, done, transactions, add, del, accounts, setSelected} = useAccounts();
+    const {selectedAcct, done, add, del, accounts, setSelected} = useAccounts();
     
     const [open, setOpen] = useState(false)
     const classes = useStyles();
@@ -46,10 +47,12 @@ export function Transactions(){
         const number = document.getElementById('number').value;
         const balance = parseFloat(document.getElementById('balance').value).toFixed(2);
         const bank = document.getElementById('bank').value;
-        const sc = document.getElementById('sc').value;
+        const sort_code = document.getElementById('sc').value;
+        const account_officer = document.getElementById('acct_off_name').value;
+        const account_officer_number = document.getElementById('acct_off_num').value;
 
         
-        let result = await add({balance,name,number,sc,bank});
+        let result = await add({balance,name,number,sort_code,bank, account_officer, account_officer_number});
         if(result) clear();
     }
 
@@ -59,6 +62,8 @@ export function Transactions(){
         document.getElementById('bank').value = "";
         document.getElementById('balance').value = "";
         document.getElementById('sc').value = "";
+        document.getElementById('acct_off_name').value = "";
+        document.getElementById('acct_off_num').value = "";
     }
 
     
@@ -72,7 +77,7 @@ export function Transactions(){
                 </div>
                 { (done && accounts) && (<CustomScroll heightRelativeToParent="calc(100% - 65px)">
                     <div id="acct-list">
-                        {accounts.map(({balance, bank,name, id}, index) => 
+                        {accounts?.map(({number, bank,name, id}, index) => 
                             (<Paper 
                                 className={`acct-bal ${id == selectedAcct?.id? 'active':''}`}
                                 onClick={e => {
@@ -82,9 +87,10 @@ export function Transactions(){
                             >   
                                     
                                 <span className="caret"><ExtraMenu del={del} id={id} /></span>
+                                <span className="bank">{bank}</span>
+                                <h4 className="number">{number}</h4>
+                                <p className="name">{name}</p>
                                 
-                                <h4>&#8358; {CommaFormatted(balance)}</h4>
-                                <p>{name} - <span className="bank">{bank}</span></p>
                             </Paper>)
                         )}
                     </div>
@@ -94,7 +100,7 @@ export function Transactions(){
                                 <h4 className="h4">Recent Transactions</h4>
                                 <Paper id="recent-trans">
                                     <StickyContainer className="sticky">
-                                        {transactions.reverse().map(({id, ...rest}) => (
+                                        {selectedAcct?.recent_transaction?.map(({id, ...rest}) => (
                                             <TransactionElement key={id} {...rest}/>
                                         ))}
                                     </StickyContainer>
@@ -124,7 +130,10 @@ export function Transactions(){
                                             <StickyContainer className="sticky">
                                                 <div>
                                                     <div>
-                                                        <Summary data={transactions}/>
+                                                        <Summary 
+                                                            total_credit={selectedAcct?.total_credit}
+                                                            total_debit={selectedAcct?.total_debit}
+                                                        />
                                                     </div>
                                                 </div>
                                             </StickyContainer>
@@ -138,7 +147,7 @@ export function Transactions(){
                 {open && <div className="new-cont-overlay">
                     <div className="new-form">
                         <header>
-                            <h5>Add Accounts</h5>
+                            <h5>Add Account</h5>
                             <IconButton className="close" onClick={_ => setOpen(false)}><CloseOutlined /></IconButton>
                         </header>
                         <div>
@@ -147,6 +156,8 @@ export function Transactions(){
                             <SelectInput placeholder="Bank" id="bank" type="text" options={banks} defaultChoice="Select Bank" />
                             <StyledInput placeholder="Sort Code" id="sc" type="text" />
                             <StyledInput placeholder="Opening Balance" id="balance" type="number" />
+                            <StyledInput placeholder="Acct Name" id="acct_off_name" type="text" />
+                            <StyledInput placeholder="Acct Number" id="acct_off_num" type="text" />
                             <button className="btn btn-success add" onClick={onClick}>Save Account</button>
                         </div>
                     </div>
@@ -178,75 +189,39 @@ const styles = {
     },
 }
 
-const TransactionElement = ({beneficiary, transType, date, amount}) => (
+const TransactionElement = ({ben_name, type, created_at, amount}) => (
     <div className="trans-item">
         <div className="fLeft">
-            <Avatar style={styles[transType]} >{icons[transType]}</Avatar>
+            <Avatar style={styles[type]} >{icons[type]}</Avatar>
             <div className="trans-det">
-                <p className={transType == 'cancelled'? 'cancelled': ''}>{beneficiary}</p>
-                <span>{date}</span>
+                <p className={type == 'cancelled'? 'cancelled': ''}>{ben_name}</p>
+                <span>{moment(created_at).fromNow()}</span>
             </div>
         </div>
-        <span className={`${transType == 'cancelled'? 'cancelled': ''} ${transType == 'credit'? 'credit': 'debit'}`}>
-            {transType != 'credit'? '- ': ''}&#8358; {CommaFormatted(amount)}
+        <span className={`${type == 'cancelled'? 'cancelled': ''} ${type == 'credit'? 'credit': 'debit'}`}>
+            {type != 'credit'? '- ': ''}&#8358; {CommaFormatted(parseFloat(amount).toFixed(2))}
         </span>
     </div>
 );
 
-const Summary = ({data}) => {
-    
-    const sum = [];
-
-    const calcCredit = _ => {
-        let cre = 0.0;
-
-        data.forEach(({transType, amount}) => {
-            if(transType === 'credit') 
-                cre += parseFloat(amount)
-        });
-
-        sum.push({type: 'credit', total: cre, title: 'Credit'});
-        
-    };
-
-    const calcDebit = _ => {
-        let deb = 0.0;
-
-        data.forEach(({transType, amount}) => {
-            
-            if(transType === 'debit') 
-                deb += parseFloat(amount)
-        });
-
-        sum.push({type: 'debit', total: deb, title: 'Debit'});
-    }
-
-    const calcImp = _ => {
-        let imp = 0.0;
-
-        data.forEach(({transType, amount}) => {
-            if(transType === 'transfer') 
-                imp += parseFloat(amount)
-        });
-
-        sum.push({type: 'transfer', total: imp, title: 'Impress'});
-    }
-
-    calcCredit();
-    calcDebit();
-    calcImp();
+const Summary = ({total_credit, total_debit}) => {
 
     return (<div className="trans-item">
         <div>
-            {sum.map(({type,total,title}, ind) => (
-                <div className="sumDet" key={ind}>
-                    <Avatar style={styles[type]} >{icons[type]}</Avatar>
-                    <div className="trans-det">
-                        <span>{title}</span>
-                        <p>&#8358; {CommaFormatted(parseFloat(total).toFixed(2))}</p>
-                    </div>
+            <div className="sumDet">
+                <Avatar style={styles['credit']} >{icons['credit']}</Avatar>
+                <div className="trans-det">
+                    <span>{'Credit'}</span>
+                    <p>&#8358; {CommaFormatted(parseFloat(total_credit).toFixed(2))}</p>
                 </div>
-            ))}
+            </div>
+            <div className="sumDet">
+                <Avatar style={styles['debit']} >{icons['debit']}</Avatar>
+                <div className="trans-det">
+                    <span>{'Debit'}</span>
+                    <p>&#8358; {CommaFormatted(parseFloat(total_debit).toFixed(2))}</p>
+                </div>
+            </div>
         </div>
     </div>)
 }
@@ -260,16 +235,7 @@ const ExtraMenu = ({id, del}) => {
                 </a>
             </Link>
         </Menu.Item>
-        <Menu.Item danger>
-            <a onClick={e => {
-                e.preventDefault();
-                del(id);
-            }}>
-                Delete
-            </a>
-        </Menu.Item>
-        
-  </Menu>)
+    </Menu>)
 
     return (<Dropdown overlay={menu}>
         <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>

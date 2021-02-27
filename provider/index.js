@@ -1,13 +1,12 @@
 import React, {createContext, useState, useContext, useEffect} from 'react';
 import Cookies from 'js-cookie';
-import JwtDecode from 'jwt-decode';
 
-import {backend} from '../constants/url';
-import {refreshToken, delData, setData, setAcct} from '../utility/fetcher';
+import {delData, setData} from '../utility/fetcher';
 import {getViewData} from '../lib/hooks';
 import Loader from '../components/loader';
 import {openNotification} from '../components/notification';
-import {} from 'swr'
+import client from '../axios/tokenClient';
+import { useRouter } from 'next/router';
 
 
 const AuthContext = createContext({});
@@ -18,25 +17,23 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [token, setToken] = useState(null);
+    const router = useRouter();
 
     const loadUserFromCookies = async () => {
-        const refresh_token = Cookies.get('refresh_token');
-        const newToken =  await refreshToken(refresh_token);
-    
-        
-        Cookies.set('token', newToken);
-        
-        if (newToken) {
-            setToken(newToken);
-            const claim = await JwtDecode(newToken);
+
+        const token = JSON.parse(Cookies.get('tokenData'));
+
+        const isValid = (await verifyToken(token.access_token));
+        if (isValid){
+            const user = JSON.parse(Cookies.get('user'));
             
-            if (claim) {
-                setUser(claim.identity);  
-            }
-            
+            setUser(user);
+            setToken(token.access_token);
         }
-        setLoading(false);
-        
+        else{
+            setLoading(false);
+            router.push('/');
+        }
     }
 
     useEffect(() => {
@@ -47,40 +44,42 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         
-        const res = await fetch(`${backend}/api/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({email,password}),
-        });
+        const {data, status} = await client.post(`auth/login/`, {username: email, password});
 
-        const json = await res.json();
-
-        const {token, refreshToken, status, msg} = await json;
-
-        if (token && refreshToken) {
-            
-            Cookies.set('token', token, { expires: 7 });
-            Cookies.set('refresh_token', refreshToken);
-            setToken(token);
-            const claim = JwtDecode(token);
-            if(claim) {
-                setUser(claim.identity);
-            }
-            
-            return true;
+        if (status === 201 || status === 200){
+            Cookies.set('tokenData', 
+                        JSON.stringify({access_token: data.access_token, refresh_token: data.refresh_token}), 
+                        {expires: 2});
+            setToken(data.access_token);
+            Cookies.set('user', JSON.stringify(data.user));
+            setUser(data.user);
+            return {status: true};
         }
 
-        return {status, msg};
+
+        //const {token, refreshToken, status, msg} = await json;
+
+        return {status: false, msg: data};
+    }
+
+    const verifyToken = async token => {
+        const {data, status} = await client.post('auth/token/verify/', {token});
+        
+        if(status === 200 || status === 201){
+            return true;
+        }
+        else if (status === 401) {
+            alert(data?.detail);
+            return false;
+        }
+        
     }
 
     const logout = () => {
-        Cookies.remove('token');
-        Cookies.remove('refresh_token')
+        Cookies.remove('tokenData');
         setUser(null);
         setToken(null);
+        router.push('/')
         return true;
     }
 
@@ -101,75 +100,39 @@ export default function useAuth() {
 
 export const AccountProvider = ({ children }) => {
 
-    const [accounts, setAccounts] = useState([]);
     const [selectedAcct, setSelectedAcct] = useState(null);
-    const [transactions, setTransactions] = useState([]);
-    const {token} = useAuth();
-    const {data, isLoading, isError, mutate} = getViewData('accounts/');
-
-    const loadAccounts = async () => {
-        setAccounts(data);
-    }
-
-    useEffect(() => {
-        if (!data)
-            return
-        loadAccounts();
-    }, [data]);
+    
+    const {data, isLoading, isError, mutate} = getViewData('accounts/cortts/');
 
     useEffect(()=> {
         if(selectedAcct != null) return;
-        setSelectedAcct(accounts[0]);
-    }, [accounts, selectedAcct]);
+        if(data)
+            setSelectedAcct(data[0]);
+    }, [data]);
 
-    useEffect(() => {
-        if(selectedAcct == null) return;
-        setTransactions(selectedAcct.transactions);
-    }, [selectedAcct]);
 
-    const setSelected = aid => setSelectedAcct(accounts.find(({id}) => aid === id));
-
-    const del = async rid => {
-        delData
-        const {msg, status, data} = await delData('accounts/delete',rid,token);
-        if( status == 'success')
-            mutate(data);
-        openNotification(status,msg);
-        setSelectedAcct(accounts[0]);
-    }
+    const setSelected = aid => setSelectedAcct(data?.find(({id}) => aid === id));
     
     const add = async body => {
-        console.log(body)
-        const {msg, status, data} = await setData('accounts/create',body,token);
-        if( status == 'success')
+        const {status, data} = await setData('accounts/cortts/', body);
+        console.log(data)
+        if( status == 200 || status === 201){
             mutate(data);
-        openNotification(status,msg);
-        return status == 'success' || false;
-    }
-
-    const addTransaction = async body => {
-
-        const {msg, status, data} = await setData('transactions/create', body, token);
-        if( status == 'success'){
-            mutate([...accounts, {...selectedAcct,transactions: data}]);
+            openNotification("Success","Transaction has been saved", 'success');
+            return true;
         }
-        openNotification(status,msg);
-
-        return status == 'success' || false;
+        for (let m in data) openNotification(m.toUpperCase(),data[m]);
+        return false;
     }
-
 
     return (
         <AccountContext.Provider 
             value={{ 
                 selectedAcct, 
-                accounts, 
+                accounts: data, 
                 setSelected, 
                 done: !isLoading, 
                 add, 
-                del, 
-                transactions,
-                addTransaction
             }}
         >
             {!isLoading ? children : isError ? (<p>something bad happened please refresh the page</p>) : (<Loader />)}
