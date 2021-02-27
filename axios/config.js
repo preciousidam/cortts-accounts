@@ -1,1 +1,1 @@
-export const apiConfig = {baseUrl:"http://localhost:8000/api/v1/"}
+export const apiConfig = {baseUrl:`${process.env.NEXT_PUBLIC_BACKEND}/api/v1/`}
