@@ -15,6 +15,10 @@
         width: 70%;
 
         #basic{
+            svg{
+                color: $primary-blue;
+                font-size: 12.5px;
+            }
             padding: 20px;
 
             h4{
@@ -22,23 +26,25 @@
             }
             .vacant{
                 color: $text-color-dark-active;
-                font-weight: bold;
-                font-size: 12px;
+                font-size: 11px;
+                font-weight: 700;
                 background-color: red;
                 border-radius: 3px;
-                padding: 5px;
+                padding: 3px;
                 text-transform: uppercase;
                 margin-left: 15px ;
+                font-family: 'Montserrat' !important;
             }
             .occupied{
                 color: $text-color-dark-active;
-                font-weight: bold;
-                font-size: 12px;
+                font-size: 11px;
+                font-weight: 700;
                 background-color: $primary-green;
                 border-radius: 3px;
-                padding: 5px;
+                padding: 3px;
                 text-transform: uppercase;
                 margin-left: 15px ;
+                font-family: $font-main !important;
             }
 
             .room{
@@ -95,7 +101,7 @@
             }
         }
 
-        #info{
+        #info, #info-period{
             padding: 15px;
 
             #tenant-info{
@@ -110,7 +116,26 @@
                 font-weight: bold;
             }
 
+            h6{
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 15px;
+            }
+
+            #tName{
+                margin-bottom: 0px !important;
+            }
+
+            .period{
+                margin-bottom: 15px;
+                min-height: 45vh;
+                .name, .tPeriod{
+                    margin: 0 !important;
+                }
+            }
+
         }
+
     }
 
     .aside{
@@ -145,21 +170,21 @@
                 .no{
                     background-color: #c6c6c6;
                     border-radius: 50%;
-                    padding: 15px 10px;
-                    font-size: 13px;
+                    padding: 10px 6px;
+                    font-size: 11px;
                     color: $text-color-dark-active;
                     margin: 0 10px 0 0;
                 }
             
                 a{
-                    margin: 10px 0 !important;
+                    margin: 0 !important;
                     display: block;
                     text-decoration: none;
                     color: $text-color;
 
                     p, span{
                         margin: 0;
-                        font-size: 15px;
+                        font-size: 12px;
                     }
                 }
             }

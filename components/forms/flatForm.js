@@ -6,14 +6,15 @@ import {Checkbox, Button } from 'antd';
 
 
 import {openNotification} from '../../components/notification';
-import {setData} from '../../utility/fetcher';
+import {setData, editData} from '../../utility/fetcher';
 import {StyledInput, SelectInput, AddDataSelectInput} from '../textinput/styledTextInput';
 import { mutate } from 'swr';
+import { getViewData } from '../../lib/hooks';
 
 
 const areas = [{text: "Ikoyi", value: 'Ikoyi'},{text: "Victoria Island", value: 'Victoria Island'},{text: "Oniru", value: 'Oniru'},{text: "Lekki", value: 'Lekki'},]
 
-const Form = ({add, loading}) => {
+export const Form = ({add, loading}) => {
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [email, setEmail] = useState('');
@@ -24,7 +25,8 @@ const Form = ({add, loading}) => {
     const onClick = _ => {
         add({name,email, address,phone, contact_name, contact_phone});
         setAddress('');
-        setContactPerson('');
+        setContactPhone('');
+        setContactName('');
         setEmail('');
         setPhone('');
         setName('');
@@ -46,12 +48,19 @@ const Form = ({add, loading}) => {
     </div>);
 }
 
-const Landlord = AddDataSelectInput('contacts/clients/');
+export const Client = AddDataSelectInput('contacts/clients/');
 
-export default function CreateForm({close}){
+export default function CreateForm({close, id}){
 
     const [details, setDetails] = useState({});
     const [loading, setLoading] = useState(false);
+    const {data, isLoading} = getViewData(`apartments/${id}/`);
+    
+    useEffect(() => {
+        if (!isLoading && data){
+            setDetails({...data})
+        }
+    }, [data, isLoading])
    
 
     const onChange = e => {
@@ -64,11 +73,13 @@ export default function CreateForm({close}){
 
     const handleOk = async () => {
         setLoading(true);
-        const {data, status} = await setData(`apartments/`, details)
+        const funct = id? editData : setData;
+        const link = id ? `apartments/${id}/` : `apartments/`
+        const {data, status} = await funct(link, details)
         setLoading(false);
         if (status === 200 || status === 201){
             openNotification("Success", 'Record saved successfully', 'success');
-            mutate('apartments/');
+            mutate(link);
             close();
             return;
         }
@@ -95,22 +106,22 @@ export default function CreateForm({close}){
             </header>
             <div id="form" className="row">
                 <div className="col-6">
-                    <StyledInput value={details.name} name="flat" onChange={onChange} type="text" placeholder="AM6" label="Flat" id="flat" />
+                    <StyledInput value={details.flat} name="flat" onChange={onChange} type="text" placeholder="AM6" label="Flat" id="flat" />
                 </div>
                 <div className="col-6">
-                    <StyledInput value={details.prop} name="building" onChange={onChange} id="property" defaultChoice="Select property" label="Property" />
+                    <StyledInput value={details.building} name="building" onChange={onChange} id="property" label="Property" />
                 </div>
                 <div className="col-3">
-                    <StyledInput value={details.noOfBed} name="no_of_bed" onChange={onChange} type="number" label="Bedroom" id="bed" min={1} max={10} />
+                    <StyledInput value={details.no_of_bed} name="no_of_bed" onChange={onChange} type="number" label="Bedroom" id="bed" min={1} max={10} />
                 </div>
                 <div className="col-3">
-                    <StyledInput value={details.noOfBath} name="no_of_bath" onChange={onChange} type="number" label="Baths" id="baths" min={1} max={10} />
+                    <StyledInput value={details.no_of_bath} name="no_of_bath" onChange={onChange} type="number" label="Baths" id="baths" min={1} max={10} />
                 </div>
                 <div className="col-3">
-                    <StyledInput value={details.noOfToilet} name="no_of_toilet" onChange={onChange} type="number" label="Toilet" id="toilet" min={1} max={10} />
+                    <StyledInput value={details.no_of_toilet} name="no_of_toilet" onChange={onChange} type="number" label="Toilet" id="toilet" min={1} max={10} />
                 </div>
                 <div className="col-3">
-                    <StyledInput value={details.noOfPark} name="no_of_park" onChange={onChange} type="number" label="Car Park" id="park" min={1} max={10} />
+                    <StyledInput value={details.no_of_park} name="no_of_park" onChange={onChange} type="number" label="Car Park" id="park" min={1} max={10} />
                 </div>
                 <div className="col-9">
                     <StyledInput value={details.address} name="address" onChange={onChange} type="text" placeholder="Block 101, Plot 7, Furo Ezimora" label="Address" id="address" />
@@ -128,8 +139,7 @@ export default function CreateForm({close}){
                 </div>
                 <div className="col-6">
                
-                    <Landlord 
-                        defaultChoice="Select landlord"
+                    <Client 
                         onChange={val => setDetails(prev => ({...prev, landlord: val}))}
                         value={details.landlord}
                         containerStyle={{width: '100%'}}
@@ -154,7 +164,7 @@ export default function CreateForm({close}){
             <div className="row">
                 <div className="col-12">
                     <label htmlFor="note">Additiona Note?</label>
-                    <textarea className="form-control" id="note" rows="3" name="other_info" onChange={onChange}>{details.note}</textarea>
+                    <textarea value={details?.other_info} className="form-control" id="note" rows="3" name="other_info" onChange={onChange} />
                 </div>
             </div>
             <div>
@@ -164,3 +174,4 @@ export default function CreateForm({close}){
         </div>
     );
 }
+

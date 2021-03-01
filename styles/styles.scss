@@ -37,7 +37,25 @@ p, span, td, th{
     font-size: 13px;
 }
 
+label{
+    font-family: 'Open Sans' !important;
+    font-weight: 500 !important;
+    font-size: 12px;
+    margin-bottom: 0 !important;
+}
+input, textarea{
+    font-size: 12px !important;
+}
+
+select{
+    font-size: 12px !important;
+}
+
 th{
     font-family: 'Montserrat' !important;
     font-weight: 700 !important;
+}
+
+button{
+    font-size: 12px !important;
 }

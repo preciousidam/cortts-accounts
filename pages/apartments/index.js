@@ -1,4 +1,4 @@
-import React, {useState, Suspense} from 'react';
+import React, {useState, Suspense, useEffect} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Paper from '@material-ui/core/Paper';
 import CustomScroll from 'react-custom-scroll';
@@ -12,8 +12,6 @@ import CreateForm from '../../components/forms/flatForm';
 import {ProtectRoute} from '../../utility/route';
 import {hoc} from '../../utility/hoc';
 
-const Table = hoc(FlatsTable, `flats/`);
-const Form = hoc(CreateForm, `flats/create`);
 
 export function Apartments() {
     const useStyles = makeStyles({
@@ -30,13 +28,26 @@ export function Apartments() {
 
     const classes = useStyles();                        
     
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false);
+    useEffect(() => {
+        if (!open) setPId(null);
+    }, [open])
+
+    const [pId, setPId] = useState(null);
     
     const renderBreadcrumb = _ => (<Breadcrumb>
         <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
         <Breadcrumb.Item>Apartments</Breadcrumb.Item>
     </Breadcrumb>);
 
+    const showEdit = id => {
+        setPId(id);
+        setOpen(true);
+    }
+    const close = _ => {
+        setOpen(false);
+        setPId(null);
+    }
 
     return (
         <MainLayout title="Apartments">
@@ -54,7 +65,7 @@ export function Apartments() {
                         {!open && <header id="header">
                             <h4> All Apartments </h4>
                         </header>}
-                        {!open ? <Table />: <Form close={_ => setOpen(false)} />}
+                        {!open ? <FlatsTable showEdit={showEdit} />: <CreateForm id={pId} close={_ => setOpen(false)} />}
                     </Paper>
                 </CustomScroll>
             </div>

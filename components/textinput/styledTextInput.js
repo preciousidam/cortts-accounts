@@ -2,7 +2,9 @@ import { PlusOutlined } from '@ant-design/icons';
 import { IconButton } from '@material-ui/core';
 import { message, Popover } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { mutate } from 'swr';
 import { getViewData } from '../../lib/hooks';
+import { setData } from '../../utility/fetcher';
 
 
 export function StyledInput({type, label, placeholder, id, ...rest}){
@@ -46,7 +48,7 @@ export const DataSelectInput = (datasource) => {
 
 
 export const AddDataSelectInput = (datasource) => {
-    return ({ containerStyle, options, label, id, onChange, value, ...rest}) => {
+    return ({ containerStyle, options, label, id, onChange, value, Form, button, ...rest}) => {
         const {data, isLoading} = getViewData(datasource);
         const [loading, setLoading] = useState(false);
 
@@ -56,7 +58,7 @@ export const AddDataSelectInput = (datasource) => {
 
         const add = async (body) => {
             setLoading(true);
-            const {data, status} = await editData(datasource,body)
+            const {data, status} = await setData(datasource,body)
             setLoading(false);
             if (status === 200 || status === 201){
                 message.success('Data added');
@@ -69,7 +71,7 @@ export const AddDataSelectInput = (datasource) => {
         }
         
         const renderForm = _ => (
-            <rest.Form add={add} loading={loading} />
+            <Form add={add} loading={loading} />
         );
 
         return (!isLoading &&
@@ -85,7 +87,7 @@ export const AddDataSelectInput = (datasource) => {
                     content={renderForm}
                     placement="bottomLeft"
                 >
-                    {rest?.button ? <IconButton><PlusOutlined /></IconButton> : <span>click to add new</span>}
+                    {button ? <IconButton><PlusOutlined /></IconButton> : <span>click to add new</span>}
                 </Popover>
             </div>);
     }

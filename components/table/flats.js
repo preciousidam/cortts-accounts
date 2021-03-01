@@ -5,30 +5,23 @@ import moment from 'moment';
 
 import ActionButton from '../button/actionButtons';
 import {getViewData} from '../../lib/hooks';
-import Loader from '../loader';
 import useAuth from '../../provider';
 import {openNotification} from '../../components/notification';
-import {setData, delData} from '../../utility/fetcher';
-import CreateForm from '../../components/forms/flatForm';
-import {hoc} from '../../utility/hoc';
+import {delData} from '../../utility/fetcher';
 
 
-export default function FlatsTable({linkId, newData, callback}){
+
+export default function FlatsTable({linkId, newData, showEdit}){
     
     const {data, isError, isLoading, mutate} = getViewData('apartments/');
     const [page, setPage] = useState(1)
-    const offset = 8;
-    const [holdEdit, setHoldEdit] = useState({});
-    const [showForm, setShowForm] = useState(false);
-    const [loading, setLoading] = useState(false);
+   
     const {token} = useAuth();
     const router = useRouter();
-    const Form = hoc(CreateForm, `${linkId}edit`);
 
     const onChange = pag => {
         setPage(pag)
     };
-    const [upper,lower] = [(offset * page) - offset, page * offset];
     
     
     useEffect(()=>{
@@ -36,21 +29,20 @@ export default function FlatsTable({linkId, newData, callback}){
         mutate(newData);
     }, [newData])
 
-
-    const edit = rid => {
-        setHoldEdit(data.find(({id}) => id === rid));
-        setShowForm(true);
-    }
     const del = async id => {
-        const {msg, status, data} = await delData(`${linkId}delete`,id,token);
-        if( status == 'success')
-            mutate(data);
-        openNotification(status,msg);
+        const {status, data} = await delData(`apartments/${id}/`);
+        if(status === 204) {
+            openNotification('Item', "Deleted successfully", 'success');
+            mutate('apartments/');
+            return;
+        }
+        for (let item in data)
+            openNotification(item.toUpperCase(), data[item]);
     }
 
 
     return (
-        !isLoading ? !showForm ? (<div id="expense-table">
+        !isLoading && <div id="expense-table">
                 <table>
                     <thead>
                         <tr>
@@ -88,7 +80,7 @@ export default function FlatsTable({linkId, newData, callback}){
                                         actions={{
                                             view: _ => router.push(`/apartments/${id}`),
                                             del: _ => del(id), 
-                                            edit: _ => edit(id)}} 
+                                            edit: _ => showEdit(id)}} 
                                     />
                                 </td>
                             </tr>
@@ -96,12 +88,8 @@ export default function FlatsTable({linkId, newData, callback}){
                     </tbody>
                 </table>
             <div className="pagination">
-                <Pagination current={page} defaultCurrent={1} total={data.length} onChange={onChange} />
+                <Pagination current={page} defaultCurrent={1} total={data?.length} onChange={onChange} />
             </div>
-        </div>) : <Form 
-                        data={holdEdit} 
-                        close={_ => setShowForm(false)}  
-                        mutate={newData => mutate([...data, newData])}
-                    /> : isError ? <p>Something happened cannot load data right now</p> : <Loader />
+        </div>
     );
 }
