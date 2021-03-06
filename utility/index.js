@@ -17,7 +17,8 @@ export function CommaFormatted(amount) {
 	if(n.length > 0) { a.unshift(n); }
 	n = a.join(delimiter);
 	if(d.length < 1) { amount = n; }
-	else { amount = n + '.' + d; }
+	//else { amount = n + '.' + d; }
+	else { amount = n; }
 	amount = minus + amount;
 	return amount;
 }

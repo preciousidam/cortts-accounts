@@ -1,4 +1,5 @@
+import {CommaFormatted} from '../../utility/index';
 
 export default function Money({amount, className}){
-    return <span className={`money ${className}`}>&#8358; {amount}</span>
+    return <span className={`money ${className}`}>{amount}</span>
 }

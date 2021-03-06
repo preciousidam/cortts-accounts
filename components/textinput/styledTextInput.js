@@ -16,12 +16,11 @@ export function StyledInput({type, label, placeholder, id, ...rest}){
     );
 }
 
-export function SelectInput({defaultChoice, containerStyle, options, label, id, ...rest}){
+export function SelectInput({value, containerStyle, options, label, id, onChange, ...rest}){
     return (
         <div className="form-group styled" style={containerStyle}>
             {label && <label className="label" htmlFor={id}>{label}</label>}
-            <select className="custom-select" id={id} {...rest}>
-                <option key={1000} value={0}>{defaultChoice}</option>
+            <select className="custom-select" id={id} defaultValue={value} onChange={onChange} {...rest} >
                 {options.map(({text,value}, i) => <option key={i} value={value}>{text}</option>)}
             </select>
         </div>
@@ -40,7 +39,7 @@ export const DataSelectInput = (datasource) => {
             <div className="form-group styled" style={containerStyle}>
                 {label && <label className="label" htmlFor={id}>{label}</label>}
                 <select className="custom-select" id={id} onChange={e => onChange(e.target.value)} defaultValue={value} {...rest}>
-                    {data?.map(({id, name, title}, i) => <option key={i} value={id}>{name || title}</option>)}
+                    {data?.map(({id, name, title, flat}, i) => <option key={i} value={id}>{name || title || flat}</option>)}
                 </select>
             </div>);
     }

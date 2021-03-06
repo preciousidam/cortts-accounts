@@ -16,7 +16,7 @@ const links = [
     {icon: <Apartment />, title: 'Apartments', link: 'apartments'},
     {icon: <Person />, title: 'Clients', link: 'clients'},
     {icon: <Person />, title: 'Vendors', link: 'vendors'},
-    {icon: <Badge badgeContent={2} color="error"><FontAwesomeIcon icon="handshake" /></Badge>, 
+    {icon: <FontAwesomeIcon icon="handshake" size="sm" />, 
         title: 'Agreements', link: 'agreements'},
 ]
 

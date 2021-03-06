@@ -41,7 +41,7 @@ export function Clients() {
 
     const renderBreadcrumb = _ => (<Breadcrumb>
         <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
-        <Breadcrumb.Item>Landlords</Breadcrumb.Item>
+        <Breadcrumb.Item>Vendors</Breadcrumb.Item>
     </Breadcrumb>);
 
     const onChange = e => {
@@ -93,7 +93,7 @@ export function Clients() {
                 {open && <div className="new-cont-overlay">
                     <div className="new-form">
                         <header>
-                            <h5>Add Client</h5>
+                            <h5>Add Vendor</h5>
                             <IconButton className="close" onClick={_ => setOpen(false)}><CloseOutlined /></IconButton>
                         </header>
                         <div>

@@ -40,7 +40,7 @@ export function Invoice() {
 
     const renderBreadcrumb = _ => (<Breadcrumb>
         <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
-        <Breadcrumb.Item>Summary</Breadcrumb.Item>
+        <Breadcrumb.Item>Invoices</Breadcrumb.Item>
     </Breadcrumb>)
 
     const router = useRouter();
@@ -60,11 +60,11 @@ export function Invoice() {
                 <CustomScroll heightRelativeToParent="calc(100% - 68px)">
                     <Paper id="transactions">
                         <header id="header">
-                            <h4>All Transactions</h4>
+                            <h4>All Invoices</h4>
                             
-                            <Button className="elevated" onClick={_ => router.push('/expenses/summary')} className={classes.pdf} >View Report 
+                            {/*<Button className="elevated" onClick={_ => router.push('/expenses/summary')} className={classes.pdf} >View Report 
                                 <FontAwesomeIcon icon="file-pdf" color="#ED213A" style={{margin: 5}} />
-                            </Button>
+                            </Button>*/}
                         </header>
                         <Table data={invoice} />
                     </Paper>

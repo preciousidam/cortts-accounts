@@ -7,6 +7,7 @@ import { Tabs } from 'antd';
 import { StickyContainer, Sticky } from 'react-sticky';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import moment from 'moment';
+import CustomScroll from 'react-custom-scroll';
 
 
 import MainLayout from "../../layouts/mainLayout";
@@ -51,30 +52,32 @@ export function Flats(props) {
     return (
         <MainLayout title={`Flat ${data?.name}`}>
             <div className="body">
-                {edit == false ? <div className="container-fluid flat-details-cont">
-                    <Paper className="container flat" >
-                        <StickyContainer className="sticky">
-                            <Tabs defaultActiveKey="1" renderTabBar={renderTabBar}>
-                                <TabPane tab="Basic" key="1">
-                                    {basicDetail(data)}
-                                </TabPane>
-                                <TabPane tab="Information" key="2">
-                                    <ClientInfo landlord={data?.landlord} tenant={data?.tenant} />
-                                </TabPane>
-                                <TabPane tab="Tenancy Period" key="3">
-                                    <TenancyPeriod 
-                                        list={data?.all_tenancy_period}
-                                        current={data?.current_tenancy_period}
-                                        mutate={_ => mutate(`apartments/${id}/`)}
-                                        id={id}
-                                        amount={data?.rent}
-                                    />
-                                </TabPane>
-                            </Tabs>
-                        </StickyContainer>
-                    </Paper>
-                    <Aside similar={data?.similar} edit={showForm} />
-                </div>: <CreateForm id={id} close={_ => setEdit(false)} />}
+                <CustomScroll heightRelativeToParent="calc(100%)">
+                    {edit == false ? <div className="container-fluid flat-details-cont">
+                        <Paper className="container flat" >
+                            <StickyContainer className="sticky">
+                                <Tabs defaultActiveKey="1" renderTabBar={renderTabBar}>
+                                    <TabPane tab="Basic" key="1">
+                                        {basicDetail(data)}
+                                    </TabPane>
+                                    <TabPane tab="Information" key="2">
+                                        <ClientInfo landlord={data?.landlord} tenant={data?.tenant} />
+                                    </TabPane>
+                                    <TabPane tab="Tenancy Period" key="3">
+                                        <TenancyPeriod 
+                                            list={data?.all_tenancy_period}
+                                            current={data?.current_tenancy_period}
+                                            mutate={_ => mutate(`apartments/${id}/`)}
+                                            id={id}
+                                            amount={data?.rent}
+                                        />
+                                    </TabPane>
+                                </Tabs>
+                            </StickyContainer>
+                        </Paper>
+                        <Aside similar={data?.similar} edit={showForm} />
+                    </div>: <CreateForm id={id} close={_ => setEdit(false)} />}
+                </CustomScroll>
             </div>
         </MainLayout>
     );
